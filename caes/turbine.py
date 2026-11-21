@@ -12,6 +12,7 @@ reçue et sa source (``externe`` ou ``cuve_X``), voir formules.md#F19.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Callable
 
 from caes.proprietes import Air
 
@@ -112,27 +113,45 @@ class Turbine:
         return self.etages[-1].p_sortie_pa
 
     def produire(
-        self, air: Air, T_entree_K: float
+        self,
+        air: Air,
+        T_entree_K: float,
+        rechauffeur: Callable[[int, float, float, float | None],
+                              tuple[float, str]] | None = None,
     ) -> tuple[ResultatEtageTurbine, ...]:
         """Réchauffage et détente de chaque étage, à partir de T_entree.
 
         L'air arrive à la pression d'entrée du premier étage. Entre deux
         étages, la petite chute de pression (11,5 → 11 bar chez DEPRAG)
         est traitée comme un laminage isenthalpique.
+
+        ``rechauffeur(i, p, T_avant, T_cible)`` renvoie la température
+        après réchauffage et l'étiquette de la source (« externe »,
+        « cuve_3 », « huile_ideale »). Par défaut : source externe qui
+        atteint toujours la cible (comme Dormoy).
         """
         resultats: list[ResultatEtageTurbine] = []
         T = T_entree_K
         p = self.p_entree_pa
-        for etage in self.etages:
+        for i, etage in enumerate(self.etages):
             if p > etage.p_entree_pa:
                 T = air.T_de_p_h(etage.p_entree_pa, air.h(p, T))
             p = etage.p_entree_pa
             T_avant = T
             q = 0.0
             cible = etage.T_entree_cible_K
-            if cible is not None and T < cible:
+            source = ""
+            if rechauffeur is not None:
+                T_new, source = rechauffeur(i, p, T, cible)
+                if T_new > T:
+                    q = air.h(p, T_new) - air.h(p, T)
+                    T = T_new
+                else:
+                    source = ""
+            elif cible is not None and T < cible:
                 q = air.h(p, cible) - air.h(p, T)
                 T = cible
+                source = self.source_chaleur
             T_out, w_pol, dh = detendre_etage(
                 air, p, T, etage.p_sortie_pa, etage.indice_polytropique
             )
@@ -145,7 +164,7 @@ class Turbine:
                     p_out_pa=etage.p_sortie_pa,
                     T_out_K=T_out,
                     q_rechauffage=q,
-                    source_chaleur=self.source_chaleur if q > 0 else "",
+                    source_chaleur=source if q > 0 else "",
                     w_pol=w_pol,
                     w_mec=w_mec,
                     w_el=etage.rendement_electrique * w_mec,

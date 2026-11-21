@@ -2,6 +2,47 @@
 
 *Mis à jour à la fin de chaque session. Le plus récent en haut.*
 
+## 2026-11-21 : phase 5 terminée (système intégré Dormoy + gravier)
+
+### Fait
+
+- `caes/systeme.py` et `caes/turbine.py` rendus « branchables » : crochets `CouplageCharge` (cuve entre un étage et son refroidisseur) et `RechauffeurDecharge` (source de chaleur par étage de turbine), reprise d'un réservoir existant pour les cycles, colonnes de séries supplémentaires (`T_in_ref_i`, `Q_cuve_i`).
+- `caes/integre.py` : architectures A à E, `ConfigCuves`, `CouplageCuvesCharge`, `CouplageHuileIdeale`, `RechauffeurCuves` (bypass pour viser la cible, pincement de 20 K pour la boucle d'air, pas d'appoint), `RechauffeurHuileIdeale`, `simuler_cycles` (charge → attente → décharge jusqu'au régime stable, critère sur l'électricité et sur la chaleur des cuves), `exergie_cuve`.
+- `caes/exergie.py` : bilans étendus aux cuves (exergie stockée, destruction dans l'échange, exergie puisée en décharge) ; l'état initial réel du réservoir est pris dans les totaux quand la simulation reprend un réservoir (cycles).
+- Scénarios `A.yaml` à `E.yaml` ; `rapports/phase5_architectures.py` → `rapports/phase5/architectures.md`, tableaux « 1000 unités » et cascades par architecture, balayage de volume `dimensionnement.csv` et figure.
+- 8 tests nouveaux (121 au total, tous verts). Fiches F30 et F31, `docs/phase-05-explication.md`.
+
+### Résultats (cycle stable, charge « aspiration chaude »)
+
+| Arch. | Charge | Produit | RTE | Chaleur | Unités sur 1000 | Fiche (à la main) |
+|---|---|---|---|---|---|---|
+| A | 324,5 kWh | 14,05 kWh | 4,3 % | – | 43 | 46 |
+| B | 243,2 | 40,96 | 16,8 % (13,9 % en comptant 51,2 kWh externes) | externe | 168 | 160 |
+| C | 243,2 | 40,96 | 16,8 % | huile idéale (réserve excédentaire de 26 kWh) | 168 | ≈ 160 |
+| D | 239,5 | 41,05 | 17,1 % | cuves 30,2 / 6,4 / 14,8 kWh | 171 | ≈ 150–155 |
+| E | 239,4 | 41,01 | 17,1 % | cuves 30,2 / 6,4 / 14,7 kWh | 171 | ≈ 130–150 |
+
+Dimensionnement : volumes de base [0,35 ; 0,2 ; 0,7] m³ (2,4 t de gravier) = coude de la courbe ; à la moitié, la fin de décharge souffre (T min 99 / 62 / 28 °C, 40,3 kWh) ; au double, rien de plus (41,1 kWh, 137 kWh de chaleur inutilisée). Pressions des cuves 3,3 / 12,3 / 55 bar contre turbines 3 / 11 / 40 bar. Perte de charge 29 / 13 / 1 Pa (0,007 kWh par charge). Chaleur restante dans les cuves de D au cycle stable : 48 kWh.
+
+### Ce que ça change par rapport à la fiche
+
+- D et E produisent autant que B et C : le gravier alimente les turbines exactement à leur température nominale grâce au bypass, et la marge de 40 à 60 K entre la sortie des compresseurs (168–188 °C) et le besoin (130 °C) absorbe les deux pincements de la boucle d'air. La pénalité de fin de décharge de la fiche (−5 %) n'apparaît qu'avec des cuves trop petites.
+- Les cuves consomment même un peu moins à la charge (239 contre 243 kWh) : les refroidisseurs reçoivent de l'air moins chaud et le rendent plus froid.
+- Volume total ≈ 1,25 m³ au lieu des 2 m³ estimés dans la fiche.
+- **Mise à jour des fiches Dormoy et Tola (sections « cuves de gravier » et « 1000 unités ») proposée dans le rapport, à faire seulement avec l'accord de l'utilisateur.**
+
+### Choix et limites
+
+- Réservoir en modèle « paroi » pour toutes les phases du cycle (en phase 1, la charge avait été validée avec le modèle « K global ») ; charge à dt = 30 s, décharge à dt = 5 s, cuves à 30 cellules (20 pour le balayage).
+- Attente de 1 h entre charge et décharge, isolation des cuves parfaite : les pertes sont l'objet de la phase 6.
+- Le bypass suppose que la sortie de la cuve ne change pas quand le débit baisse ; la température visée est atteinte à 0,5 K près.
+- Dans E, la boucle d'air transporte le même débit massique que l'air comprimé (échangeur équilibré) ; pas de perte de charge ni de puissance de ventilateur pour la boucle (à ajouter si la phase 9 le demande).
+- Le critère de stabilisation sur la chaleur des cuves (1 %) n'est pas atteint en 4 à 6 cycles pour les cuves surdimensionnées (k ≥ 2) : l'électricité est stable, la chaleur continue de s'accumuler lentement.
+
+### Prochaine étape
+
+Phase 6 (prompt 07) : module `isolation`, attente de 7 à 56 jours avec température extérieure, courbes « chaleur restante » et « électricité livrée », effet d'échelle, fuites d'air.
+
 ## 2026-11-19 : phase 4 terminée (lit de gravier)
 
 ### Fait

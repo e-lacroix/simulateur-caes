@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, Protocol
 
 import numpy as np
 import pandas as pd
@@ -48,6 +48,26 @@ class EtatChaine:
     T_sortie_K: float
     h_sortie_j_kg: float
     rendement_mecanique: float
+    T_entree_refroidisseurs_K: tuple[float, ...] = ()
+    """Température à l'entrée de chaque refroidisseur (après cuve)."""
+
+
+class CouplageCharge(Protocol):
+    """Crochets pour brancher des cuves de chaleur sur la charge.
+
+    ``apres_etage`` est appelé après chaque étage de compression, avant
+    le refroidisseur ; il reçoit l'indice (0 = étage 1), la pression et
+    la température de sortie de l'étage, et renvoie la température à
+    l'entrée du refroidisseur. ``fin_de_pas`` reçoit la chaîne du pas,
+    pour les comptes (chaleur stockée, chaleur au-dessus du seuil).
+    """
+
+    def preparer(self, m_dot: float, dt: float) -> None: ...
+
+    def apres_etage(self, i: int, p_pa: float, T_K: float) -> float: ...
+
+    def fin_de_pas(self, chaine: "EtatChaine", m_dot: float,
+                   dt: float) -> dict[str, float]: ...
 
 
 def construire_compresseur(sc: Scenario) -> Compresseur:
@@ -112,22 +132,32 @@ def chaine_compression(
     T_froid_K: float,
     p_refoulement_pa: float,
     T_seuil_K: float,
+    apres_etage: Callable[[int, float, float], float] | None = None,
 ) -> EtatChaine:
-    """Chaîne compression / refroidissement en régime permanent."""
+    """Chaîne compression / refroidissement en régime permanent.
+
+    ``apres_etage(i, p, T)`` permet d'intercaler une cuve de chaleur
+    entre l'étage i et son refroidisseur (phase 5).
+    """
     rapports = compresseur.rapports_pression(p_aspiration_pa, p_refoulement_pa)
     p, T = p_aspiration_pa, T_aspiration_K
     etages: list[ResultatEtage] = []
     refs: list[ResultatRefroidisseur] = []
+    T_entrees_ref: list[float] = []
     w_tot = q_poly = q_ref = q_sup = 0.0
-    for beta, n, refroidisseur in zip(
+    for i, (beta, n, refroidisseur) in enumerate(zip(
         rapports, compresseur.indices_polytropiques, refroidisseurs
-    ):
+    )):
         et = comprimer_etage(air, p, T, beta, n)
         etages.append(et)
         w_tot += et.w_pol
         q_poly += -et.q_poly
+        T_ref_in = et.T_out_K
+        if apres_etage is not None:
+            T_ref_in = apres_etage(i, et.p_out_pa, et.T_out_K)
+        T_entrees_ref.append(T_ref_in)
         rf = refroidisseur.refroidir(
-            air, et.p_out_pa, et.T_out_K, T_froid_K, T_seuil_K,
+            air, et.p_out_pa, T_ref_in, T_froid_K, T_seuil_K,
             p_refoulement_pa,
         )
         refs.append(rf)
@@ -146,6 +176,7 @@ def chaine_compression(
         T_sortie_K=T,
         h_sortie_j_kg=air.h(p, T),
         rendement_mecanique=compresseur.rendement_mecanique(p_refoulement_pa),
+        T_entree_refroidisseurs_K=tuple(T_entrees_ref),
     )
 
 
@@ -174,11 +205,15 @@ def simuler_charge(
     scenario: Scenario | Path | str,
     registre: Registre | None = None,
     air: Air | None = None,
+    couplage: CouplageCharge | None = None,
+    reservoir_initial: Reservoir | None = None,
 ) -> ResultatCharge:
     """Simule la charge décrite par le scénario jusqu'à la pression cible.
 
     Le pas de temps vient de ``simulation.dt`` (1 s chez Dormoy ; 10 s
-    suffisent, voir les tests de convergence).
+    suffisent, voir les tests de convergence). ``couplage`` branche des
+    cuves de chaleur (phase 5) ; ``reservoir_initial`` permet de
+    repartir de l'état laissé par une décharge (cycles).
     """
     sc = (
         scenario
@@ -200,9 +235,14 @@ def simuler_charge(
     t_max = sc.get("simulation.duree_max", 48 * 3600.0)
     debit_res_impose = sc.get("secheur.debit_massique_reservoir_impose")
 
-    reservoir.initialiser(
-        air, sc["reservoir.p_initiale"], sc["reservoir.T_initiale"]
-    )
+    if reservoir_initial is not None:
+        reservoir = reservoir_initial
+    else:
+        reservoir.initialiser(
+            air, sc["reservoir.p_initiale"], sc["reservoir.T_initiale"],
+            sc.get("reservoir.T_paroi_initiale"),
+        )
+    p_init, T_init = reservoir.p_abs_pa, reservoir.T_K
     h_amb = air.h(p_amb, T_asp)
     m_dot_asp = compresseur.debit_massique_aspire(air, p_amb, T_asp)
     if debit_res_impose is not None:
@@ -218,28 +258,41 @@ def simuler_charge(
     cumul = {
         "E_el": 0.0, "E_pol": 0.0, "Q_poly": 0.0, "Q_ref": 0.0,
         "Q_sup": 0.0, "E_air_perdu": 0.0, "Q_paroi": 0.0, "Q_ext": 0.0,
-        "m_in": 0.0,
+        "m_in": 0.0, "Q_cuves": 0.0,
     }
     nb = len(refroidisseurs)
     Q_ref_etage = np.zeros(nb)
     Q_sup_etage = np.zeros(nb)
+    Q_cuve_etage = np.zeros(nb)
     U0 = reservoir.energie_interne_j
     m0 = reservoir.masse_kg
     t = 0.0
     arret = "pression cible atteinte"
+    extra: dict[str, float] = {}
     while reservoir.p_abs_pa < p_cible:
         if t >= t_max:
             arret = "durée maximale atteinte"
             break
         p_ref = compresseur.p_refoulement(reservoir.p_abs_pa)
         cle = int(round(p_ref / 1.0e4))  # cache au 0,1 bar près
-        ch = cache.get(cle)
-        if ch is None:
+        if couplage is None:
+            ch = cache.get(cle)
+            if ch is None:
+                ch = chaine_compression(
+                    air, compresseur, refroidisseurs, p_amb, T_asp, T_amb,
+                    cle * 1.0e4, T_seuil,
+                )
+                cache[cle] = ch
+        else:
+            couplage.preparer(m_dot_asp, dt)
             ch = chaine_compression(
                 air, compresseur, refroidisseurs, p_amb, T_asp, T_amb,
-                cle * 1.0e4, T_seuil,
+                cle * 1.0e4, T_seuil, apres_etage=couplage.apres_etage,
             )
-            cache[cle] = ch
+            extra = couplage.fin_de_pas(ch, m_dot_asp, dt)
+            for i in range(nb):
+                Q_cuve_etage[i] += extra.get(f"Q_cuve_{i + 1}_j", 0.0)
+            cumul["Q_cuves"] += extra.get("Q_cuves_j", 0.0)
         P_pol = m_dot_asp * ch.w_pol_total
         P_el = compresseur.puissance_electrique(
             m_dot_asp, ch.w_pol_total, p_ref
@@ -284,7 +337,11 @@ def simuler_charge(
             ligne[f"p_in_comp_{i}_pa"] = et.p_in_pa
             ligne[f"T_in_comp_{i}_K"] = et.T_in_K
             ligne[f"T_out_comp_{i}_K"] = et.T_out_K
+            ligne[f"T_in_ref_{i}_K"] = ch.T_entree_refroidisseurs_K[i - 1]
             ligne[f"T_out_ref_{i}_K"] = rf.T_out_K
+            if couplage is not None:
+                ligne[f"Q_cuve_{i}_w"] = extra.get(
+                    f"Q_cuve_{i}_j", 0.0) / dt
             ligne[f"Q_ref_{i}_w"] = m_dot_asp * rf.q
             ligne[f"Q_sup_seuil_{i}_w"] = m_dot_asp * rf.q_sup_seuil
             ligne[f"w_pol_{i}_j_kg"] = et.w_pol
@@ -298,7 +355,7 @@ def simuler_charge(
     somme = (
         (cumul["E_el"] - cumul["E_pol"])
         + cumul["Q_poly"] + cumul["Q_ref"] + cumul["E_air_perdu"]
-        + cumul["Q_paroi"] + E_stock
+        + cumul["Q_paroi"] + E_stock + cumul["Q_cuves"]
     )
     bilan = {
         "E_el_j": cumul["E_el"],
@@ -308,6 +365,7 @@ def simuler_charge(
         "E_air_perdu_j": cumul["E_air_perdu"],
         "Q_paroi_reservoir_j": cumul["Q_paroi"],
         "E_stockee_relative_j": E_stock,
+        "Q_cuves_j": cumul["Q_cuves"],
         "dU_reservoir_j": dU,
         "somme_j": somme,
         "residu_relatif": (cumul["E_el"] - somme) / cumul["E_el"]
@@ -329,13 +387,19 @@ def simuler_charge(
         "T_finale_degC": reservoir.T_K - 273.15,
         "debit_aspire_kg_s": m_dot_asp,
         "debit_reservoir_kg_s": m_dot_res,
+        "chaleur_cuves_kwh": cumul["Q_cuves"] / 3.6e6,
+        "p_initiale_bar": p_init / 1e5,
+        "T_initiale_degC": T_init - 273.15,
     }
     for i in range(nb):
         totaux[f"chaleur_refroidisseur_{i + 1}_kwh"] = Q_ref_etage[i] / 3.6e6
         totaux[f"chaleur_sup_seuil_{i + 1}_kwh"] = Q_sup_etage[i] / 3.6e6
-    return ResultatCharge(
+        totaux[f"chaleur_cuve_{i + 1}_kwh"] = Q_cuve_etage[i] / 3.6e6
+    res = ResultatCharge(
         scenario=sc, series=series, totaux=totaux, bilan=bilan, arret=arret
     )
+    res.reservoir = reservoir  # type: ignore[attr-defined]
+    return res
 
 
 def sauvegarder_series(resultat: ResultatCharge, chemin: Path | str) -> None:
@@ -422,10 +486,26 @@ class ResultatDecharge:
         )
 
 
+class RechauffeurDecharge(Protocol):
+    """Source de chaleur de réchauffage branchable sur la décharge.
+
+    ``preparer(m_dot, dt)`` est appelé à chaque pas avant la turbine ;
+    ``chauffer(i, p, T_avant, T_cible)`` renvoie (T après réchauffage,
+    étiquette de la source).
+    """
+
+    def preparer(self, m_dot: float, dt: float) -> None: ...
+
+    def chauffer(self, i: int, p_pa: float, T_avant_K: float,
+                 T_cible_K: float | None) -> tuple[float, str]: ...
+
+
 def simuler_decharge(
     scenario: Scenario | Path | str,
     registre: Registre | None = None,
     air: Air | None = None,
+    rechauffeur: RechauffeurDecharge | None = None,
+    reservoir_initial: Reservoir | None = None,
 ) -> ResultatDecharge:
     """Simule la décharge jusqu'à l'arrêt du détendeur.
 
@@ -435,6 +515,10 @@ def simuler_decharge(
       (essai mesuré de Dormoy, sans turbine) ;
     * ``turbine`` : débit nominal de la turbine, réchauffage suivi par
       source, puissance électrique (formules.md#F17 à #F20).
+
+    ``rechauffeur`` remplace la source externe par des cuves ou une
+    huile idéale (phase 5) ; ``reservoir_initial`` reprend l'état laissé
+    par une charge (cycles).
     """
     sc = (
         scenario
@@ -461,12 +545,16 @@ def simuler_decharge(
     T_amb = sc["ambiance.T_amb"]
     dt = sc["simulation.dt"]
     t_max = sc.get("simulation.duree_max", 6 * 3600.0)
-    reservoir.initialiser(
-        air,
-        sc["reservoir.p_initiale"],
-        sc["reservoir.T_initiale"],
-        sc.get("reservoir.T_paroi_initiale"),
-    )
+    if reservoir_initial is not None:
+        reservoir = reservoir_initial
+    else:
+        reservoir.initialiser(
+            air,
+            sc["reservoir.p_initiale"],
+            sc["reservoir.T_initiale"],
+            sc.get("reservoir.T_paroi_initiale"),
+        )
+    p_init, T_init = reservoir.p_abs_pa, reservoir.T_K
     m0 = reservoir.masse_kg
     U0 = reservoir.energie_interne_j
     Tp0 = reservoir.T_paroi_K
@@ -491,7 +579,12 @@ def simuler_decharge(
         det = detendeur.detendre(air, reservoir.p_abs_pa, reservoir.T_K)
         ligne: dict[str, float] = {}
         if turbine is not None:
-            etages = turbine.produire(air, det.T_out_K)
+            if rechauffeur is not None:
+                rechauffeur.preparer(m_dot, dt)
+                etages = turbine.produire(air, det.T_out_K,
+                                          rechauffeur.chauffer)
+            else:
+                etages = turbine.produire(air, det.T_out_K)
             P_el = turbine.puissance_electrique(etages)
             P_mec = m_dot * sum(e.w_mec for e in etages)
             P_pol = m_dot * sum(e.w_pol for e in etages)
@@ -605,9 +698,11 @@ def simuler_decharge(
         totaux["T_sortie_detendeur_finale_degC"] = (
             series["T_sortie_detendeur_K"].iloc[-1] - 273.15
         )
+    totaux["p_initiale_bar"] = p_init / 1e5
+    totaux["T_initiale_degC"] = T_init - 273.15
     for i in range(nb):
         totaux[f"chaleur_rechauffage_{i + 1}_kwh"] = Q_etage[i] / 3.6e6
-    return ResultatDecharge(
+    res = ResultatDecharge(
         scenario=sc,
         series=series,
         totaux=totaux,
@@ -617,6 +712,8 @@ def simuler_decharge(
         },
         arret=arret,
     )
+    res.reservoir = reservoir  # type: ignore[attr-defined]
+    return res
 
 
 def rendements_aller_retour(

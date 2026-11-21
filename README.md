@@ -1,8 +1,8 @@
-# Simulateur CAES : air comprimé et gravier
+# Simulateur CAES : un banc d'essai numérique pour le stockage d'énergie par air comprimé
 
-Simulateur Python du projet Expo-sciences 2026-2027. Il reproduit le banc d'essai d'air comprimé de Dormoy et al. (2024, ÉTS / Hydro-Québec, 190 bar), puis l'améliore avec un stockage de chaleur dans du gravier, pour répondre à une question : combien d'électricité un module transporté par bateau peut-il livrer après 7 à 56 jours, et qu'est-ce qu'il faudrait pour que ce soit viable ?
+Simulateur Python du projet Expo-sciences 2026-2027. Il réunit les données des études publiées dans un registre scientifique traçable, modélise chaque composante d'une installation d'air comprimé (compression, refroidissement, séchage, réservoir, détente, turbine, stockage de chaleur, attente) avec plusieurs modèles au choix, valide chacune contre les mesures et simulations publiées, et calcule les performances de n'importe quelle configuration assemblée par fichier, dans les conditions ambiantes choisies (hiver québécois compris). Son cas de référence est le banc d'essai de Dormoy et al. (2024, ÉTS / Hydro-Québec, 190 bar), reproduit à quelques pour cent près.
 
-Le plan complet (phases, priorités, règles) est dans `../Études/études/plan-simulateur/`.
+Objectif : qu'un futur chercheur puisse tester ses propres configurations et ajouter ses propres composantes ou jeux de données. Les règles du dépôt sont dans `CLAUDE.md` ; le plan (phases 6 à 13) dans `../Études/études/plan-simulateur/plan-v2.md` ; l'état d'avancement dans `JOURNAL.md`. Licence : `LICENSE` (GPL-3.0).
 
 ## Installation
 
@@ -77,7 +77,17 @@ Voir `JOURNAL.md`.
 | 2. Décharge, validation sur Dormoy | Terminée le 12 novembre 2026 (essai mesuré à −2 %, tableau 5 à −4 % ; cas de base à −15 %, écart non expliqué) |
 | 3. Exergie et tableau « 1000 unités » | Terminée le 19 novembre 2026 (bilans fermés à 0,2 % ; le détendeur détruit 68 % de l'exergie stockée dans le cas de base) |
 | 4. Lit de gravier | Terminée le 19 novembre 2026 (vérifié contre la solution exacte de Schumann ; cuves de Tola retrouvées à 0,1–3,6 % ; validation expérimentale en attente des PDF de Cascetta et Barbour) |
-| 5. Système intégré Dormoy + gravier | À faire |
+| 5. Système intégré Dormoy + gravier | Terminée le 21 novembre 2026 (architectures A à E ; 1,25 m³ de gravier suffisent pour que la turbine reçoive 130/90/90 °C ; D et E à 17,1 %) |
+| 6. Architecture « composants », configurations YAML libres, bloc `ambiance` | À faire (plan v2) |
+| 7. Bibliothèque des composants et alternatives | À faire |
+| 8. Tableau de bord de validation multi-sources | À faire |
+| 9. Humidité et sécheur | Souhaitable |
+| 10. Sensibilité, Pareto, incertitudes | Souhaitable |
+| 11. Scénarios d'exemple (Dormoy + gravier, transport, centre d'urgence, grande échelle, solaire) | À faire |
+| 12. Documentation pour chercheurs et reproductibilité | À faire |
+| 13. Rapport et jury | À faire |
+
+Architectures : `python rapports/phase5_architectures.py` → `rapports/phase5/architectures.md`. En Python : `from caes.integre import simuler_cycles ; r = simuler_cycles("D.yaml") ; print(r.resume())`.
 
 Lit de gravier : `python validation/lit_gravier.py` → `rapports/phase4/validation_lit_gravier.md`.
 

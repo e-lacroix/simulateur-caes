@@ -1,0 +1,16 @@
+[1 s] A : cycle 2, charge 324.5 kWh, produit 14.05 kWh, RTE 4.3 %, chaleur {}
+[1 s] B : cycle 3, charge 243.2 kWh, produit 40.96 kWh, RTE 16.8 %, chaleur {'externe': 51.204514881871944}
+[1 s] C : cycle 3, charge 243.2 kWh, produit 40.96 kWh, RTE 16.8 %, chaleur {'huile_ideale': 51.204514881871944}
+[38 s] D : cycle 4, charge 239.5 kWh, produit 41.05 kWh, RTE 17.1 %, chaleur {'cuve_3': 30.2265382425023, 'cuve_2': 6.35804202427004, 'cuve_1': 14.834909702030146}
+[39 s] E : cycle 4, charge 239.4 kWh, produit 41.01 kWh, RTE 17.1 %, chaleur {'cuve_3': 30.23411979089211, 'cuve_2': 6.35804202427004, 'cuve_1': 14.654069573054011}
+  [29 s] D k=0.25: 34.90 kWh, T min -4 / -46 / -65
+  [28 s] D k=0.5: 40.32 kWh, T min 99 / 62 / 28
+  [27 s] D k=1.0: 41.05 kWh, T min 130 / 90 / 90
+  [27 s] D k=2.0: 41.13 kWh, T min 130 / 90 / 90
+  [28 s] D k=4.0: 41.13 kWh, T min 130 / 90 / 90
+  [27 s] E k=0.25: 33.38 kWh, T min -5 / -49 / -75
+  [27 s] E k=0.5: 38.87 kWh, T min 55 / 34 / 9
+  [27 s] E k=1.0: 41.01 kWh, T min 130 / 90 / 74
+  [28 s] E k=2.0: 41.13 kWh, T min 130 / 90 / 90
+  [27 s] E k=4.0: 41.22 kWh, T min 130 / 90 / 90
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase5\architectures.md

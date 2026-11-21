@@ -178,6 +178,40 @@ class LitGravier:
             * np.sum(np.maximum(self.T_s_K - T_seuil_K, 0.0))
         )
 
+    def sortie_instantanee(
+        self,
+        air: Air,
+        debit_massique_kg_s: float,
+        T_entree_K: float,
+        p_abs_pa: float,
+        sens: int = 1,
+    ) -> float:
+        """Température de sortie de l'air, solide figé (sans avancer).
+
+        Sert à régler un bypass avant d'appeler :meth:`pas`.
+        """
+        n = self.n_cellules
+        ordre = range(n) if sens >= 0 else range(n - 1, -1, -1)
+        T_in = T_entree_K
+        a_v = self.materiau.surface_specifique_m2_m3
+        for i in ordre:
+            T_s = self.T_s_K[i]
+            T_film = 0.5 * (T_in + T_s)
+            cp = air.cp(p_abs_pa, T_film)
+            if self.h_impose_w_m2k is not None:
+                h = self.h_impose_w_m2k
+            else:
+                rho = air.rho(p_abs_pa, T_film)
+                u = debit_massique_kg_s / (rho * self.section_m2)
+                h, _, _ = coefficient_echange(
+                    air, self.materiau, self.correlations, p_abs_pa, T_film,
+                    u,
+                )
+            NTU = h * a_v * self.section_m2 * self.dx_m / (
+                debit_massique_kg_s * cp)
+            T_in = T_s + (T_in - T_s) * math.exp(-NTU)
+        return T_in
+
     # --- un pas de temps -------------------------------------------------
     def pas(
         self,

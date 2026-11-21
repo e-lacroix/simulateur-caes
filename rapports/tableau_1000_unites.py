@@ -133,14 +133,22 @@ def lignes_tableau(cas: Cas) -> list[dict[str, object]]:
               "perdu": None, "reste": reste, "chaleur": None,
               "note": f"coussin initial {coussin0:.0f}"})
     rech = u(cas, bd.exergie_rechauffage_j)
+    q = sum(v for k, v in bd.chaleurs_j.items() if "réchauffage" in k)
     if rech > 0:
-        q = sum(v for k, v in bd.chaleurs_j.items() if "réchauffage" in k)
         reste += rech
-        L.append({"etape": "Réchauffage avant les turbines (source externe)",
+        L.append({"etape": "Réchauffage avant les turbines (source externe "
+                           "ou huile idéale)",
                   "perdu": -rech, "reste": reste,
                   "chaleur": f"+{u(cas, q):.0f} fournies",
                   "note": "exergie apportée = gain de l'air ; à compter si "
                           "la source est externe"})
+    puise = u(cas, bd.exergie_puisee_cuves_j)
+    if puise > 0:
+        reste += puise
+        L.append({"etape": "Exergie puisée dans les cuves de gravier",
+                  "perdu": -puise, "reste": reste,
+                  "chaleur": f"+{u(cas, q):.0f} fournies à l'air",
+                  "note": "chaleur de compression stockée pendant la charge"})
     for nom, val in bd.postes.items():
         perdu = u(cas, val)
         reste -= perdu

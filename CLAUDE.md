@@ -1,0 +1,45 @@
+# CLAUDE.md : règles du dépôt `simulateur`
+
+Simulateur de stockage d'énergie par air comprimé (CAES) du projet Expo-sciences 2026-2027 d'un élève de 16 ans. Depuis le 21 novembre 2026, c'est un **banc d'essai numérique pour les chercheurs** : chaque composante est validée séparément contre les données publiées, toute configuration s'assemble par fichier YAML, et des études s'ajoutent au fil du projet pour apporter de nouvelles options ou composantes. Le plan en vigueur est `../Études/études/plan-simulateur/plan-v2.md` ; les prompts par phase sont dans `../Études/études/plan-simulateur/prompts/`. L'état d'avancement, les écarts connus et les questions ouvertes sont dans `JOURNAL.md` (à lire en début de session, à mettre à jour en fin de session).
+
+## Ce que le projet livre
+
+1. Un **registre scientifique** (`data/registre/`) où chaque chiffre a sa source, son unité, ses conditions et son niveau de preuve.
+2. Une **bibliothèque de composants** interchangeables (compression, refroidissement, séchage, réservoir d'air, détente, turbine, stockage de chaleur, attente), chacun sourcé, borné et testé.
+3. Un **tableau de bord de validation** : chaque composant contre chaque jeu de données disponible (Dormoy, Luo, Castellani, Cascetta, Shi, Tola), régénéré en une commande.
+4. Des **scénarios d'exemple** reproductibles (banc de Dormoy avec gravier, transport, centre d'urgence, grande échelle, solaire), dont au moins un en hiver québécois.
+5. Une **documentation pour chercheurs** et un rapport d'Expo-sciences où chaque chiffre se régénère.
+
+## Règles de travail
+
+- **Français partout** : code commenté, docstrings, rapports, documentation. Modules en français ; variables physiques usuelles acceptées (`p`, `T`, `m_dot`, `h`).
+- **Unités SI en interne** (Pa, K, kg, s, J) ; pressions absolues et explicites (`p_abs_pa`) ; conversion seulement en entrée et en sortie (`caes/registre.py`, table `UNITES`).
+- **Aucun chiffre en dur dans le code.** Tout paramètre vient du registre (`registre:<id>` dans les scénarios) ou d'un scénario avec sa source (`{valeur, unite, source}`).
+- **Niveaux de preuve** : `mesure`, `fabricant`, `calibration`, `simulation_publiee`, `calcul_personnel`, `hypothese`. Aucune source sans DOI ou PDF vérifié. Pas de téléchargement illégal : noter dans `JOURNAL.md`, proposer BAnQ ou un courriel aux auteurs ; les PDF en accès libre refusés aux robots sont déposés à la main par l'utilisateur dans `data/sources/`.
+- **Bilan de chaleur** : toute chaleur ajoutée à l'air a une source déclarée, `cuve_X` (récupérée) ou `externe` (comptée). Le rendement est un résultat, jamais une entrée ; on donne toujours les deux définitions (avec et sans chaleur externe).
+- **Conditions ambiantes** : tout scénario a un bloc `ambiance` (`T_amb`, `p_amb`, `humidite_relative`, `T_aspiration`, `profil` optionnel). Les composants n'ont pas d'autre source de température ambiante (refroidisseurs, pertes des réservoirs et cuves, air aspiré, état mort de l'exergie, point de rosée). Objectif : voir l'effet de l'hiver québécois en changeant un nombre.
+- **Composants** : un composant n'entre dans la bibliothèque que complet : fiche dans `docs/formules.md` (format en bas de ce fichier), paramètres au registre, tests de bilan (masse, énergie) et de cas limite, avertissement hors du domaine de validité, page `docs/composants/<nom>.md`, et une ligne dans le tableau de bord de validation quand des données existent.
+- **Ajouter une étude** : (1) fiche dans `../Études/études/others/<etude>/` (résumé pour l'élève, maths, `pistes-simulation.md`) ; (2) référence et paramètres au registre (`data/registre/generer_registre_phase0.py`, puis régénérer) ; (3) composant, variante ou jeu de validation (`data/validation/<source>/` avec `provenance.md`) ; (4) ligne dans le tableau « limites des études → réponse du simulateur » de `plan-v2.md` et dans le tableau de bord ; (5) entrée dans `JOURNAL.md`.
+- **Honnêteté** : un écart avec une référence est montré et expliqué ; on ne calibre jamais pour le faire disparaître ; un écart non expliqué est écrit comme tel (exemple : cas de base de Dormoy, −15 %). Les erreurs trouvées dans les publications sont listées.
+- **Fiches d'études** (`../Études/études/`) : ne pas les modifier sans l'accord de l'utilisateur.
+- **Pédagogie** : `docs/phase-XX-explication.md` à la fin de chaque phase, pour un élève de 16 ans ; chaque fiche de formule commence par un « En bref » vulgarisé et contient un exemple à la main.
+
+## Code
+
+- Python ≥ 3.11 (`pyproject.toml`), environnement `.venv` (`.venv\Scripts\python`). Dépendances : CoolProp, numpy, scipy, pandas, matplotlib, pyyaml, pytest.
+- PEP 8, 79 caractères par ligne, annotations de type, f-strings, pas de variable `_`.
+- Tests : `.venv\Scripts\python -m pytest -q` (121 tests au 21 novembre 2026). Tout doit passer avant de terminer une session. Tests de non-régression sur les résultats validés (Dormoy, Tola).
+- Régénérer le registre : `.venv\Scripts\python -I data\registre\generer_registre_phase0.py`.
+- Rapports : `validation/dormoy_charge.py`, `validation/dormoy_decharge.py`, `validation/lit_gravier.py`, `rapports/tableau_1000_unites.py`, `rapports/phase5_architectures.py` (3 à 15 minutes). Graphiques : style commun dans `validation/style_graphiques.py` (palette validée, étiquettes directes, un seul axe).
+- Git : jamais de push, d'amend ni de réécriture d'historique ; commit seulement à la demande de l'utilisateur. Licence : `LICENSE` (GPL-3.0), ne pas la changer.
+
+## Pièges techniques sur ce poste (Windows)
+
+- Les commandes Bash de plus d'environ 8 Ko sont tronquées : écrire les gros fichiers avec l'outil d'écriture, pas avec un heredoc.
+- Les séquences `\n` écrites dans une commande Bash sont désescapées par l'outil : tout contenu avec des barres obliques inverses passe par les outils d'écriture ou d'édition de fichiers.
+- La console est en cp1252 : les scripts qui impriment des caractères spéciaux font `sys.stdout.reconfigure(encoding="utf-8")` ; en ligne de commande, `PYTHONIOENCODING=utf-8`.
+- ScienceDirect refuse les accès automatisés ; les tentatives de contournement sont refusées par les garde-fous : demander le PDF à l'utilisateur.
+
+## Format d'une fiche de formule (`docs/formules.md`)
+
+0. **En bref** (3 ou 4 phrases sans jargon, avec une analogie) ; 1. formule, symboles et unités ; 2. niveau (loi fondamentale / modèle classique / corrélation empirique / paramètre mesuré ou calibré) ; 3. d'où elle vient ; 4. hypothèses et domaine de validité, avec la vérification automatique ; 5. pourquoi celle-ci plutôt qu'une autre ; 6. exemple chiffré à la main (secondaire 5) ; 7. source (identifiant du registre). Le code renvoie à la fiche (`# voir formules.md#F12`).

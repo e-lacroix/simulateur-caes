@@ -110,6 +110,7 @@ class BilanExergie:
     exergie_initiale_j: float = 0.0
     exergie_rechauffage_j: float = 0.0
     rechauffage_j: dict[str, float] = field(default_factory=dict)
+    exergie_puisee_cuves_j: float = 0.0
 
     @property
     def total_postes_j(self) -> float:
@@ -121,6 +122,17 @@ class BilanExergie:
         if self.entree_j == 0:
             return 0.0
         return (self.entree_j - self.total_postes_j) / self.entree_j
+
+
+def _etat_initial(res: ResultatCharge | ResultatDecharge,
+                  sc) -> tuple[float, float]:
+    """État initial réel du réservoir (p, T) : celui du résultat si la
+    simulation a repris un réservoir existant (cycles), sinon le
+    scénario."""
+    t = res.totaux
+    if "p_initiale_bar" in t and "T_initiale_degC" in t:
+        return t["p_initiale_bar"] * 1e5, t["T_initiale_degC"] + 273.15
+    return sc["reservoir.p_initiale"], sc["reservoir.T_initiale"]
 
 
 def exergie_etage_compression(
@@ -175,12 +187,22 @@ def bilan_exergie_charge(
     P["laminage vers le réservoir"] = 0.0
     P["remplissage du réservoir (mélange)"] = 0.0
     P["chaleur perdue par les parois"] = 0.0
+    cuves = [
+        i for i in range(1, nb + 1)
+        if f"Q_cuve_{i}_w" in s.columns
+        and s[f"Q_cuve_{i}_w"].abs().sum() > 0
+    ]
+    for i in cuves:
+        P[f"cuve {i} (échange air-gravier en charge)"] = 0.0
     Q: dict[str, float] = {}
     for i in range(1, nb + 1):
         Q[f"refroidisseur {i}"] = 0.0
         Q[f"refroidisseur {i} > seuil"] = 0.0
         Q[f"compression étage {i}"] = 0.0
+    for i in cuves:
+        Q[f"cuve {i}"] = 0.0
     Q["parois du réservoir"] = 0.0
+    Ex_vers_cuves = {i: 0.0 for i in cuves}
 
     S_in_res = 0.0
     S_q_res = 0.0
@@ -212,8 +234,14 @@ def bilan_exergie_charge(
                 ma * (D + Exq)
             )
             Q[f"compression étage {i}"] += -ma * row[f"q_poly_{i}_j_kg"]
+            T_in_ref = row.get(f"T_in_ref_{i}_K", T_out)
+            if i in cuves:
+                Ex_vers_cuves[i] += ma * (
+                    ex.flux(p_out, T_out) - ex.flux(p_out, T_in_ref)
+                )
+                Q[f"cuve {i}"] += row[f"Q_cuve_{i}_w"] * d
             P[f"refroidisseur {i} (chaleur rejetée)"] += ma * (
-                ex.flux(p_out, T_out) - ex.flux(p_out, T_ref)
+                ex.flux(p_out, T_in_ref) - ex.flux(p_out, T_ref)
             )
             Q[f"refroidisseur {i}"] += row[f"Q_ref_{i}_w"] * d
             Q[f"refroidisseur {i} > seuil"] += row[f"Q_sup_seuil_{i}_w"] * d
@@ -236,7 +264,7 @@ def bilan_exergie_charge(
         Q["parois du réservoir"] += q
 
     V = sc["reservoir.volume"]
-    p_i, T_i = sc["reservoir.p_initiale"], sc["reservoir.T_initiale"]
+    p_i, T_i = _etat_initial(res, sc)
     m_i = air.rho(p_i, T_i) * V
     fin = s.iloc[-1]
     m_f, p_f, T_f = fin["m_res_kg"], fin["p_res_pa"], fin["T_res_K"]
@@ -244,6 +272,12 @@ def bilan_exergie_charge(
     S_gen_res = dS_res - S_in_res + S_q_res
     P["remplissage du réservoir (mélange)"] = T0 * S_gen_res
     stock = ex.fermee(m_f, p_f, T_f) - ex.fermee(m_i, p_i, T_i)
+    sorties = {"exergie stockée dans les réservoirs": float(stock)}
+    for i in cuves:
+        dEx = float(res.totaux.get(f"dEx_cuve_{i}_j", 0.0))
+        sorties[f"exergie stockée dans la cuve {i}"] = dEx
+        P[f"cuve {i} (échange air-gravier en charge)"] = (
+            Ex_vers_cuves[i] - dEx)
     return BilanExergie(
         nom=sc.nom,
         T0_K=T0,
@@ -251,7 +285,7 @@ def bilan_exergie_charge(
         entree_j=float(E_el),
         postes={k: float(v) for k, v in P.items()},
         chaleurs_j={k: float(v) for k, v in Q.items()},
-        sorties_utiles_j={"exergie stockée dans les réservoirs": float(stock)},
+        sorties_utiles_j=sorties,
         exergie_initiale_j=float(ex.fermee(m_i, p_i, T_i)),
     )
 
@@ -299,7 +333,7 @@ def bilan_exergie_decharge(
     S_q_res = 0.0
 
     V = sc["reservoir.volume"]
-    p_prev, T_prev = sc["reservoir.p_initiale"], sc["reservoir.T_initiale"]
+    p_prev, T_prev = _etat_initial(res, sc)
     m_i = air.rho(p_prev, T_prev) * V
     for k in range(len(s)):
         row = s.iloc[k]
@@ -349,13 +383,29 @@ def bilan_exergie_decharge(
 
     fin = s.iloc[-1]
     m_f, p_f, T_f = fin["m_res_kg"], fin["p_res_pa"], fin["T_res_K"]
-    p_i, T_i = sc["reservoir.p_initiale"], sc["reservoir.T_initiale"]
+    p_i, T_i = _etat_initial(res, sc)
     dS_res = m_f * air.s(p_f, T_f) - m_i * air.s(p_i, T_i)
     S_gen_res = dS_res + S_out_res + S_q_res
     P["réservoir (détente interne)"] = T0 * S_gen_res
     Ex_i = ex.fermee(m_i, p_i, T_i)
     Ex_f = ex.fermee(m_f, p_f, T_f)
-    entree = Ex_i + sum(rech.values())
+    # Réchauffage par des cuves (phase 5) : l'entrée est l'exergie
+    # puisée dans la cuve ; la différence avec le gain de l'air est
+    # détruite dans l'échange gravier → air.
+    sources: dict[int, str] = getattr(res, "sources_etages", {})
+    rech_externe = 0.0
+    puise_cuves = 0.0
+    for i in range(1, nb + 1):
+        gain = rech[f"réchauffage étage {i} (exergie apportée)"]
+        src = sources.get(i, "")
+        if src.startswith("cuve_"):
+            k = src.split("_")[1]
+            puise = -float(res.totaux.get(f"dEx_cuve_{k}_j", 0.0))
+            puise_cuves += puise
+            P[f"cuve {k} (restitution gravier → air)"] = puise - gain
+        else:
+            rech_externe += gain
+    entree = Ex_i + rech_externe + puise_cuves
     sorties = {"électricité produite": float(E_el),
                "exergie restant dans les réservoirs (coussin)": float(Ex_f)}
     return BilanExergie(
@@ -364,6 +414,7 @@ def bilan_exergie_decharge(
         chaleurs_j={k: float(v) for k, v in Q.items()},
         sorties_utiles_j=sorties,
         exergie_initiale_j=float(Ex_i),
-        exergie_rechauffage_j=float(sum(rech.values())),
+        exergie_rechauffage_j=float(rech_externe),
         rechauffage_j={k: float(v) for k, v in rech.items()},
+        exergie_puisee_cuves_j=float(puise_cuves),
     )

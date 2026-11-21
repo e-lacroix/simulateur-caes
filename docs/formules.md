@@ -35,6 +35,8 @@
 | F27 | Coefficient d'échange air-cailloux : Wakao et Jeffreson | `caes/lit_gravier.py` | 4 |
 | F28 | Perte de charge d'Ergun | `caes/lit_gravier.py` | 4 |
 | F29 | Conduction axiale et pertes latérales du lit | `caes/lit_gravier.py` | 4 |
+| F30 | Couplage des cuves au banc : charge, bypass, pincement | `caes/integre.py` | 5 |
+| F31 | Exergie d'un lit de gravier | `caes/integre.py` | 5 |
 
 ---
 
@@ -695,6 +697,49 @@ Sens = +1 : l'air entre en haut (charge) ; −1 : par le bas (décharge).
 **Exemple à la main.** Distance de diffusion en 14 jours : √(α·t) = √(10⁻⁶ × 1,2·10⁶) = **1,1 m**. Le front d'une cuve de 2 m s'étale donc sur toute la hauteur en deux semaines : la chaleur reste là, mais à une température moyenne plus basse. C'est l'« effet de fin de décharge » que la phase 6 chiffrera.
 
 **Source.** Convention du projet ; `materiau.gravier_tola.conductivite` (hypothèse) ; `LitGravier.pas`.
+
+---
+
+## F30 : couplage des cuves au banc (charge, bypass, pincement)
+
+**En bref.** En charge, l'air chaud qui sort d'un étage de compression traverse sa cuve de gravier avant le radiateur : la cuve prend ce qu'elle peut, le radiateur finit le travail. En décharge, l'air froid qui sort du détendeur traverse la cuve en sens inverse et en ressort chaud avant d'entrer dans la turbine. Si la cuve est plus chaude que nécessaire, une vanne de bypass mélange de l'air froid pour viser exactement la température de la turbine : on ne gaspille pas la chaleur, on la garde pour plus tard. Si la cuve est trop froide, la turbine reçoit de l'air trop froid et produit moins : il n'y a pas d'appoint magique.
+
+**Formule.**
+- Charge, étage i : T_entrée,cuve = T_sortie,compresseur − δ ; la cuve rend T_sortie,cuve (F26) ; T_entrée,refroidisseur = T_sortie,cuve + δ (jamais plus que T_sortie,compresseur).
+- Décharge, turbine i ← cuve n−i+1 : T_plein = sortie de la cuve si tout le débit la traverse, moins δ ; fraction de bypass f = (T_plein − T_cible)/(T_plein − T_avant) bornée à [0, 1[ ; débit dans la cuve ṁ·(1−f) ; T_turbine = f·T_avant + (1−f)·(T_sortie,cuve − δ), plafonnée à T_cible.
+- δ = 0 pour le gravier direct (D) ; δ = 20 K par échangeur pour la boucle d'air (E).
+
+**Niveau.** Convention de modélisation (bilan de mélange) + paramètre δ (Tola, tableau 2).
+
+**D'où elle vient.** Mélange adiabatique de deux débits d'air à la même pression ; pincement minimal d'un échangeur air-air à contre-courant équilibré (les deux débits ont la même capacité thermique, donc l'écart est constant le long de l'échangeur).
+
+**Hypothèses et validité.** Pas de perte de charge dans les échangeurs ; le bypass suppose que la sortie de la cuve ne change pas quand le débit baisse (vrai à quelques degrés près : la cuve a un NTU élevé). L'air comprimé traverse la cuve à la pression de l'étage (D) ; dans E, la boucle est à 1 bar et transporte le même débit massique que l'air comprimé (échangeur équilibré).
+
+**Pourquoi.** C'est ce qui fait que D et E produisent autant que C : la température d'entrée des turbines est régulée, comme dans toute installation réelle. Alternative : laisser la turbine recevoir toute la chaleur de la cuve (plus de puissance au début, cuve vide plus tôt) ; non retenue parce que la fiche DEPRAG ne donne pas de limite de température.
+
+**Exemple à la main.** Cuve 3 à 188 °C en haut, air du détendeur à −10 °C, cible 130 °C : f = (188 − 130)/(188 + 10) = 0,29. 29 % de l'air contourne la cuve, 71 % la traverse ; le mélange sort à 130 °C et la cuve se vide 29 % moins vite.
+
+**Source.** Convention du projet ; Tola 2022, tableau 2 (pincement 20 °C pour l'air) ; `caes/integre.py`, `CouplageCuvesCharge`, `RechauffeurCuves`.
+
+---
+
+## F31 : exergie d'un lit de gravier
+
+**En bref.** Comme pour l'air (F21), on peut calculer ce qu'un tas de cailloux chauds « vaut » en travail : plus ils sont chauds par rapport à l'air ambiant, plus ils valent, mais avec le même facteur de Carnot qui pénalise la chaleur tiède. Ça permet de mettre les cuves dans le tableau « 1000 unités » : exergie stockée en charge, exergie puisée en décharge, et la différence détruite dans les échanges air-gravier.
+
+**Formule.** Ex = Σ_cellules C · [(T − T₀) − T₀ · ln(T/T₀)], avec C la capacité thermique du solide d'une cellule [J/K]. Nulle à T = T₀, positive sinon (y compris pour une cuve plus froide que l'ambiant).
+
+**Niveau.** Loi fondamentale (exergie d'un corps incompressible).
+
+**D'où elle vient.** Travail maximal d'un solide de capacité C ramené de T à T₀ par un moteur de Carnot : ∫ C (1 − T₀/T') dT'.
+
+**Hypothèses et validité.** Le gravier est un solide incompressible à capacité constante ; l'air interstitiel est négligé.
+
+**Pourquoi.** Permet de fermer le bilan d'exergie de la charge (entrée = pertes + stock dans l'air + stock dans les cuves) et de la décharge (entrée = stock de l'air + exergie puisée dans les cuves). Les tests `test_D_bilan_d_exergie_ferme` vérifient la fermeture à 1–2 %.
+
+**Exemple à la main.** 500 kg de gravier (C = 450 kJ/K) à 180 °C (453 K), ambiant 293 K : Ex = 450 × [(453 − 293) − 293 × ln(453/293)] = 450 × [160 − 293 × 0,4357] = 450 × 32,3 = **14,5 MJ = 4,0 kWh**, pour 20 kWh de chaleur stockée : la chaleur à 180 °C vaut 20 % de son énergie en travail.
+
+**Source.** Thermodynamique classique ; `caes/integre.py`, `exergie_cuve`.
 
 ---
 
