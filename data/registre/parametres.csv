@@ -1,0 +1,225 @@
+id,nom,valeur,valeur_min,valeur_max,unite,source_id,localisation,conditions,niveau_preuve,notes
+compresseur.marque_modele,Compresseur : marque et modèle,Sauer WP4351 Basic,,,texte,dormoy2024supp,tableau 7,,fabricant,
+compresseur.puissance_arbre,Puissance nominale à l'arbre du compresseur,45,,,kW,dormoy2024supp,tableau 7 ; §2.1,,fabricant,
+compresseur.nb_etages,Nombre d'étages de compression,4,,,-,dormoy2024supp,tableau 7 ; §2.1,,fabricant,
+compresseur.pression_max_conception,Pression maximale de conception du compresseur,350,,,bar,dormoy2024supp,tableau 7 ; §2.1,,fabricant,Pression absolue supposée (l'article ne précise pas abs/relative ; à 350 bar la différence est négligeable).
+compresseur.vitesse_rotation,Vitesse de rotation du vilebrequin,1782,,,rpm,dormoy2024supp,tableau 7 ; §2.1,constante pendant la charge,fabricant,
+compresseur.cylindree_piston1,Volume déplacé par le premier piston à chaque tour,0.001609,,,m3/tr,dormoy2024supp,tableau 7,,fabricant,"L'article (§2.1) arrondit à 1,61e-3 m3."
+compresseur.debit_volumique_entree,Débit volumique aspiré par l'étage 1,172.4,,,m3/h,dormoy2024,§2.1 ; §3.1,conditions d'aspiration,fabricant,"1,609e-3 × 1782 × 60 = 172,0 m3/h ; l'article donne 172,4. Écart de 0,2 % non expliqué."
+compresseur.debit_volumique_reel_115bar,Débit volumique réel annoncé à 115 bar,129.2,,,m3/h,dormoy2024supp,tableau 7,refoulement à 115 bar,fabricant,
+compresseur.debit_volumique_reel_200bar,Débit volumique réel annoncé à 200 bar,125.4,,,m3/h,dormoy2024supp,tableau 7,refoulement à 200 bar,fabricant,
+compresseur.rendement_electrique,Rendement électrique du moteur du compresseur (plage),,94,95,%,dormoy2024supp,tableau 7,,fabricant,Résout le point d'attention de la phase 1 : le rendement mécanique calibré (69-74 %) ne contient PAS le rendement électrique. Éq. 5 : W_el = W_pol / (eta_mec × eta_el).
+compresseur.rendement_volumetrique,Rendement volumétrique moyen du compresseur,83,,,%,dormoy2024,§3.1 ; tableau 7 (supp.),charge 1 → 190 bar,calcul_personnel,"0,043 / 0,052 = 0,83. Calculé par Dormoy à partir du débit fabricant et du débit d'entrée mesuré."
+compresseur.debit_massique_entree_moyen,Débit massique moyen à l'entrée du compresseur (point 1),0.052,,,kg/s,dormoy2024,§3.1,"charge 1 → 190 bar, état ambiant mesuré",mesure,"Déduit de l'état mesuré de l'air et du débit volumique de 172,4 m3/h."
+compresseur.debit_massique_sortie,Débit massique à la sortie du compresseur (point 9),0.043,,,kg/s,dormoy2024,§3.1,"valeur annoncée par le fabricant, pas mesurée",fabricant,
+compresseur.rapport_compression_etage1,"Rapport de compression moyen, étage 1",3.25,,,-,dormoy2024,§3.1 ; fig. 8 ; tableau 7 (supp.),stable pendant la charge,mesure,Moyenne des mesures.
+compresseur.rapport_compression_etage2,"Rapport de compression moyen, étage 2",3.75,,,-,dormoy2024,§3.1 ; fig. 8 ; tableau 7 (supp.),stable pendant la charge,mesure,Moyenne des mesures.
+compresseur.rapport_compression_etage3,"Rapport de compression, étage 3 (plage)",,3.54,4.44,-,dormoy2024,§3.1 ; fig. 8 ; tableau 7 (supp.),croît linéairement avec la pression du réservoir au-dessus de 60 bar,mesure,Courbe à numériser (fig. 8).
+compresseur.rapport_compression_etage4,"Rapport de compression, étage 4 (plage)",,1.52,3.5,-,dormoy2024,§3.1 ; fig. 8,croît linéairement avec la pression du réservoir au-dessus de 60 bar,mesure,"Le texte donne 1,52-3,5 ; le tableau 7 des données supplémentaires donne 1,63-3,50. Incohérence de la source. Courbe à numériser (fig. 8)."
+compresseur.indice_polytropique_etage1,"Indice polytropique calibré, étage 1",1.35,,,-,dormoy2024,tableau 2,charge 1 → 190 bar,calibration,"Valeur initiale avant calibration : 1.35 (étage 4 : 1,59 déduit des mesures, puis calibré à 1,52)."
+compresseur.indice_polytropique_etage2,"Indice polytropique calibré, étage 2",1.38,,,-,dormoy2024,tableau 2,charge 1 → 190 bar,calibration,"Valeur initiale avant calibration : 1.37 (étage 4 : 1,59 déduit des mesures, puis calibré à 1,52)."
+compresseur.indice_polytropique_etage3,"Indice polytropique calibré, étage 3",1.44,,,-,dormoy2024,tableau 2,charge 1 → 190 bar,calibration,"Valeur initiale avant calibration : 1.44 (étage 4 : 1,59 déduit des mesures, puis calibré à 1,52)."
+compresseur.indice_polytropique_etage4,"Indice polytropique calibré, étage 4",1.52,,,-,dormoy2024,tableau 2,charge 1 → 190 bar,calibration,"Valeur initiale avant calibration : 1.59 (étage 4 : 1,59 déduit des mesures, puis calibré à 1,52)."
+compresseur.rendement_mecanique,Rendement mécanique calibré du compresseur (plage),,69,74,%,dormoy2024,tableau 2 ; §3.2,varie avec la pression du réservoir,calibration,Valeur initiale 85 % (littérature). La loi de variation avec la pression n'est pas donnée : hypothèse à poser en phase 1 et à marquer comme telle.
+refroidisseur.nb_etages,Nombre d'étages de refroidissement,4,,,-,dormoy2024supp,tableau 7,,fabricant,
+refroidisseur.debit_volumique_air_froid,Débit volumique de la source froide (air ambiant) du refroidisseur,11000,,,m3/h,dormoy2024supp,tableau 7,,fabricant,Air de refroidissement tiré de l'ambiant (§3.3.1).
+refroidisseur.efficacite_etage1,"Efficacité NTU calibrée du refroidisseur, étage 1",82,,,%,dormoy2024,tableau 2,charge 1 → 190 bar,calibration,Valeur initiale : 83 %.
+refroidisseur.efficacite_etage2,"Efficacité NTU calibrée du refroidisseur, étage 2",85,,,%,dormoy2024,tableau 2,charge 1 → 190 bar,calibration,Valeur initiale : 86 %.
+refroidisseur.efficacite_etage3,"Efficacité NTU calibrée du refroidisseur, étage 3",88,,,%,dormoy2024,tableau 2,charge 1 → 190 bar,calibration,Valeur initiale : 86 %.
+refroidisseur.efficacite_etage4,"Efficacité NTU calibrée du refroidisseur, étage 4 (plage)",,74,85,%,dormoy2024,tableau 2 ; §3.2,croît avec la pression du réservoir,calibration,Valeur initiale constante 76 %. Modèle transitoire : efficacité qui augmente avec la pression. Loi exacte non donnée : hypothèse en phase 1.
+secheur.efficacite,Efficacité massique du sécheur par adsorption (débit sortant / entrant),81,,,%,dormoy2024,§2.2.3 ; éq. 10,charge,mesure,Le fabricant annonce une perte de 20-25 % (soit 75-80 %).
+secheur.perte_debit_fabricant,Perte de débit annoncée par le fabricant du sécheur (plage),,20,25,%,dormoy2024,§2.1 ; §2.2.3,,fabricant,
+secheur.debit_massique_sortie,"Débit massique moyen à la sortie du sécheur (point 10), entrant dans les réservoirs",0.032,,,kg/s,dormoy2024,§3.1,charge 1 → 190 bar,mesure,"Perte cumulée compresseur + sécheur : 0,020 kg/s, soit 38 %."
+reservoir.nb_320L,Nombre de réservoirs de 320 L,8,,,-,dormoy2024,§1 (contributions) ; éq. 11-12,,fabricant,
+reservoir.nb_270L,Nombre de réservoirs de 270 L,12,,,-,dormoy2024,§1 (contributions) ; éq. 11-12,,fabricant,"L'article dit 0,27 m3 ; la nomenclature et les éq. 11-12 parlent de 275 L. Voir reservoir.volume_total."
+reservoir.volume_unitaire_320L,Volume intérieur d'un réservoir de 320 L,0.32,,,m3,dormoy2024supp,tableau 8,,fabricant,
+reservoir.volume_unitaire_270L,Volume intérieur d'un réservoir de 270 L,0.27,,,m3,dormoy2024supp,tableau 8,,fabricant,"8 × 0,32 + 12 × 0,27 = 5,80 m3, mais l'article annonce 5,86 m3, ce qui correspond à 0,275 m3 (275 L). Incohérence de 1 % dans la source."
+reservoir.volume_total,Volume total du système de réservoirs (réservoir équivalent),5.86,,,m3,dormoy2024,§2.1 ; §3.1 ; §3.3,,fabricant,"Valeur utilisée par Dormoy pour toutes les simulations. Préférer cette valeur au produit des volumes unitaires (5,80)."
+reservoir.diametre_interieur,Diamètre intérieur d'un réservoir (les deux modèles),0.372,,,m,dormoy2024supp,tableau 8,,fabricant,
+reservoir.surface_interieure_320L,Surface intérieure d'un réservoir de 320 L,3.6,,,m2,dormoy2024supp,tableau 8,,fabricant,
+reservoir.surface_interieure_270L,Surface intérieure d'un réservoir de 270 L,3.06,,,m2,dormoy2024supp,tableau 8,,fabricant,
+reservoir.surface_equivalente_totale,Surface d'échange du réservoir équivalent (éq. 12),65.52,,,m2,dormoy2024,éq. 12 ; tableau 8 (supp.),,calcul_personnel,"8 × 3,6 + 12 × 3,06 = 65,52 m2."
+reservoir.masse_320L,Masse d'un réservoir de 320 L,107,,,kg,dormoy2024supp,tableau 8,,fabricant,
+reservoir.masse_270L,Masse d'un réservoir de 270 L,95,,,kg,dormoy2024supp,tableau 8,,fabricant,
+reservoir.alu.epaisseur,Épaisseur de la couche intérieure en aluminium 6061-T6,0.005,,,m,dormoy2024supp,tableau 8,,fabricant,
+reservoir.alu.conductivite,Conductivité thermique de l'aluminium 6061-T6,167,,,W/mK,dormoy2024supp,tableau 8,20 °C,mesure,ASM Handbook [28] cité par Dormoy.
+reservoir.alu.cp,Chaleur massique de l'aluminium 6061-T6,869,,,J/kgK,dormoy2024supp,tableau 8,20 °C,mesure,ASM Handbook [28] cité par Dormoy.
+reservoir.alu.masse_volumique,Masse volumique de l'aluminium 6061-T6,2700,,,kg/m3,dormoy2024supp,tableau 8,20 °C,mesure,ASM Handbook [28] cité par Dormoy.
+reservoir.alu.masse_320L,"Masse de la couche d'aluminium, réservoir de 320 L",53,,,kg,dormoy2024supp,tableau 8,,fabricant,
+reservoir.alu.masse_270L,"Masse de la couche d'aluminium, réservoir de 270 L",45,,,kg,dormoy2024supp,tableau 8,,fabricant,
+reservoir.fibre.epaisseur,Épaisseur de la couche extérieure en fibre de carbone,0.011,,,m,dormoy2024supp,tableau 8,,fabricant,
+reservoir.fibre.conductivite,Conductivité thermique de la fibre de carbone (composite),0.6,,,W/mK,dormoy2024supp,tableau 8,20 °C,hypothese,Estimation de Dormoy d'après Ou et al. [29] et Khan et al. [30] ; composition exacte non divulguée par le fournisseur.
+reservoir.fibre.cp,Chaleur massique de la fibre de carbone (composite),900,,,J/kgK,dormoy2024supp,tableau 8,20 °C,hypothese,"Estimation de Dormoy d'après [29,30]."
+reservoir.fibre.masse_volumique,Masse volumique de la fibre de carbone (composite),1400,,,kg/m3,dormoy2024supp,tableau 8,20 °C,hypothese,"Estimation de Dormoy d'après [29,30]."
+reservoir.fibre.masse_320L,"Masse de la couche de fibre de carbone, réservoir de 320 L",54,,,kg,dormoy2024supp,tableau 8,,fabricant,
+reservoir.fibre.masse_270L,"Masse de la couche de fibre de carbone, réservoir de 270 L",50,,,kg,dormoy2024supp,tableau 8,,fabricant,
+reservoir.K_global,Coefficient de transfert thermique global du réservoir équivalent (éq. 14),8.8,,,W/m2K,dormoy2024,tableau 2 ; §3.2,charge,calibration,"Valeur initiale 13,9 W/m2K (Chen et al. [25])."
+reservoir.h_conv_ext,Coefficient de convection extérieur paroi-ambiant (éq. 21),2.47,,,W/m2K,dormoy2024,§3.2,décharge,calibration,Température de la structure supposée uniforme.
+reservoir.h_conv_int,Coefficient de convection intérieur air-paroi (éq. 21),25.42,,,W/m2K,dormoy2024,§3.2,décharge,calibration,Température de la structure supposée uniforme.
+detendeur.pression_sortie_min,Pression de sortie minimale réglable du détendeur,17,,,bar,dormoy2024,§2.1,,fabricant,
+detendeur.pression_sortie_max,Pression de sortie maximale réglable du détendeur,275,,,bar,dormoy2024,§2.1,,fabricant,
+detendeur.ecart_pression_min,Écart de pression minimal entrée-sortie pour une sortie stable ; arrêt automatique sous ce seuil,15,,,bar,dormoy2024,§2.1,observation sur le banc,mesure,
+detendeur.cheayb.pression_min_validite,Borne basse de validité du modèle de Cheayb et al. (éq. 15),25,,,bar,dormoy2024,§2.2.5,,simulation_publiee,"Dormoy l'utilise jusqu'à 190 bar et observe un MAPE de 0,21 % (tableau 4)."
+detendeur.cheayb.pression_max_validite,Borne haute de validité du modèle de Cheayb et al. (éq. 15),150,,,bar,dormoy2024,§2.2.5,,simulation_publiee,
+essai_charge.pression_initiale,"Pression initiale du réservoir, essai de charge",1.01325,,,bar,dormoy2024,§3.1,« atmospheric pressure »,mesure,Valeur exacte non donnée ; pression atmosphérique normale supposée.
+essai_charge.pression_finale,"Pression finale du réservoir, essai de charge",190,,,bar,dormoy2024,§3.1,,mesure,
+essai_charge.duree,Durée de l'essai de charge complet,10,,,h,dormoy2024,§3.1,1 → 190 bar,mesure,« almost 10 h » : valeur approximative ; courbe fig. 10 à numériser.
+essai_charge.energie_consommee,"Énergie électrique consommée, essai de charge",396,,,kWh,dormoy2024,§3.1,"1 → 190 bar, 5,86 m3",mesure,
+essai_charge.puissance_moyenne,"Puissance électrique moyenne, essai de charge",39,,,kW,dormoy2024,§3.1,1 → 190 bar,mesure,
+essai_charge.pas_acquisition,Pas de temps d'acquisition des mesures,1,,,s,dormoy2024,§3.1,,mesure,
+essai_decharge.volume,"Volume de réservoir utilisé, essai de décharge",2.56,,,m3,dormoy2024,§3.1,"capacité partielle (8 × 0,32 m3)",mesure,
+essai_decharge.pression_initiale,"Pression initiale, essai de décharge",190,,,bar,dormoy2024,§3.1,,mesure,
+essai_decharge.pression_consigne_detendeur,"Pression de consigne en sortie du détendeur, essai de décharge",35,,,bar,dormoy2024,§3.1,,mesure,
+essai_decharge.pression_arret,Pression du réservoir à l'arrêt de l'essai de décharge,50,,,bar,dormoy2024,§3.1,,mesure,35 + 15 bar d'écart minimal.
+essai_decharge.temperature_initiale,"Température moyenne initiale de l'air dans le réservoir, essai de décharge",55,,,degC,dormoy2024,§3.1,,mesure,
+essai_decharge.duree,Durée de l'essai de décharge,38,,,min,dormoy2024,§3.1,190 → 50 bar,mesure,
+essai_decharge.debit_massique,"Débit massique moyen mesuré au débitmètre, essai de décharge",0.148,,,kg/s,dormoy2024,§3.1,,mesure,
+dormoy_modele.charge.MAPE_max,MAPE maximal du modèle de Dormoy sur la charge (tous paramètres),3.58,,,%,dormoy2024,tableau 3,,simulation_publiee,Tolérance à viser en phase 1.
+dormoy_modele.charge.T_etage4.RMSE_calibre,RMSE de la température de sortie de l'étage 4 après calibration,2.83,,,degC,dormoy2024,§3.2 ; fig. 9,,simulation_publiee,"Différence de températures (ne pas convertir en K absolu) : 10,39 °C avant calibration."
+dormoy_modele.charge.T_etage4.MAPE_calibre,MAPE de la température de sortie de l'étage 4 après calibration,1.9,,,%,dormoy2024,§3.2 ; fig. 9,,simulation_publiee,"5,49 % avant calibration."
+dormoy_modele.decharge.MAPE_max_reservoir,MAPE maximal du modèle de Dormoy sur la décharge (réservoir),1.1,,,%,dormoy2024,tableau 4,,simulation_publiee,
+dormoy_modele.decharge.MAPE_detendeur_isenthalpique,"MAPE de la température de sortie du détendeur, modèle isenthalpique",0.39,,,%,dormoy2024,tableau 4,,simulation_publiee,"RMSE 1,17 °C."
+dormoy_modele.decharge.MAPE_detendeur_cheayb,"MAPE de la température de sortie du détendeur, modèle de Cheayb",0.21,,,%,dormoy2024,tableau 4,,simulation_publiee,"RMSE 0,98 °C."
+cas_base.energie_produite,"Énergie produite, cas de base simulé (1 étage, sans réchauffage, 190 bar, 5,86 m3)",16.93,,,kWh,dormoy2024,§3.3,,simulation_publiee,
+cas_base.energie_consommee,"Énergie consommée, cas de base simulé",366.75,,,kWh,dormoy2024,§3.3,,simulation_publiee,"Simulée, à ne pas confondre avec les 396 kWh mesurés."
+cas_base.rte_annonce,Rendement aller-retour annoncé pour le cas de base,4.3,,,%,dormoy2024,§3.3,,simulation_publiee,"16,93 / 396 = 4,3 % (consommation mesurée)."
+cas_base.rte_recalcule,Rendement aller-retour recalculé pour le cas de base,4.6,,,%,dormoy2024,§3.3,,calcul_personnel,"16,93 / 366,75 = 4,6 % (consommation simulée). L'article mélange les deux."
+cas_Tamb.plage_min,Température ambiante minimale de l'analyse paramétrique,-15,,,degC,dormoy2024,§3.3.1,,simulation_publiee,
+cas_Tamb.plage_max,Température ambiante maximale de l'analyse paramétrique,25,,,degC,dormoy2024,§3.3.1,,simulation_publiee,
+cas_Tamb.debit_massique_-15C,Débit massique de charge à -15 °C,0.065,,,kg/s,dormoy2024,§3.3.1 ; fig. 11,,simulation_publiee,
+cas_Tamb.debit_massique_25C,Débit massique de charge à 25 °C,0.056,,,kg/s,dormoy2024,§3.3.1 ; fig. 11,,simulation_publiee,
+cas_Tamb.duree_charge_25C,Durée de charge à 25 °C,595,,,min,dormoy2024,§3.3.1,,simulation_publiee,
+cas_Tamb.energie_produite_prechauffe_-15C,Énergie produite avec réchauffage à -15 °C,27,,,kWh,dormoy2024,§3.3.1 ; fig. 12,,simulation_publiee,
+cas_Tamb.energie_produite_prechauffe_25C,Énergie produite avec réchauffage à 25 °C,22,,,kWh,dormoy2024,§3.3.1 ; fig. 12,,simulation_publiee,
+cas_Tamb.rte_prechauffe_-15C,RTE avec réchauffage à -15 °C,6.3,,,%,dormoy2024,§3.3.1 ; fig. 12,,simulation_publiee,
+cas_Tamb.rte_prechauffe_25C,RTE avec réchauffage à 25 °C,5.4,,,%,dormoy2024,§3.3.1 ; fig. 12,,simulation_publiee,
+cas_pmax.plage_min,"Pression maximale de stockage, borne basse de l'analyse",75,,,bar,dormoy2024,§3.3.2,,simulation_publiee,
+cas_pmax.plage_max,"Pression maximale de stockage, borne haute de l'analyse",300,,,bar,dormoy2024,§3.3.2,,simulation_publiee,
+cas_pmax.puissance_compresseur_300bar,Puissance du compresseur à 300 bar,48,,,kW,dormoy2024,§3.3.2,,simulation_publiee,39 kW à 190 bar.
+cas_pmax.optimum_prechauffe,"Pression maximale optimale, système avec réchauffage",150,,,bar,dormoy2024,§3.3.2 ; fig. 13,,simulation_publiee,"RTE 5,3 % à l'optimum, 5,1 % au-delà."
+cas_pmax.optimum_sans_prechauffage,"Pression maximale optimale, système sans réchauffage",125,,,bar,dormoy2024,§3.3.2 ; fig. 13,,simulation_publiee,"RTE 4,2 % à l'optimum, 3,8 % au-delà."
+cas_n.energie_produite_n1_sans,"Énergie produite avec indice polytropique 1 (isotherme), sans réchauffage",17.9,,,kWh,dormoy2024,§3.3.3 ; fig. 15,,simulation_publiee,
+cas_n.energie_produite_n1_avec,"Énergie produite avec indice polytropique 1, avec réchauffage",22.8,,,kWh,dormoy2024,§3.3.3 ; fig. 15,,simulation_publiee,
+cas_n.rte_n1_avec,RTE avec indice polytropique 1 et réchauffage,7.5,,,%,dormoy2024,§3.3.3,,simulation_publiee,
+cas_n.puissance_compresseur_n1,Puissance du compresseur avec indice polytropique 1 (borne haute),36,,,kW,dormoy2024,§3.3.3 ; fig. 14,,simulation_publiee,« less than 36 kW ».
+cas_etages.energie_consommee_1etage,Énergie de charge avec turbine à 1 étage (pression de travail minimale basse),380,,,kWh,dormoy2024,§3.3.4,,simulation_publiee,« nearly 380 kWh ».
+cas_etages.energie_consommee_3etages,Énergie de charge avec turbine à 3 étages (recharge depuis ~55 bar),290,,,kWh,dormoy2024,§3.3.4,,simulation_publiee,
+cas_etages.rte_1etage_prechauffe,RTE avec 1 étage et réchauffage,5.5,,,%,dormoy2024,§3.3.4 ; fig. 16,,simulation_publiee,
+cas_etages.rte_3etages_prechauffe,RTE avec 3 étages et réchauffage,16.0,,,%,dormoy2024,§3.3.4 ; fig. 16 ; §4,,simulation_publiee,"La chaleur de réchauffage (46,2 kWh) n'est pas comptée dans ce rendement."
+turbine.etage1.pression_entree,"Turbine DEPRAG, étage 1 : Pression d'entrée",40,,,bar,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.pression_entree,"Turbine DEPRAG, étage 2 : Pression d'entrée",11,,,bar,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.pression_entree,"Turbine DEPRAG, étage 3 : Pression d'entrée",3,,,bar,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.pression_sortie,"Turbine DEPRAG, étage 1 : Pression de sortie",11.5,,,bar,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.pression_sortie,"Turbine DEPRAG, étage 2 : Pression de sortie",3.5,,,bar,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.pression_sortie,"Turbine DEPRAG, étage 3 : Pression de sortie",1.0,,,bar,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.temperature_entree,"Turbine DEPRAG, étage 1 : Température d'entrée (réchauffage requis)",130,,,degC,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.temperature_entree,"Turbine DEPRAG, étage 2 : Température d'entrée (réchauffage requis)",90,,,degC,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.temperature_entree,"Turbine DEPRAG, étage 3 : Température d'entrée (réchauffage requis)",90,,,degC,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.temperature_sortie,"Turbine DEPRAG, étage 1 : Température de sortie",59.2,,,degC,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.temperature_sortie,"Turbine DEPRAG, étage 2 : Température de sortie",20.7,,,degC,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.temperature_sortie,"Turbine DEPRAG, étage 3 : Température de sortie",16.0,,,degC,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.rapport_detente,"Turbine DEPRAG, étage 1 : Rapport de détente (p_sortie / p_entrée)",0.29,,,-,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.rapport_detente,"Turbine DEPRAG, étage 2 : Rapport de détente (p_sortie / p_entrée)",0.32,,,-,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.rapport_detente,"Turbine DEPRAG, étage 3 : Rapport de détente (p_sortie / p_entrée)",0.34,,,-,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.indice_polytropique,"Turbine DEPRAG, étage 1 : Indice polytropique calculé",1.19,,,-,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.indice_polytropique,"Turbine DEPRAG, étage 2 : Indice polytropique calculé",1.23,,,-,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.indice_polytropique,"Turbine DEPRAG, étage 3 : Indice polytropique calculé",1.27,,,-,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.debit_massique,"Turbine DEPRAG, étage 1 : Débit massique nominal",0.321,,,kg/s,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.debit_massique,"Turbine DEPRAG, étage 2 : Débit massique nominal",0.321,,,kg/s,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.debit_massique,"Turbine DEPRAG, étage 3 : Débit massique nominal",0.321,,,kg/s,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.rendement_mecanique,"Turbine DEPRAG, étage 1 : Rendement mécanique",53,,,%,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.rendement_mecanique,"Turbine DEPRAG, étage 2 : Rendement mécanique",64,,,%,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.rendement_mecanique,"Turbine DEPRAG, étage 3 : Rendement mécanique",73,,,%,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.rendement_electrique,"Turbine DEPRAG, étage 1 : Rendement électrique de la génératrice",90,,,%,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.rendement_electrique,"Turbine DEPRAG, étage 2 : Rendement électrique de la génératrice",91,,,%,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.rendement_electrique,"Turbine DEPRAG, étage 3 : Rendement électrique de la génératrice",92,,,%,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.puissance_mecanique,"Turbine DEPRAG, étage 1 : Puissance mécanique",22.1,,,kW,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.puissance_mecanique,"Turbine DEPRAG, étage 2 : Puissance mécanique",22.0,,,kW,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.puissance_mecanique,"Turbine DEPRAG, étage 3 : Puissance mécanique",23.7,,,kW,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage1.puissance_electrique,"Turbine DEPRAG, étage 1 : Puissance électrique",20.0,,,kW,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage2.puissance_electrique,"Turbine DEPRAG, étage 2 : Puissance électrique",20.1,,,kW,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.etage3.puissance_electrique,"Turbine DEPRAG, étage 3 : Puissance électrique",21.8,,,kW,dormoy2024supp,tableau 9,conditions nominales,fabricant,Turbine non installée sur le banc : utilisée en simulation seulement.
+turbine.puissance_electrique_totale,Puissance électrique totale des 3 étages de turbine,62,,,kW,dormoy2024,§2.1,avec réchauffage 130/90/90 °C,fabricant,"20,0 + 20,1 + 21,8 = 61,9 kW."
+turbine.nb_etages_max,Nombre d'étages de turbine (configuration simulée),3,,,-,dormoy2024,§2.1,,simulation_publiee,
+turbine.etage1.puissance_chaleur_requise,Puissance thermique requise pour réchauffer l'air avant la turbine 1 (plage),,33.5,38.0,kW,dormoy2024,tableau 5,"190 → 55 bar, 3 étages, 0,321 kg/s",simulation_publiee,ΔT maximal de 115 °C.
+turbine.etage2.puissance_chaleur_requise,Puissance thermique requise pour réchauffer l'air avant la turbine 2,9.6,,,kW,dormoy2024,tableau 5,"190 → 55 bar, 3 étages, 0,321 kg/s",simulation_publiee,
+turbine.etage3.puissance_chaleur_requise,Puissance thermique requise pour réchauffer l'air avant la turbine 3,22.5,,,kW,dormoy2024,tableau 5,"190 → 55 bar, 3 étages, 0,321 kg/s",simulation_publiee,
+turbine.etage1.energie_chaleur_requise,"Énergie thermique requise avant la turbine 1, sur la décharge",24.8,,,kWh,dormoy2024,tableau 5,"décharge de 40 min, 190 → 55 bar",simulation_publiee,
+turbine.etage2.energie_chaleur_requise,"Énergie thermique requise avant la turbine 2, sur la décharge",6.4,,,kWh,dormoy2024,tableau 5,"décharge de 40 min, 190 → 55 bar",simulation_publiee,
+turbine.etage3.energie_chaleur_requise,"Énergie thermique requise avant la turbine 3, sur la décharge",15.0,,,kWh,dormoy2024,tableau 5,"décharge de 40 min, 190 → 55 bar",simulation_publiee,
+turbine.energie_chaleur_requise_totale,Énergie thermique totale requise par la turbine à 3 étages,46.2,,,kWh,dormoy2024,tableau 5 ; §3.3.5,"décharge de 40 min, 190 → 55 bar",simulation_publiee,
+decharge_3etages.duree,Durée de la décharge simulée avec 3 étages,40,,,min,dormoy2024,§3.3.5,190 → 55 bar,simulation_publiee,
+refroidisseur.etage1.puissance_chaleur_sup130,"Puissance thermique récupérable au-dessus de 130 °C, refroidisseur 1",1.9,,,kW,dormoy2024,tableau 6,"charge 55 → 190 bar, 0,052 kg/s",simulation_publiee,
+refroidisseur.etage1.energie_chaleur_sup130,"Énergie thermique récupérable au-dessus de 130 °C, refroidisseur 1",12.5,,,kWh,dormoy2024,tableau 6,"charge 55 → 190 bar sur 6,8 h",simulation_publiee,
+refroidisseur.etage2.puissance_chaleur_sup130,"Puissance thermique récupérable au-dessus de 130 °C, refroidisseur 2",3.8,,,kW,dormoy2024,tableau 6,"charge 55 → 190 bar, 0,052 kg/s",simulation_publiee,
+refroidisseur.etage2.energie_chaleur_sup130,"Énergie thermique récupérable au-dessus de 130 °C, refroidisseur 2",23.4,,,kWh,dormoy2024,tableau 6,"charge 55 → 190 bar sur 6,8 h",simulation_publiee,
+refroidisseur.etage3.puissance_chaleur_sup130,"Puissance thermique récupérable au-dessus de 130 °C, refroidisseur 3",5.0,,,kW,dormoy2024,tableau 6,"charge 55 → 190 bar, 0,052 kg/s",simulation_publiee,
+refroidisseur.etage3.energie_chaleur_sup130,"Énergie thermique récupérable au-dessus de 130 °C, refroidisseur 3",30.0,,,kWh,dormoy2024,tableau 6,"charge 55 → 190 bar sur 6,8 h",simulation_publiee,
+refroidisseur.etage4.puissance_chaleur_sup130,"Puissance thermique récupérable au-dessus de 130 °C, refroidisseur 4",3.5,,,kW,dormoy2024,tableau 6,"charge 55 → 190 bar, 0,052 kg/s",simulation_publiee,
+refroidisseur.etage4.energie_chaleur_sup130,"Énergie thermique récupérable au-dessus de 130 °C, refroidisseur 4",6.3,,,kWh,dormoy2024,tableau 6,"charge 55 → 190 bar sur 6,8 h",simulation_publiee,
+refroidisseur.energie_chaleur_sup130_totale,Énergie thermique totale récupérable au-dessus de 130 °C (4 refroidisseurs),72.2,,,kWh,dormoy2024,tableau 6 ; §3.3.5,"charge 55 → 190 bar sur 6,8 h",simulation_publiee,
+refroidisseur.energie_chaleur_totale,Énergie thermique totale rejetée par les 4 refroidisseurs (toutes températures),189.2,,,kWh,dormoy2024,§3.3.5,"charge 55 → 190 bar sur 6,8 h",simulation_publiee,143 kWh resteraient disponibles après réchauffage de la turbine.
+charge_55_190.duree,Durée de la charge simulée de 55 à 190 bar,6.8,,,h,dormoy2024,§3.3.5,,simulation_publiee,
+charge_55_190.pression_min,Pression minimale de travail du banc avec turbine à 3 étages,55,,,bar,dormoy2024,§3.3.5,,simulation_publiee,Pression d'entrée turbine 1 (40 bar) + écart minimal du détendeur (15 bar).
+fig18.T_sortie_etage3_max,Température maximale de sortie de l'étage 3 (lecture de la fig. 18),200,,,degC,dormoy2024,§3.3.5 ; fig. 18,après 3 h de charge,mesure,« exceeding 200 °C » : borne basse. Courbe à numériser.
+fig18.T_sortie_etages1a3_min,"Température de sortie des étages 1 à 3 (lecture de la fig. 18, borne basse)",150,,,degC,dormoy2024,§3.3.5 ; fig. 18,charge,mesure,« surpassing 150 °C ». Courbe à numériser.
+air.R_specifique,Constante spécifique de l'air sec (R / M),287.05,,,J/kgK,lemmon2000,"§2 (M = 28,9586 g/mol)",,mesure,"8,314462618 / 0,0289586 = 287,10 ; CoolProp donne 287,05 avec M = 28,9647 g/mol. Sert au modèle « gaz parfait » de comparaison."
+air.cp_1bar_20C,Chaleur massique à pression constante de l'air,1006.1,,,J/kgK,lemmon2000,"équation d'état, via CoolProp","1,013 bar, 20 °C",mesure,Valeur constante du modèle « gaz parfait » de comparaison.
+ambiance.T_amb_essai_charge,Température ambiante pendant l'essai de charge,20,,,degC,dormoy2024,§3.1,non donnée par l'article,hypothese,"Hypothèse du projet. Le débit aspiré mesuré (0,052 kg/s) correspondrait à ≈ 52 °C à 1,013 bar avec 172,4 m3/h : l'air aspiré est sans doute plus chaud que l'ambiant, ou la mesure inclut autre chose. Voir rapports/phase1/validation_charge.md."
+ambiance.p_amb_essai,Pression atmosphérique pendant les essais,1.01325,,,bar,dormoy2024,§3.1,non donnée par l'article,hypothese,"Pression normale supposée (Shawinigan, ≈ 100 m d'altitude : ≈ 1,00 bar en moyenne)."
+compresseur.pression_refoulement_min,Pression de refoulement minimale du compresseur (soupape de pression minimale avant le sécheur),66,,,bar,dormoy2024,§3.1 ; fig. 8,pression de réservoir sous laquelle les rapports des étages 3 et 4 restent constants,calcul_personnel,"1,01325 × 3,25 × 3,75 × 3,54 × 1,52 = 66,4 bar, avec les rapports minimaux des étages 3 et 4. Dormoy parle d'un seuil de 60 bar. À vérifier sur la fig. 8 numérisée."
+compresseur.loi_rapport_etage3,Loi de variation du rapport de pression de l'étage 3,"linéaire en pression de refoulement, de 3,54 à p_refoulement_min jusqu'à 4,44 à 190 bar",,,texte,dormoy2024,§3.1 ; fig. 8,,hypothese,Dormoy dit « linear increase beyond the 60-bar threshold ». La pente exacte sera lue sur la fig. 8 numérisée. L'étage 4 prend le reste du rapport total.
+compresseur.loi_rendement_mecanique,Loi de variation du rendement mécanique du compresseur,"linéaire en pression de refoulement, de 69 % à p_refoulement_min jusqu'à 74 % à 190 bar",,,texte,dormoy2024,tableau 2 ; §3.2,,hypothese,"Dormoy donne seulement la plage 69-74 % « depending on reservoir pressure », sans le sens de variation. Hypothèse : croissant (meilleur rendement à forte charge). À confronter à la fig. 10."
+refroidisseur.loi_efficacite_etage4,Loi de variation de l'efficacité du refroidisseur 4,"linéaire en pression de refoulement, de 74 % à p_refoulement_min jusqu'à 85 % à 190 bar",,,texte,dormoy2024,§3.2,,hypothese,"Dormoy : « efficiency scaling alongside reservoir pressure », sans la loi exacte."
+reservoir.capacite_thermique_paroi,Capacité thermique totale des parois des 20 réservoirs,1767000.0,,,J/K,dormoy2024supp,tableau 8,,calcul_personnel,"Aluminium : (8 × 53 + 12 × 45) kg × 869 J/kgK = 837,7 kJ/K ; fibre : (8 × 54 + 12 × 50) kg × 900 J/kgK = 928,8 kJ/K. Total 1 766,5 kJ/K. Sert au modèle thermique « paroi » (décharge)."
+detendeur.cheayb.a1,"Coefficient de l'éq. 15 (modèle de Cheayb et al.), a : terme en 1/T_in",0.0297,,,-,dormoy2024,"§2.2.5, éq. 15","pression en bar, température en K ; validé de 25 à 150 bar",simulation_publiee,"T(P) = a·P² + b·P + c ; a = ½(a1/T − a2/T² − a3/T³ + a4) ; b = b1/T + b2/T² + b3/T³ − b4 ; c = T_in − a·P_in² − b·P_in. Relation semi-empirique d'après Hoxton, reprise par Cheayb et al. [27]. Lue sur l'image de la page 8 (extraction texte illisible)."
+detendeur.cheayb.a2,"Coefficient de l'éq. 15 (modèle de Cheayb et al.), a : terme en 1/T_in^2 (soustrait)",1.674,,,-,dormoy2024,"§2.2.5, éq. 15","pression en bar, température en K ; validé de 25 à 150 bar",simulation_publiee,"T(P) = a·P² + b·P + c ; a = ½(a1/T − a2/T² − a3/T³ + a4) ; b = b1/T + b2/T² + b3/T³ − b4 ; c = T_in − a·P_in² − b·P_in. Relation semi-empirique d'après Hoxton, reprise par Cheayb et al. [27]. Lue sur l'image de la page 8 (extraction texte illisible)."
+detendeur.cheayb.a3,"Coefficient de l'éq. 15 (modèle de Cheayb et al.), a : terme en 1/T_in^3 (soustrait)",19093,,,-,dormoy2024,"§2.2.5, éq. 15","pression en bar, température en K ; validé de 25 à 150 bar",simulation_publiee,"T(P) = a·P² + b·P + c ; a = ½(a1/T − a2/T² − a3/T³ + a4) ; b = b1/T + b2/T² + b3/T³ − b4 ; c = T_in − a·P_in² − b·P_in. Relation semi-empirique d'après Hoxton, reprise par Cheayb et al. [27]. Lue sur l'image de la page 8 (extraction texte illisible)."
+detendeur.cheayb.a4,"Coefficient de l'éq. 15 (modèle de Cheayb et al.), a : constante (ajoutée)",1.57e-05,,,-,dormoy2024,"§2.2.5, éq. 15","pression en bar, température en K ; validé de 25 à 150 bar",simulation_publiee,"T(P) = a·P² + b·P + c ; a = ½(a1/T − a2/T² − a3/T³ + a4) ; b = b1/T + b2/T² + b3/T³ − b4 ; c = T_in − a·P_in² − b·P_in. Relation semi-empirique d'après Hoxton, reprise par Cheayb et al. [27]. Lue sur l'image de la page 8 (extraction texte illisible)."
+detendeur.cheayb.b1,"Coefficient de l'éq. 15 (modèle de Cheayb et al.), b : terme en 1/T_in",50.1,,,-,dormoy2024,"§2.2.5, éq. 15","pression en bar, température en K ; validé de 25 à 150 bar",simulation_publiee,"T(P) = a·P² + b·P + c ; a = ½(a1/T − a2/T² − a3/T³ + a4) ; b = b1/T + b2/T² + b3/T³ − b4 ; c = T_in − a·P_in² − b·P_in. Relation semi-empirique d'après Hoxton, reprise par Cheayb et al. [27]. Lue sur l'image de la page 8 (extraction texte illisible)."
+detendeur.cheayb.b2,"Coefficient de l'éq. 15 (modèle de Cheayb et al.), b : terme en 1/T_in^2",14830,,,-,dormoy2024,"§2.2.5, éq. 15","pression en bar, température en K ; validé de 25 à 150 bar",simulation_publiee,"T(P) = a·P² + b·P + c ; a = ½(a1/T − a2/T² − a3/T³ + a4) ; b = b1/T + b2/T² + b3/T³ − b4 ; c = T_in − a·P_in² − b·P_in. Relation semi-empirique d'après Hoxton, reprise par Cheayb et al. [27]. Lue sur l'image de la page 8 (extraction texte illisible)."
+detendeur.cheayb.b3,"Coefficient de l'éq. 15 (modèle de Cheayb et al.), b : terme en 1/T_in^3",366000,,,-,dormoy2024,"§2.2.5, éq. 15","pression en bar, température en K ; validé de 25 à 150 bar",simulation_publiee,"T(P) = a·P² + b·P + c ; a = ½(a1/T − a2/T² − a3/T³ + a4) ; b = b1/T + b2/T² + b3/T³ − b4 ; c = T_in − a·P_in² − b·P_in. Relation semi-empirique d'après Hoxton, reprise par Cheayb et al. [27]. Lue sur l'image de la page 8 (extraction texte illisible)."
+detendeur.cheayb.b4,"Coefficient de l'éq. 15 (modèle de Cheayb et al.), b : constante (soustraite)",0.122,,,-,dormoy2024,"§2.2.5, éq. 15","pression en bar, température en K ; validé de 25 à 150 bar",simulation_publiee,"T(P) = a·P² + b·P + c ; a = ½(a1/T − a2/T² − a3/T³ + a4) ; b = b1/T + b2/T² + b3/T³ − b4 ; c = T_in − a·P_in² − b·P_in. Relation semi-empirique d'après Hoxton, reprise par Cheayb et al. [27]. Lue sur l'image de la page 8 (extraction texte illisible)."
+essai_decharge.surface,Surface d'échange des 8 réservoirs de 320 L utilisés à la décharge,28.8,,,m2,dormoy2024supp,tableau 8,,calcul_personnel,"8 × 3,6 m2. Dormoy dit « 2,56 m3 », soit exactement 8 × 0,32."
+essai_decharge.capacite_thermique_paroi,Capacité thermique des parois des 8 réservoirs de 320 L,757400.0,,,J/K,dormoy2024supp,tableau 8,,calcul_personnel,"8 × (53 kg × 869 + 54 kg × 900) J/K = 757,4 kJ/K."
+essai_decharge.temperature_paroi_initiale,"Température initiale de la structure des réservoirs, essai de décharge",55,,,degC,dormoy2024,§3.1 ; §3.2,égale à celle de l'air,hypothese,Non mesurée. Dormoy note que la chaleur accumulée dans la structure pendant la charge influence la température de l'air en décharge.
+cas_base.turbine,"Détendeur du cas de base (1 étage, sans réchauffage)","étage 3 de la turbine DEPRAG (3 → 1 bar, n = 1,27, 0,321 kg/s)",,,texte,dormoy2024,§3.3,,simulation_publiee,"« a single-stage expansion device represented by the last stage of the selected turbine (Table 9) ». Le détendeur est donc réglé à 3 bar et la décharge s'arrête à 18 bar, pas à 50 bar comme dans l'essai mesuré."
+cas_base.pression_arret,"Pression d'arrêt de la décharge, cas de base (3 bar + 15 bar d'écart)",18,,,bar,dormoy2024,§2.1 ; §3.3 ; tableau 9 (supp.),,calcul_personnel,Pression d'entrée de l'étage 3 (3 bar) + écart minimal du détendeur (15 bar).
+cas_2etages.pression_arret,Pression d'arrêt de la décharge avec 2 étages (étages 2 et 3),26,,,bar,dormoy2024,§3.3.4 ; tableau 9 (supp.),,calcul_personnel,11 bar + 15 bar. Hypothèse : les 2 étages sont les étages 2 et 3 de la turbine DEPRAG.
+cas_base.temperature_initiale_decharge,Température initiale de l'air et des parois pour les cas de décharge simulés,55,,,degC,dormoy2024,§3.1 ; §3.3 ; tableau 5,non donnée par l'article pour les cas simulés,hypothese,"Valeur mesurée au début de l'essai de décharge (§3.1). Retenue parce qu'elle reproduit le tableau 5 (chaleur de réchauffage 24,8 / 6,4 / 15,0 kWh) et les températures d'entrée de turbine qu'il implique (13-27 °C). Variantes testées : 20 °C (air revenu à l'ambiant) et 29 °C (fin de la charge simulée en phase 1). Voir rapports/phase2/validation_decharge.md."
+turbine.rechauffage.source,Source de la chaleur de réchauffage dans les simulations de Dormoy,"externe, non comptée dans le rendement",,,texte,dormoy2024,§2.4 ; §3.3.4,,simulation_publiee,Dormoy impose 130/90/90 °C sans modéliser la source. Le simulateur marque cette chaleur « externe » et calcule aussi le rendement qui la compte.
+materiau.gravier_tola.masse_volumique,Masse volumique du gravier,2750,,,kg/m3,tola2022,tableau 3,,simulation_publiee,Valeur adoptée par Tola d'après sa réf. [28].
+materiau.gravier_tola.cp,Chaleur massique du gravier,900,,,J/kgK,tola2022,tableau 3,,simulation_publiee,
+materiau.gravier_tola.diametre_particule,Diamètre moyen des particules de gravier,0.03,,,m,tola2022,tableau 3,,simulation_publiee,
+materiau.gravier_tola.porosite,Fraction de vide du lit de gravier,0.3,,,-,tola2022,tableau 3 ; §2.3,,simulation_publiee,"Tola : granulométrie variée, d'où 0,3 (plus compact que 0,38 pour des sphères)."
+materiau.gravier_tola.conductivite,Conductivité thermique des particules de gravier,2.5,,,W/mK,robertson1988,tableaux granite / gneiss,"roche silicatée, 20 °C",hypothese,"Tola ne la donne pas. 2 à 3,5 W/m·K selon la roche (USGS). Sert à la correction de Jeffreson (gradient interne) et à la conduction axiale."
+lit.wakao.a,"Corrélation de Wakao : Nu = a + b Re^c Pr^(1/3), a",2.0,,,-,wakao1979,éq. 11,"15 < Re < 8500, Re sur la vitesse superficielle et le diamètre des particules",simulation_publiee,
+lit.wakao.b,Corrélation de Wakao : b,1.1,,,-,wakao1979,éq. 11,,simulation_publiee,
+lit.wakao.c,Corrélation de Wakao : exposant de Re,0.6,,,-,wakao1979,éq. 11,,simulation_publiee,
+lit.wakao.Re_min,Borne basse de validité de Wakao,15,,,-,wakao1979,§ résultats,,simulation_publiee,
+lit.wakao.Re_max,Borne haute de validité de Wakao,8500,,,-,wakao1979,§ résultats,,simulation_publiee,
+lit.ergun.A,Équation d'Ergun : terme visqueux,150,,,-,ergun1949,éq. 6 (constantes de 1952),Re_p de 1 à environ 2500,simulation_publiee,
+lit.ergun.B,Équation d'Ergun : terme inertiel,1.75,,,-,ergun1949,éq. 6 (constantes de 1952),,simulation_publiee,
+lit.jeffreson.facteur,Correction de Jeffreson : h_eff = h / (1 + Bi / facteur),5,,,-,jeffreson1972,éq. 9,,simulation_publiee,"Bi = h d / (2 k_s). Négligeable si Bi < 0,1."
+air.sutherland.mu_ref,Viscosité de référence de l'air (loi de Sutherland),1.716e-05,,,Pa.s,sutherland1893,constantes usuelles pour l'air,"273,15 K",mesure,Modèle gaz parfait seulement ; CoolProp sinon.
+air.sutherland.T_ref,Température de référence de Sutherland,273.15,,,K,sutherland1893,constantes usuelles,,mesure,
+air.sutherland.S,Constante de Sutherland pour l'air,110.4,,,K,sutherland1893,constantes usuelles,,mesure,
+air.prandtl,Nombre de Prandtl de l'air (modèle gaz parfait),0.71,,,-,lemmon2000,propriétés de transport via CoolProp,"0 à 300 °C, 1 bar",mesure,"Varie de 0,70 à 0,72."
+tola.tes_lp.diametre,Cuve TES-LP (cas C) : diamètre,5.2,,,m,tola2022,tableau 8,,simulation_publiee,"Même diamètre pour TES-IP et TES-HP. Vérification : π/4 × 5,2² × 10,4 = 220,8 m3."
+tola.tes_lp.rapport_hauteur_diametre,Cuve TES-LP : rapport hauteur / diamètre,2.0,,,-,tola2022,tableau 8 ; §3.3 (« an aspect ratio of 2 was set »),,simulation_publiee,"Hauteur 10,4 m ; volume 220,8 m3 pour chacune des trois cuves du cas C."
+tola.tes_lp.volume,Cuve TES-LP : volume,220.8,,,m3,tola2022,tableau 8,,simulation_publiee,
+tola.tes_lp.pression_charge,Cuve TES-LP : pression en charge,3.9,,,bar,tola2022,tableau 4,,simulation_publiee,"0,39 MPa ; décharge 0,40-0,53 MPa."
+tola.tes_ip.pression_charge,Cuve TES-IP : pression en charge,11.9,,,bar,tola2022,tableau 4,,simulation_publiee,"1,19 MPa ; décharge 1,74-2,24 MPa."
+tola.tes_hp.pression_charge,Cuve TES-HP : pression en charge,36.8,,,bar,tola2022,tableau 4,,simulation_publiee,"3,68 MPa ; décharge 6,40-10,0 MPa."
+tola.tes.debit_charge,Cuves du cas C : débit d'air en charge,12.3,,,kg/s,tola2022,tableau 8 ; §3.3,,simulation_publiee,
+tola.tes.debit_decharge,Cuves du cas C : débit d'air en décharge,24.5,,,kg/s,tola2022,tableau 8 ; §3.3,,simulation_publiee,
+tola.tes.T_entree_charge,Cuves du cas C : température d'entrée en charge,170,,,degC,tola2022,tableau 4 et 8,,simulation_publiee,
+tola.tes.T_entree_decharge,Cuves du cas C : température d'entrée en décharge,35,,,degC,tola2022,tableau 4 et 8,,simulation_publiee,
+tola.tes.duree_charge,Durée de la charge,6,,,h,tola2022,§3.3,,simulation_publiee,
+tola.tes.duree_decharge,Durée de la décharge,3,,,h,tola2022,§3.3,,simulation_publiee,
+tola.tes.T_sortie_min_decharge,Température minimale de sortie imposée en décharge (1er cycle),100,,,degC,tola2022,§3.3,,simulation_publiee,
+tola.tes_lp.energie_stockee,Cuve TES-LP : énergie stockée,9.6,,,MWh,tola2022,tableau 8,,simulation_publiee,
+tola.tes_ip.energie_stockee,Cuve TES-IP : énergie stockée,9.54,,,MWh,tola2022,tableau 8,,simulation_publiee,
+tola.tes_hp.energie_stockee,Cuve TES-HP : énergie stockée,9.54,,,MWh,tola2022,tableau 8,,simulation_publiee,
+tola.tes.nb_cycles_stabilisation,Nombre de cycles simulés jusqu'au régime stable,20,,,-,tola2022,§3.3,,simulation_publiee,« full operational regime is reached » en moins de 20 cycles ; l'air converge plus vite que l'huile.
+tola.tes.fraction_sortie_constante,Fraction de la charge ou de la décharge pendant laquelle la température de sortie reste constante,0.67,,,-,tola2022,§3.3 ; fig. 4,,simulation_publiee,« about two thirds ».

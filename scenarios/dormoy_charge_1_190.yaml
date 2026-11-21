@@ -1,0 +1,74 @@
+# Essai de charge mesuré par Dormoy et al. (2024) : 1 → 190 bar, 5,86 m3.
+# Référence : 396 kWh, ≈ 10 h, 39 kW en moyenne (§ 3.1).
+# Toute valeur physique vient du registre (registre:<id>) ou porte sa source.
+
+nom: dormoy_charge_1_190
+description: >
+  Charge complète du banc de Dormoy (2024), de la pression atmosphérique
+  à 190 bar, avec le débit aspiré mesuré (0,052 kg/s). Le débit entrant
+  dans les réservoirs est calculé par les rendements (volumétrique 83 %
+  puis sécheur 81 %).
+
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+  T_aspiration: registre:ambiance.T_amb_essai_charge
+
+compresseur:
+  debit_volumique_aspire: registre:compresseur.debit_volumique_entree
+  # Si présent, remplace rho(T_aspiration) × débit volumique.
+  debit_massique_aspire: registre:compresseur.debit_massique_entree_moyen
+  rendement_volumetrique: registre:compresseur.rendement_volumetrique
+  rendement_electrique: registre:compresseur.rendement_electrique#moyen
+  rendement_mecanique_min: registre:compresseur.rendement_mecanique#min
+  rendement_mecanique_max: registre:compresseur.rendement_mecanique#max
+  pression_refoulement_min: registre:compresseur.pression_refoulement_min
+  etages:
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage1
+      rapport_pression: registre:compresseur.rapport_compression_etage1
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage2
+      rapport_pression: registre:compresseur.rapport_compression_etage2
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage3
+      rapport_pression_min: registre:compresseur.rapport_compression_etage3#min
+      rapport_pression_max: registre:compresseur.rapport_compression_etage3#max
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage4
+      # L'étage 4 prend le reste du rapport total (p_refoulement / p_amb).
+
+refroidisseurs:
+  efficacites:
+    - registre:refroidisseur.efficacite_etage1
+    - registre:refroidisseur.efficacite_etage2
+    - registre:refroidisseur.efficacite_etage3
+  efficacite_dernier_min: registre:refroidisseur.efficacite_etage4#min
+  efficacite_dernier_max: registre:refroidisseur.efficacite_etage4#max
+  # Chaleur comptée « récupérable » au-dessus de la température requise
+  # par la turbine 1 (tableau 6 de Dormoy).
+  T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+
+secheur:
+  efficacite: registre:secheur.efficacite
+  # Mettre registre:secheur.debit_massique_sortie pour imposer le débit
+  # mesuré (0,032 kg/s) au lieu du produit des rendements (0,035 kg/s).
+  debit_massique_reservoir_impose: null
+
+reservoir:
+  volume: registre:reservoir.volume_total
+  surface: registre:reservoir.surface_equivalente_totale
+  modele_thermique: K_global
+  K_global: registre:reservoir.K_global
+  h_int: registre:reservoir.h_conv_int
+  h_ext: registre:reservoir.h_conv_ext
+  capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+  p_initiale: registre:essai_charge.pression_initiale
+  T_initiale: registre:ambiance.T_amb_essai_charge
+
+simulation:
+  p_cible: registre:essai_charge.pression_finale
+  dt:
+    valeur: 10
+    unite: s
+    source: choix numérique ; l'écart avec dt = 1 s est inférieur à 0,1 % (tests)
+  duree_max:
+    valeur: 24
+    unite: h
+    source: garde-fou contre une boucle infinie

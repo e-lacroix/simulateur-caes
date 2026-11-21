@@ -1,0 +1,78 @@
+# Cas « 3 étages + réchauffage » simulé par Dormoy et al. (2024), § 3.3.4 et
+# 3.3.5 : turbine DEPRAG complète (40 → 11,5 → 3,5 → 1 bar), air réchauffé à
+# 130 / 90 / 90 °C avant chaque étage, 0,321 kg/s. Décharge de 190 à 55 bar
+# en ≈ 40 min. Références : ≈ 46 kWh produits (16 % de 290 kWh), chaleur
+# 46,2 kWh (24,8 / 6,4 / 15,0).
+
+nom: dormoy_decharge_3etages
+description: >
+  Décharge avec la turbine DEPRAG à 3 étages et réchauffage externe à
+  130 / 90 / 90 °C. Détendeur réglé à 40 bar, arrêt à 55 bar.
+
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+
+reservoir:
+  volume: registre:reservoir.volume_total
+  surface: registre:reservoir.surface_equivalente_totale
+  modele_thermique: paroi
+  K_global: registre:reservoir.K_global
+  h_int: registre:reservoir.h_conv_int
+  h_ext: registre:reservoir.h_conv_ext
+  capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+  p_initiale: registre:essai_charge.pression_finale
+  T_initiale: registre:cas_base.temperature_initiale_decharge
+  T_paroi_initiale: registre:cas_base.temperature_initiale_decharge
+
+detendeur:
+  modele: isenthalpique
+  p_consigne: registre:turbine.etage1.pression_entree
+  ecart_min: registre:detendeur.ecart_pression_min
+  cheayb:
+    a1: registre:detendeur.cheayb.a1
+    a2: registre:detendeur.cheayb.a2
+    a3: registre:detendeur.cheayb.a3
+    a4: registre:detendeur.cheayb.a4
+    b1: registre:detendeur.cheayb.b1
+    b2: registre:detendeur.cheayb.b2
+    b3: registre:detendeur.cheayb.b3
+    b4: registre:detendeur.cheayb.b4
+    p_min_validite: registre:detendeur.cheayb.pression_min_validite
+    p_max_validite: registre:detendeur.cheayb.pression_max_validite
+
+decharge:
+  mode: turbine
+
+turbine:
+  debit_massique: registre:turbine.etage1.debit_massique
+  source_chaleur: externe
+  etages:
+    - p_entree: registre:turbine.etage1.pression_entree
+      p_sortie: registre:turbine.etage1.pression_sortie
+      indice_polytropique: registre:turbine.etage1.indice_polytropique
+      rendement_mecanique: registre:turbine.etage1.rendement_mecanique
+      rendement_electrique: registre:turbine.etage1.rendement_electrique
+      T_entree_cible: registre:turbine.etage1.temperature_entree
+    - p_entree: registre:turbine.etage2.pression_entree
+      p_sortie: registre:turbine.etage2.pression_sortie
+      indice_polytropique: registre:turbine.etage2.indice_polytropique
+      rendement_mecanique: registre:turbine.etage2.rendement_mecanique
+      rendement_electrique: registre:turbine.etage2.rendement_electrique
+      T_entree_cible: registre:turbine.etage2.temperature_entree
+    - p_entree: registre:turbine.etage3.pression_entree
+      p_sortie: registre:turbine.etage3.pression_sortie
+      indice_polytropique: registre:turbine.etage3.indice_polytropique
+      rendement_mecanique: registre:turbine.etage3.rendement_mecanique
+      rendement_electrique: registre:turbine.etage3.rendement_electrique
+      T_entree_cible: registre:turbine.etage3.temperature_entree
+
+simulation:
+  dt:
+    valeur: 1
+    unite: s
+    source: pas d'acquisition de Dormoy (§ 3.1)
+  duree_max:
+    valeur: 3
+    unite: h
+    source: garde-fou contre une boucle infinie

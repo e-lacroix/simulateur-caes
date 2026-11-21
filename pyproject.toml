@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "caes-simulateur"
+version = "0.0.1"
+description = "Simulateur CAES (air comprimé + gravier) du projet Expo-sciences 2026-2027, validé sur le banc de Dormoy (2024)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Projet Expo-sciences 2026-2027"}]
+dependencies = [
+    "CoolProp>=6.6",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.1",
+    "matplotlib>=3.8",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+include = ["caes*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

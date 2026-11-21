@@ -1,0 +1,66 @@
+# Cas de base simulé par Dormoy et al. (2024), § 3.3 : 5,86 m3 à 190 bar,
+# un seul étage de détente (le dernier étage de la turbine DEPRAG, 3 → 1 bar),
+# sans réchauffage. Référence : 16,93 kWh produits.
+
+nom: dormoy_decharge_base
+description: >
+  Décharge du cas de base : détendeur réglé à 3 bar (entrée de l'étage 3
+  DEPRAG), arrêt à 18 bar, pas de réchauffage. Référence 16,93 kWh.
+
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+
+reservoir:
+  volume: registre:reservoir.volume_total
+  surface: registre:reservoir.surface_equivalente_totale
+  modele_thermique: paroi
+  K_global: registre:reservoir.K_global
+  h_int: registre:reservoir.h_conv_int
+  h_ext: registre:reservoir.h_conv_ext
+  capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+  p_initiale: registre:essai_charge.pression_finale
+  T_initiale: registre:cas_base.temperature_initiale_decharge
+  T_paroi_initiale: registre:cas_base.temperature_initiale_decharge
+
+detendeur:
+  modele: isenthalpique
+  p_consigne: registre:turbine.etage3.pression_entree
+  ecart_min: registre:detendeur.ecart_pression_min
+  cheayb:
+    a1: registre:detendeur.cheayb.a1
+    a2: registre:detendeur.cheayb.a2
+    a3: registre:detendeur.cheayb.a3
+    a4: registre:detendeur.cheayb.a4
+    b1: registre:detendeur.cheayb.b1
+    b2: registre:detendeur.cheayb.b2
+    b3: registre:detendeur.cheayb.b3
+    b4: registre:detendeur.cheayb.b4
+    p_min_validite: registre:detendeur.cheayb.pression_min_validite
+    p_max_validite: registre:detendeur.cheayb.pression_max_validite
+
+decharge:
+  mode: turbine
+
+turbine:
+  debit_massique: registre:turbine.etage3.debit_massique
+  source_chaleur: externe
+  etages:
+    - p_entree: registre:turbine.etage3.pression_entree
+      p_sortie: registre:turbine.etage3.pression_sortie
+      indice_polytropique: registre:turbine.etage3.indice_polytropique
+      rendement_mecanique: registre:turbine.etage3.rendement_mecanique
+      rendement_electrique: registre:turbine.etage3.rendement_electrique
+      # null = pas de réchauffage (cas de base). Mettre
+      # registre:turbine.etage3.temperature_entree pour réchauffer à 90 °C.
+      T_entree_cible: null
+
+simulation:
+  dt:
+    valeur: 1
+    unite: s
+    source: pas d'acquisition de Dormoy (§ 3.1)
+  duree_max:
+    valeur: 3
+    unite: h
+    source: garde-fou contre une boucle infinie
