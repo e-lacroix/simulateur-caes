@@ -1,0 +1,60 @@
+# Analyse de démonstration (rapide, pour les tests) : architecture B,
+# un cycle, pas de temps grossiers. Sert à `tests/test_analyse.py` et à
+# vérifier le format du fichier d'analyse ; l'analyse de référence de la
+# phase 10 est `D.yaml`.
+
+nom: B_rapide
+description: Architecture B (3 étages réchauffés), un cycle, pas grossiers ; trois paramètres, démonstration du format.
+scenario: ../B.yaml
+modifications_de_base:
+  - simulation.nombre_max=1
+  - charge.dt=120s
+  - decharge.dt=20s
+
+sorties:
+  - rte_sans_chaleur
+  - energie_produite_kwh
+  - energie_consommee_kwh
+  - masse_totale_kg
+  - decharge.T_rejet_min_degC
+
+parametres:
+  - nom: p_max
+    chemin: charge.p_cible
+    etiquette: Pression maximale du réservoir
+    unite: bar
+    plage: {min: 120, max: 220}
+  - nom: rendement_electrique
+    chemin: composants.compresseur.rendement_electrique
+    etiquette: Rendement électrique du compresseur
+    unite: "%"
+    plage: registre
+  - nom: T_amb
+    chemin: ambiance.T_amb
+    etiquette: Température ambiante
+    unite: degC
+    plage: {min: -20, max: 30}
+
+sobol:
+  n: 4
+  graine: 1
+
+incertitudes:
+  n: 6
+  graine: 1
+  parametres: [rendement_electrique]
+
+pareto:
+  objectifs:
+    - {sortie: energie_produite_kwh, sens: max}
+    - {sortie: masse_totale_kg, sens: min}
+  variables: [p_max]
+  population: 4
+  generations: 1
+  graine: 1
+
+masse:
+  pression: charge.p_cible
+  diametre: registre:reservoir.diametre_interieur
+  resistance_specifique: registre:reservoir.resistance_specifique_equivalente
+  coefficient_securite: registre:reservoir.coefficient_securite

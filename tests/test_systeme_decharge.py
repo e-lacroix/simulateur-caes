@@ -21,21 +21,21 @@ def registre() -> Registre:
 @pytest.fixture(scope="module")
 def essai(registre: Registre) -> ResultatDecharge:
     return simuler_decharge(
-        charger_scenario("dormoy_decharge_essai.yaml", registre)
+        charger_scenario("v1/dormoy_decharge_essai.yaml", registre)
     )
 
 
 @pytest.fixture(scope="module")
 def base(registre: Registre) -> ResultatDecharge:
     return simuler_decharge(
-        charger_scenario("dormoy_decharge_base.yaml", registre)
+        charger_scenario("v1/dormoy_decharge_base.yaml", registre)
     )
 
 
 @pytest.fixture(scope="module")
 def trois(registre: Registre) -> ResultatDecharge:
     return simuler_decharge(
-        charger_scenario("dormoy_decharge_3etages.yaml", registre)
+        charger_scenario("v1/dormoy_decharge_3etages.yaml", registre)
     )
 
 
@@ -80,7 +80,7 @@ def test_air_se_refroidit_dans_le_reservoir(essai: ResultatDecharge) -> None:
 def test_cheayb_proche_de_l_isenthalpique(
     registre: Registre, essai: ResultatDecharge
 ) -> None:
-    sc = charger_scenario("dormoy_decharge_essai.yaml", registre)
+    sc = charger_scenario("v1/dormoy_decharge_essai.yaml", registre)
     ch = simuler_decharge(sc.avec({"detendeur.modele": "cheayb"}, "cheayb"))
     assert abs(ch.totaux["duree_min"] - essai.totaux["duree_min"]) < 0.5
     ecart = abs(
@@ -133,7 +133,7 @@ def test_rendements_aller_retour(
     registre: Registre, trois: ResultatDecharge
 ) -> None:
     charge = simuler_charge(
-        charger_scenario("dormoy_charge_55_190.yaml", registre)
+        charger_scenario("v1/dormoy_charge_55_190.yaml", registre)
     )
     r = rendements_aller_retour(charge, trois)
     assert 0.12 < r["rte_sans_chaleur"] < 0.20
@@ -142,7 +142,7 @@ def test_rendements_aller_retour(
 
 
 def test_convergence_dt(registre: Registre, trois: ResultatDecharge) -> None:
-    sc = charger_scenario("dormoy_decharge_3etages.yaml", registre)
+    sc = charger_scenario("v1/dormoy_decharge_3etages.yaml", registre)
     gros = simuler_decharge(sc.avec({"simulation.dt": 10.0}, "dt10"))
     e1 = trois.totaux["energie_electrique_kwh"]
     e10 = gros.totaux["energie_electrique_kwh"]
@@ -150,6 +150,6 @@ def test_convergence_dt(registre: Registre, trois: ResultatDecharge) -> None:
 
 
 def test_mode_inconnu_refuse(registre: Registre) -> None:
-    sc = charger_scenario("dormoy_decharge_essai.yaml", registre)
+    sc = charger_scenario("v1/dormoy_decharge_essai.yaml", registre)
     with pytest.raises(ValueError):
         simuler_decharge(sc.avec({"decharge.mode": "x"}, "x"))

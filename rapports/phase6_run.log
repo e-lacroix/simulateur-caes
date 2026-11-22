@@ -1,0 +1,6 @@
+[1 s] A (cycles) ; cycle 2 ; charge 324.5 kWh en 8.26 h ; produit 14.05 kWh en 53.9 min, chaleur  ; RTE 4.3 % (4.3 % avec la chaleur externe) ; 1 avertissement(s)
+[2 s] B (cycles) ; cycle 3 ; charge 243.2 kWh en 6.03 h ; produit 40.96 kWh en 39.4 min, chaleur externe 51.2 ; RTE 16.8 % (13.9 % avec la chaleur externe)
+[2 s] C (cycles) ; cycle 3 ; charge 243.2 kWh en 6.03 h ; produit 40.96 kWh en 39.4 min, chaleur huile 51.2 ; RTE 16.8 % (16.8 % avec la chaleur externe) ; 1 avertissement(s)
+[61 s] D (cycles) ; cycle 4 ; charge 239.5 kWh en 6.05 h ; produit 41.05 kWh en 39.5 min, chaleur cuve_3 30.2, cuve_2 6.4, cuve_1 14.8 ; RTE 17.1 % (17.1 % avec la chaleur externe) ; 1 avertissement(s)
+[57 s] E (cycles) ; cycle 4 ; charge 239.4 kWh en 6.05 h ; produit 41.01 kWh en 39.5 min, chaleur cuve_3 30.2, cuve_2 6.4, cuve_1 14.7 ; RTE 17.1 % (17.1 % avec la chaleur externe) ; 2 avertissement(s)
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase6\non_regression.md

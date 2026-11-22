@@ -1,0 +1,38 @@
+# Intégration continue (phase 12) : la suite de tests à chaque modification.
+# Les rapports et les analyses longues ne sont pas régénérés ici (voir
+# generer_tout.py) ; seuls les tests tournent (≈ 6 à 10 min).
+
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Installer le paquet et les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Vérifier le registre et un scénario
+        run: |
+          python -I data/registre/generer_registre_phase0.py
+          python -m caes verifier scenarios/D.yaml
+        env:
+          PYTHONIOENCODING: utf-8
+      - name: Tests
+        run: python -m pytest -q -p no:cacheprovider
+        env:
+          PYTHONIOENCODING: utf-8
+          MPLBACKEND: Agg

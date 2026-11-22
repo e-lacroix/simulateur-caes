@@ -1,0 +1,374 @@
+rapide:
+  charge:
+    dormoy_charge_1_190:
+      energie_electrique_kwh: 372.9841421870935
+      duree_h: 9.886111111111111
+      puissance_moyenne_kw: 37.72809530411735
+      chaleur_refroidisseurs_kwh: 240.7975008681088
+      chaleur_sup_seuil_kwh: 63.6066740849416
+      chaleur_paroi_reservoir_kwh: 40.15611955681848
+      T_finale_degC: 28.55561485560355
+      masse_stockee_kg: 1244.2121640000532
+    dormoy_charge_1_190_aspiration_chaude:
+      energie_electrique_kwh: 386.2020312405788
+      duree_h: 9.886111111111111
+      puissance_moyenne_kw: 39.06511133650137
+      chaleur_refroidisseurs_kwh: 265.8107120906433
+      chaleur_sup_seuil_kwh: 90.74362169746269
+      chaleur_paroi_reservoir_kwh: 40.18418688349971
+      T_finale_degC: 28.559948059097053
+      masse_stockee_kg: 1244.1014637381008
+    dormoy_charge_55_190:
+      energie_electrique_kwh: 267.2164657036974
+      duree_h: 6.858333333333333
+      puissance_moyenne_kw: 38.96230362629853
+      chaleur_refroidisseurs_kwh: 174.18861307223062
+      chaleur_sup_seuil_kwh: 47.49002518769224
+      chaleur_paroi_reservoir_kwh: 29.685123216716587
+      T_finale_degC: 28.555372186684792
+      masse_stockee_kg: 863.1525240000483
+  decharge:
+    dormoy_decharge_essai:
+      energie_electrique_kwh: 0.0
+      duree_min: 37.266666666666666
+      chaleur_rechauffage_kwh: 0.0
+      p_finale_bar: 49.96083864775088
+      T_finale_degC: 5.893953685832457
+      T_rejet_min_degC: 2.479470437453415
+      masse_soutiree_kg: 330.92800000003695
+      chaleur_par_source: {}
+    dormoy_decharge_base:
+      energie_electrique_kwh: 14.345370545267908
+      duree_min: 51.53333333333333
+      chaleur_rechauffage_kwh: 0.0
+      p_finale_bar: 17.9924351339059
+      T_finale_degC: -3.283971260423357
+      T_rejet_min_degC: -62.77228110744599
+      masse_soutiree_kg: 992.5320000000336
+      chaleur_rechauffage_1_kwh: 0.0
+      chaleur_par_source: {}
+    dormoy_decharge_3etages:
+      energie_electrique_kwh: 39.03853481435488
+      duree_min: 37.56666666666667
+      chaleur_rechauffage_kwh: 44.571561466812966
+      p_finale_bar: 54.97144642828523
+      T_finale_degC: 8.165839702434823
+      T_rejet_min_degC: 14.542770182758943
+      masse_soutiree_kg: 723.5340000000219
+      chaleur_rechauffage_1_kwh: 24.415901892517212
+      chaleur_rechauffage_2_kwh: 6.04684671844079
+      chaleur_rechauffage_3_kwh: 14.10881285585524
+      chaleur_par_source:
+        externe: 44.57156146681188
+  cycles:
+    A:
+      cycles: 2
+      converge: true
+      charge:
+        energie_electrique_kwh: 324.48824087946747
+        duree_h: 8.258333333333333
+        puissance_moyenne_kw: 39.29221887541483
+        chaleur_refroidisseurs_kwh: 223.63899365439926
+        chaleur_sup_seuil_kwh: 76.55101701067898
+        chaleur_paroi_reservoir_kwh: 29.289230103578237
+        T_finale_degC: 42.97780861609198
+        masse_stockee_kg: 1039.256434867402
+      decharge:
+        energie_electrique_kwh: 14.045673786714632
+        duree_min: 53.916666666666664
+        chaleur_rechauffage_kwh: 0.0
+        p_finale_bar: 17.83976148861505
+        T_finale_degC: -16.9151809982273
+        T_rejet_min_degC: -73.93019423640891
+        masse_soutiree_kg: 1038.4350000000097
+      chaleur_par_source: {}
+      chaleur_cuves_fin_kwh: 0.0
+      chaleur_cuves_charge_kwh: 0.0
+      unites_1000:
+        stock_reservoirs: 328.6300144332975
+        electricite_rendue: 43.285617218813044
+        detendeur: 241.07348946081584
+        residu_charge: -0.0021707620798719785
+        residu_decharge: 1.8525965378419705e-14
+    B:
+      cycles: 2
+      converge: false
+      charge:
+        energie_electrique_kwh: 243.90530081659386
+        duree_h: 6.05
+        puissance_moyenne_kw: 40.314925754808904
+        chaleur_refroidisseurs_kwh: 169.1055111671593
+        chaleur_sup_seuil_kwh: 58.57913258456809
+        chaleur_paroi_reservoir_kwh: 20.68234432675083
+        T_finale_degC: 40.5684454292321
+        masse_stockee_kg: 761.3523427989287
+      decharge:
+        energie_electrique_kwh: 40.87441977013092
+        duree_min: 39.333333333333336
+        chaleur_rechauffage_kwh: 51.02641960099694
+        p_finale_bar: 54.88555790573873
+        T_finale_degC: -7.84712809493351
+        T_rejet_min_degC: 14.542770182758943
+        masse_soutiree_kg: 757.5600000000086
+      chaleur_par_source:
+        externe: 51.02641960099683
+      chaleur_cuves_fin_kwh: 0.0
+      chaleur_cuves_charge_kwh: 0.0
+      unites_1000:
+        stock_reservoirs: 341.3927266928937
+        electricite_rendue: 167.58315474605735
+        detendeur: 69.87065936600844
+        residu_charge: -0.002116729414576004
+        residu_decharge: 1.2629768497237088e-14
+    C:
+      cycles: 2
+      converge: false
+      charge:
+        energie_electrique_kwh: 243.90530081659386
+        duree_h: 6.05
+        puissance_moyenne_kw: 40.314925754808904
+        chaleur_refroidisseurs_kwh: 169.1055111671593
+        chaleur_sup_seuil_kwh: 58.57913258456809
+        chaleur_paroi_reservoir_kwh: 20.68234432675083
+        T_finale_degC: 40.5684454292321
+        masse_stockee_kg: 761.3523427989287
+      decharge:
+        energie_electrique_kwh: 40.87441977013092
+        duree_min: 39.333333333333336
+        chaleur_rechauffage_kwh: 51.02641960099694
+        p_finale_bar: 54.88555790573873
+        T_finale_degC: -7.84712809493351
+        T_rejet_min_degC: 14.542770182758943
+        masse_soutiree_kg: 757.5600000000086
+      chaleur_par_source:
+        huile_ideale: 51.02641960099683
+      chaleur_cuves_fin_kwh: 0.0
+      chaleur_cuves_charge_kwh: 0.0
+      unites_1000:
+        stock_reservoirs: 341.3927266928937
+        electricite_rendue: 167.58315474605735
+        detendeur: 69.87065936600844
+        residu_charge: -0.002116729414576004
+        residu_decharge: 1.2629768497237088e-14
+    D:
+      cycles: 2
+      converge: false
+      charge:
+        energie_electrique_kwh: 239.78274624522157
+        duree_h: 6.066666666666666
+        puissance_moyenne_kw: 39.5246285019596
+        chaleur_refroidisseurs_kwh: 110.33079217911978
+        chaleur_sup_seuil_kwh: 19.340697530667214
+        chaleur_paroi_reservoir_kwh: 19.9229078122277
+        T_finale_degC: 39.88829714218889
+        masse_stockee_kg: 763.4497321730303
+      decharge:
+        energie_electrique_kwh: 40.96101811710154
+        duree_min: 39.416666666666664
+        chaleur_rechauffage_kwh: 51.25917126571299
+        p_finale_bar: 54.961720255247926
+        T_finale_degC: -8.283371707636036
+        T_rejet_min_degC: 14.542770182758943
+        masse_soutiree_kg: 759.1650000000086
+      chaleur_par_source:
+        cuve_3: 30.1109304080336
+        cuve_2: 6.344628433501538
+        cuve_1: 14.80361242417776
+      chaleur_cuves_fin_kwh: 47.074270710797656
+      chaleur_cuves_charge_kwh: 57.12669324181998
+      unites_1000:
+        stock_reservoirs: 348.3396605193214
+        electricite_rendue: 170.8255441999627
+        detendeur: 71.24775404966148
+        residu_charge: -0.0021586684905926215
+        residu_decharge: 1.2077958530611245e-14
+    E:
+      cycles: 2
+      converge: false
+      charge:
+        energie_electrique_kwh: 240.1552420754708
+        duree_h: 6.075
+        puissance_moyenne_kw: 39.53172709061248
+        chaleur_refroidisseurs_kwh: 111.88904728677328
+        chaleur_sup_seuil_kwh: 16.744526364674442
+        chaleur_paroi_reservoir_kwh: 19.993984525445033
+        T_finale_degC: 39.90153951650029
+        masse_stockee_kg: 764.498426860081
+      decharge:
+        energie_electrique_kwh: 41.00936059711063
+        duree_min: 39.5
+        chaleur_rechauffage_kwh: 51.169108078216695
+        p_finale_bar: 54.881795883760454
+        T_finale_degC: -8.329646800265039
+        T_rejet_min_degC: 1.7471843787029115
+        masse_soutiree_kg: 760.7700000000086
+      chaleur_par_source:
+        cuve_3: 30.18017658666593
+        cuve_2: 6.35804202427004
+        cuve_1: 14.630889467280651
+      chaleur_cuves_fin_kwh: 35.29310483388248
+      chaleur_cuves_charge_kwh: 54.38901856217033
+      unites_1000:
+        stock_reservoirs: 348.3250002300282
+        electricite_rendue: 170.7618798686189
+        detendeur: 71.29325059626179
+        residu_charge: -0.0021582022743970603
+        residu_decharge: 1.2033108638672666e-14
+reglages_rapide: 'A à E : 2 cycles au plus ; D et E : 15 cellules par cuve'
+complet:
+  A:
+    cycles: 2
+    converge: true
+    charge:
+      energie_electrique_kwh: 324.48824087946747
+      duree_h: 8.258333333333333
+      puissance_moyenne_kw: 39.29221887541483
+      chaleur_refroidisseurs_kwh: 223.63899365439926
+      chaleur_sup_seuil_kwh: 76.55101701067898
+      chaleur_paroi_reservoir_kwh: 29.289230103578237
+      T_finale_degC: 42.97780861609198
+      masse_stockee_kg: 1039.256434867402
+    decharge:
+      energie_electrique_kwh: 14.045673786714632
+      duree_min: 53.916666666666664
+      chaleur_rechauffage_kwh: 0.0
+      p_finale_bar: 17.83976148861505
+      T_finale_degC: -16.9151809982273
+      T_rejet_min_degC: -73.93019423640891
+      masse_soutiree_kg: 1038.4350000000097
+    chaleur_par_source: {}
+    chaleur_cuves_fin_kwh: 0.0
+    chaleur_cuves_charge_kwh: 0.0
+    unites_1000:
+      stock_reservoirs: 328.6300144332975
+      electricite_rendue: 43.285617218813044
+      detendeur: 241.07348946081584
+      residu_charge: -0.0021707620798719785
+      residu_decharge: 1.8525965378419705e-14
+  B:
+    cycles: 3
+    converge: true
+    charge:
+      energie_electrique_kwh: 243.24140253442565
+      duree_h: 6.033333333333333
+      puissance_moyenne_kw: 40.31625456371696
+      chaleur_refroidisseurs_kwh: 168.64666901483983
+      chaleur_sup_seuil_kwh: 58.42138212495413
+      chaleur_paroi_reservoir_kwh: 20.539317811022595
+      T_finale_degC: 40.2044390288458
+      masse_stockee_kg: 759.2549534248269
+    decharge:
+      energie_electrique_kwh: 40.96101811710154
+      duree_min: 39.416666666666664
+      chaleur_rechauffage_kwh: 51.20451488187212
+      p_finale_bar: 54.83174815079064
+      T_finale_degC: -8.114038636408907
+      T_rejet_min_degC: 14.542770182758943
+      masse_soutiree_kg: 759.1650000000086
+    chaleur_par_source:
+      externe: 51.204514881871944
+    chaleur_cuves_fin_kwh: 0.0
+    chaleur_cuves_charge_kwh: 0.0
+    unites_1000:
+      stock_reservoirs: 341.5745757261821
+      electricite_rendue: 168.3965710208581
+      detendeur: 70.1785198708311
+      residu_charge: -0.002116662862032986
+      residu_decharge: 1.343057747311469e-14
+  C:
+    cycles: 3
+    converge: true
+    charge:
+      energie_electrique_kwh: 243.24140253442565
+      duree_h: 6.033333333333333
+      puissance_moyenne_kw: 40.31625456371696
+      chaleur_refroidisseurs_kwh: 168.64666901483983
+      chaleur_sup_seuil_kwh: 58.42138212495413
+      chaleur_paroi_reservoir_kwh: 20.539317811022595
+      T_finale_degC: 40.2044390288458
+      masse_stockee_kg: 759.2549534248269
+    decharge:
+      energie_electrique_kwh: 40.96101811710154
+      duree_min: 39.416666666666664
+      chaleur_rechauffage_kwh: 51.20451488187212
+      p_finale_bar: 54.83174815079064
+      T_finale_degC: -8.114038636408907
+      T_rejet_min_degC: 14.542770182758943
+      masse_soutiree_kg: 759.1650000000086
+    chaleur_par_source:
+      huile_ideale: 51.204514881871944
+    chaleur_cuves_fin_kwh: 0.0
+    chaleur_cuves_charge_kwh: 0.0
+    unites_1000:
+      stock_reservoirs: 341.5745757261821
+      electricite_rendue: 168.3965710208581
+      detendeur: 70.1785198708311
+      residu_charge: -0.002116662862032986
+      residu_decharge: 1.343057747311469e-14
+  D:
+    cycles: 4
+    converge: true
+    charge:
+      energie_electrique_kwh: 239.46280723258198
+      duree_h: 6.05
+      puissance_moyenne_kw: 39.58062929464165
+      chaleur_refroidisseurs_kwh: 115.51737937302505
+      chaleur_sup_seuil_kwh: 22.65845244555608
+      chaleur_paroi_reservoir_kwh: 19.88767873260749
+      T_finale_degC: 39.64145167474197
+      masse_stockee_kg: 761.3523427989285
+    decharge:
+      energie_electrique_kwh: 41.047616464072156
+      duree_min: 39.5
+      chaleur_rechauffage_kwh: 51.41948996880251
+      p_finale_bar: 54.927147915413855
+      T_finale_degC: -8.483511563548745
+      T_rejet_min_degC: 14.542770182758943
+      masse_soutiree_kg: 760.7700000000086
+    chaleur_par_source:
+      cuve_3: 30.2265382425023
+      cuve_2: 6.35804202427004
+      cuve_1: 14.834909702030146
+    chaleur_cuves_fin_kwh: 48.09787662922334
+    chaleur_cuves_charge_kwh: 51.56808438261269
+    unites_1000:
+      stock_reservoirs: 348.05168555573476
+      electricite_rendue: 171.41541493833748
+      detendeur: 71.49420033377
+      residu_charge: -0.00215543442057729
+      residu_decharge: 1.3090964855172893e-14
+  E:
+    cycles: 4
+    converge: true
+    charge:
+      energie_electrique_kwh: 239.4261943070605
+      duree_h: 6.05
+      puissance_moyenne_kw: 39.574577571414956
+      chaleur_refroidisseurs_kwh: 115.61504809846689
+      chaleur_sup_seuil_kwh: 19.030265365839075
+      chaleur_paroi_reservoir_kwh: 19.897126106701364
+      T_finale_degC: 39.60580905488172
+      masse_stockee_kg: 761.3523427989285
+    decharge:
+      energie_electrique_kwh: 41.01370799194411
+      duree_min: 39.5
+      chaleur_rechauffage_kwh: 51.246231388216266
+      p_finale_bar: 54.98366191175104
+      T_finale_degC: -8.500590547095612
+      T_rejet_min_degC: 2.3717538248524193
+      masse_soutiree_kg: 760.7700000000086
+    chaleur_par_source:
+      cuve_3: 30.23411979089211
+      cuve_2: 6.35804202427004
+      cuve_1: 14.654069573054011
+    chaleur_cuves_fin_kwh: 36.59862235273794
+    chaleur_cuves_charge_kwh: 50.213017918873035
+    unites_1000:
+      stock_reservoirs: 348.15107821924096
+      electricite_rendue: 171.30000378882792
+      detendeur: 71.5448536674026
+      residu_charge: -0.0021557605718653407
+      residu_decharge: 1.1749670851464231e-14
+reglages_complet: réglages de la phase 5 (scenarios/v1)
+origine: généré par tests/reference/generer_reference_phases_1_5.py avec caes.systeme
+  et caes.integre (modules des phases 1 à 5)

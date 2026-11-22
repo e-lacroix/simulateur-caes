@@ -11,51 +11,83 @@ description: >
 ambiance:
   T_amb: registre:ambiance.T_amb_essai_charge
   p_amb: registre:ambiance.p_amb_essai
+  humidite_relative: registre:ambiance.humidite_relative_essai
   T_aspiration: registre:ambiance.T_amb_essai_charge
 
-compresseur:
-  debit_volumique_aspire: registre:compresseur.debit_volumique_entree
-  debit_massique_aspire: registre:compresseur.debit_massique_entree_moyen
-  rendement_volumetrique: registre:compresseur.rendement_volumetrique
-  rendement_electrique: registre:compresseur.rendement_electrique#moyen
-  rendement_mecanique_min: registre:compresseur.rendement_mecanique#min
-  rendement_mecanique_max: registre:compresseur.rendement_mecanique#max
-  pression_refoulement_min: registre:compresseur.pression_refoulement_min
-  etages:
-    - indice_polytropique: registre:compresseur.indice_polytropique_etage1
-      rapport_pression: registre:compresseur.rapport_compression_etage1
-    - indice_polytropique: registre:compresseur.indice_polytropique_etage2
-      rapport_pression: registre:compresseur.rapport_compression_etage2
-    - indice_polytropique: registre:compresseur.indice_polytropique_etage3
-      rapport_pression_min: registre:compresseur.rapport_compression_etage3#min
-      rapport_pression_max: registre:compresseur.rapport_compression_etage3#max
-    - indice_polytropique: registre:compresseur.indice_polytropique_etage4
+composants:
+  compresseur:
+    type: compresseur
+    modele: polytropique_dormoy
+    debit_volumique_aspire: registre:compresseur.debit_volumique_entree
+    debit_massique_aspire: registre:compresseur.debit_massique_entree_moyen
+    rendement_electrique: registre:compresseur.rendement_electrique#moyen
+    rendement_mecanique_min: registre:compresseur.rendement_mecanique#min
+    rendement_mecanique_max: registre:compresseur.rendement_mecanique#max
+    pression_refoulement_min: registre:compresseur.pression_refoulement_min
+    pression_refoulement_max: registre:compresseur.pression_refoulement_max
+    etages:
+      - indice_polytropique: registre:compresseur.indice_polytropique_etage1
+        rapport_pression: registre:compresseur.rapport_compression_etage1
+      - indice_polytropique: registre:compresseur.indice_polytropique_etage2
+        rapport_pression: registre:compresseur.rapport_compression_etage2
+      - indice_polytropique: registre:compresseur.indice_polytropique_etage3
+        rapport_pression_min: registre:compresseur.rapport_compression_etage3#min
+        rapport_pression_max: registre:compresseur.rapport_compression_etage3#max
+      - indice_polytropique: registre:compresseur.indice_polytropique_etage4
 
-refroidisseurs:
-  efficacites:
-    - registre:refroidisseur.efficacite_etage1
-    - registre:refroidisseur.efficacite_etage2
-    - registre:refroidisseur.efficacite_etage3
-  efficacite_dernier_min: registre:refroidisseur.efficacite_etage4#min
-  efficacite_dernier_max: registre:refroidisseur.efficacite_etage4#max
-  T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_1:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage1
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_2:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage2
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_3:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage3
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_4:
+    type: refroidisseur
+    modele: efficacite
+    efficacite_min: registre:refroidisseur.efficacite_etage4#min
+    efficacite_max: registre:refroidisseur.efficacite_etage4#max
+    p_min: registre:compresseur.pression_refoulement_min
+    p_max: registre:compresseur.pression_refoulement_max
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
 
-secheur:
-  efficacite: registre:secheur.efficacite
-  debit_massique_reservoir_impose: null
+  refoulement:
+    type: perte_debit
+    modele: fraction
+    fraction_conservee: registre:compresseur.rendement_volumetrique
 
-reservoir:
-  volume: registre:reservoir.volume_total
-  surface: registre:reservoir.surface_equivalente_totale
-  modele_thermique: K_global
-  K_global: registre:reservoir.K_global
-  h_int: registre:reservoir.h_conv_int
-  h_ext: registre:reservoir.h_conv_ext
-  capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
-  p_initiale: registre:charge_55_190.pression_min
-  T_initiale: registre:ambiance.T_amb_essai_charge
+  secheur:
+    type: secheur
+    modele: perte_debit
+    efficacite: registre:secheur.efficacite
+    point_de_rosee_sortie: registre:secheur.point_de_rosee_sortie
+    debit_sortie_impose: null
 
-simulation:
+  reservoir:
+    type: reservoir_air
+    modele: K_global
+    volume: registre:reservoir.volume_total
+    surface: registre:reservoir.surface_equivalente_totale
+    K_global: registre:reservoir.K_global
+    h_int: registre:reservoir.h_conv_int
+    h_ext: registre:reservoir.h_conv_ext
+    capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+
+charge:
+  chaine: [compresseur.1, refroidisseur_1, compresseur.2, refroidisseur_2,
+           compresseur.3, refroidisseur_3, compresseur.4, refroidisseur_4,
+           refoulement, secheur, reservoir]
+  reservoir_initial:
+    p: registre:charge_55_190.pression_min
+    T: registre:ambiance.T_amb_essai_charge
   p_cible: registre:essai_charge.pression_finale
   dt:
     valeur: 10
@@ -65,3 +97,6 @@ simulation:
     valeur: 24
     unite: h
     source: garde-fou contre une boucle infinie
+
+simulation:
+  mode: charge

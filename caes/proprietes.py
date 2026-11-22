@@ -73,6 +73,16 @@ class Air(ABC):
         """Température [K] à partir de la pression et de l'enthalpie."""
 
     @abstractmethod
+    def T_de_p_s(self, p_abs_pa: float, s: float) -> float:
+        """Température [K] à partir de la pression et de l'entropie."""
+
+    def gamma(self, p_abs_pa: float, T_K: float) -> float:
+        """Rapport cp/cv à l'état (p, T) [-] (exposant isentropique du
+        gaz parfait équivalent)."""
+        rho = self.rho(p_abs_pa, T_K)
+        return self.cp(p_abs_pa, T_K) / self.cv_de_rho_T(rho, T_K)
+
+    @abstractmethod
     def mu(self, p_abs_pa: float, T_K: float) -> float:
         """Viscosité dynamique [Pa·s]."""
 
@@ -171,6 +181,10 @@ class AirReel(Air):
         self._etat.update(CP.HmassP_INPUTS, h, p_abs_pa)
         return self._etat.T()
 
+    def T_de_p_s(self, p_abs_pa: float, s: float) -> float:
+        self._etat.update(CP.PSmass_INPUTS, p_abs_pa, s)
+        return self._etat.T()
+
     def mu(self, p_abs_pa: float, T_K: float) -> float:
         self._etat.update(CP.PT_INPUTS, p_abs_pa, T_K)
         return self._etat.viscosity()
@@ -257,6 +271,9 @@ class AirParfait(Air):
 
     def T_de_p_h(self, p_abs_pa: float, h: float) -> float:
         return h / self._cp
+
+    def T_de_p_s(self, p_abs_pa: float, s: float) -> float:
+        return math.exp((s + self.R * math.log(p_abs_pa)) / self._cp)
 
 
 def air_par_defaut() -> Air:

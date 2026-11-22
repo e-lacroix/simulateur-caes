@@ -1,0 +1,102 @@
+# Fichier généré par scenarios/variantes/generer_variantes.py : ne pas éditer à la main.
+nom: charge_refroidisseur_perte_de_charge
+description: 'Charge avec compresseur isentropique (Shi) et refroidisseurs à pincement
+  de 10 K avec 0,04 MPa de perte de charge chacun (Shi 2024) : les étages libres
+  compensent les pertes.'
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+  humidite_relative: registre:ambiance.humidite_relative_essai
+  T_aspiration:
+    valeur: 52
+    unite: degC
+    source: 'déduite du débit aspiré mesuré (registre compresseur.debit_massique_entree_moyen,
+      0,052 kg/s) et du débit volumique de 172,4 m3/h à 1,013 bar ; hypothèse «
+      air du conteneur réchauffé par le compresseur »
+
+      '
+composants:
+  compresseur:
+    type: compresseur
+    modele: isentropique
+    debit_volumique_aspire: registre:compresseur.debit_volumique_entree
+    debit_massique_aspire: null
+    rendement_electrique: registre:compresseur.rendement_electrique#moyen
+    rendement_mecanique: registre:compresseur.rendement_mecanique#moyen
+    rendement_isentropique: registre:shi.compresseur.rendement_isentropique
+    pression_refoulement_min: registre:compresseur.pression_refoulement_min
+    etages:
+    - rapport_pression: registre:compresseur.rapport_compression_etage1
+    - rapport_pression: registre:compresseur.rapport_compression_etage2
+    - {}
+    - {}
+  refroidisseur_1:
+    type: refroidisseur
+    modele: pincement
+    pincement: registre:shi.pincement
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+    perte_de_charge: registre:shi.perte_charge_echangeur
+  refroidisseur_2:
+    type: refroidisseur
+    modele: pincement
+    pincement: registre:shi.pincement
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+    perte_de_charge: registre:shi.perte_charge_echangeur
+  refroidisseur_3:
+    type: refroidisseur
+    modele: pincement
+    pincement: registre:shi.pincement
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+    perte_de_charge: registre:shi.perte_charge_echangeur
+  refroidisseur_4:
+    type: refroidisseur
+    modele: pincement
+    pincement: registre:shi.pincement
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+    perte_de_charge: registre:shi.perte_charge_echangeur
+  refoulement:
+    type: perte_debit
+    modele: fraction
+    fraction_conservee: registre:compresseur.rendement_volumetrique
+  secheur:
+    type: secheur
+    modele: perte_debit
+    efficacite: registre:secheur.efficacite
+    point_de_rosee_sortie: registre:secheur.point_de_rosee_sortie
+    debit_sortie_impose: null
+  reservoir:
+    type: reservoir_air
+    modele: K_global
+    volume: registre:reservoir.volume_total
+    surface: registre:reservoir.surface_equivalente_totale
+    K_global: registre:reservoir.K_global
+    h_int: registre:reservoir.h_conv_int
+    h_ext: registre:reservoir.h_conv_ext
+    capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+charge:
+  chaine:
+  - compresseur.1
+  - refroidisseur_1
+  - compresseur.2
+  - refroidisseur_2
+  - compresseur.3
+  - refroidisseur_3
+  - compresseur.4
+  - refroidisseur_4
+  - refoulement
+  - secheur
+  - reservoir
+  reservoir_initial:
+    p: registre:essai_charge.pression_initiale
+    T: registre:ambiance.T_amb_essai_charge
+  p_cible: registre:essai_charge.pression_finale
+  dt:
+    valeur: 10
+    unite: s
+    source: choix numérique ; l'écart avec dt = 1 s est inférieur à 0,1 % (tests)
+  duree_max:
+    valeur: 24
+    unite: h
+    source: garde-fou contre une boucle infinie
+simulation:
+  mode: charge

@@ -37,6 +37,9 @@ class Scenario:
     valeurs: dict[str, Any]
     provenance: dict[str, str] = field(default_factory=dict)
     chemin: Path | None = None
+    references: dict[str, str] = field(default_factory=dict)
+    """Chemin pointé → identifiant du registre, pour les feuilles qui
+    en viennent (sert au fichier ``provenance.md`` de la phase 6)."""
 
     def __getitem__(self, cle: str) -> Any:
         """Accès par chemin pointé : ``sc["reservoir.volume"]``."""
@@ -112,11 +115,15 @@ def _convertir(valeur: float, unite: str) -> float:
 
 
 def _resoudre(
-    noeud: Any, chemin: str, registre: Registre, provenance: dict[str, str]
+    noeud: Any, chemin: str, registre: Registre, provenance: dict[str, str],
+    references: dict[str, str] | None = None,
 ) -> Any:
     if isinstance(noeud, str) and noeud.startswith(PREFIXE_REGISTRE):
         val, prov = _resoudre_registre(noeud, registre)
         provenance[chemin] = prov
+        if references is not None:
+            references[chemin] = (
+                noeud[len(PREFIXE_REGISTRE):].split("#", 1)[0])
         return val
     if isinstance(noeud, dict):
         if "valeur" in noeud and "unite" in noeud:
@@ -129,13 +136,14 @@ def _resoudre(
         return {
             cle: _resoudre(
                 sous, f"{chemin}.{cle}" if chemin else cle, registre,
-                provenance,
+                provenance, references,
             )
             for cle, sous in noeud.items()
         }
     if isinstance(noeud, list):
         return [
-            _resoudre(sous, f"{chemin}.{i}", registre, provenance)
+            _resoudre(sous, f"{chemin}.{i}", registre, provenance,
+                      references)
             for i, sous in enumerate(noeud)
         ]
     if isinstance(noeud, (int, float)) and not isinstance(noeud, bool):
@@ -156,11 +164,13 @@ def charger_scenario(
     nom = brut.pop("nom", chemin.stem)
     description = brut.pop("description", "")
     provenance: dict[str, str] = {}
-    valeurs = _resoudre(brut, "", reg, provenance)
+    references: dict[str, str] = {}
+    valeurs = _resoudre(brut, "", reg, provenance, references)
     return Scenario(
         nom=nom,
         description=description,
         valeurs=valeurs,
         provenance=provenance,
         chemin=chemin,
+        references=references,
     )

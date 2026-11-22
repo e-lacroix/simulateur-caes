@@ -14,7 +14,7 @@ def registre() -> Registre:
 
 
 def test_scenario_dormoy_se_charge_en_si(registre: Registre) -> None:
-    sc = charger_scenario("dormoy_charge_1_190.yaml", registre)
+    sc = charger_scenario("v1/dormoy_charge_1_190.yaml", registre)
     assert sc.nom == "dormoy_charge_1_190"
     assert sc["simulation.p_cible"] == pytest.approx(190e5)
     assert sc["ambiance.T_amb"] == pytest.approx(293.15)
@@ -26,7 +26,7 @@ def test_scenario_dormoy_se_charge_en_si(registre: Registre) -> None:
 
 
 def test_provenance_est_tracee(registre: Registre) -> None:
-    sc = charger_scenario("dormoy_charge_1_190.yaml", registre)
+    sc = charger_scenario("v1/dormoy_charge_1_190.yaml", registre)
     prov = sc.provenance["reservoir.volume"]
     assert "reservoir.volume_total" in prov
     assert "fabricant" in prov
@@ -35,7 +35,7 @@ def test_provenance_est_tracee(registre: Registre) -> None:
 
 
 def test_avec_modifie_une_copie(registre: Registre) -> None:
-    sc = charger_scenario("dormoy_charge_1_190.yaml", registre)
+    sc = charger_scenario("v1/dormoy_charge_1_190.yaml", registre)
     sc2 = sc.avec({"ambiance.T_aspiration": 325.15}, "chaud")
     assert sc2["ambiance.T_aspiration"] == 325.15
     assert sc["ambiance.T_aspiration"] == pytest.approx(293.15)

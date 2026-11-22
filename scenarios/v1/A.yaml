@@ -1,0 +1,14 @@
+# Architecture A : base de Dormoy, un étage de détente, sans réchauffage.
+nom: A
+description: Base Dormoy, 1 étage (étage 3 DEPRAG), détendeur à 3 bar, arrêt à 18 bar.
+architecture: A
+charge: v1/dormoy_charge_1_190_aspiration_chaude.yaml
+decharge: v1/dormoy_decharge_base.yaml
+pression_arret: registre:cas_base.pression_arret
+cycles:
+  nombre_max: 4
+  tolerance: 0.01
+  attente:
+    valeur: 1
+    unite: h
+    source: attente courte entre charge et décharge (choix de la phase 5)

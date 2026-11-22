@@ -15,7 +15,7 @@ def registre() -> Registre:
 
 @pytest.fixture(scope="module")
 def scenario(registre: Registre) -> Scenario:
-    return charger_scenario("dormoy_charge_1_190.yaml", registre)
+    return charger_scenario("v1/dormoy_charge_1_190.yaml", registre)
 
 
 @pytest.fixture(scope="module")
@@ -93,7 +93,7 @@ def test_charge_partielle_plus_courte(
     registre: Registre, resultat: ResultatCharge
 ) -> None:
     partiel = simuler_charge(
-        charger_scenario("dormoy_charge_55_190.yaml", registre)
+        charger_scenario("v1/dormoy_charge_55_190.yaml", registre)
     )
     assert partiel.totaux["duree_h"] < resultat.totaux["duree_h"]
     assert partiel.totaux["chaleur_refroidisseurs_kwh"] < (

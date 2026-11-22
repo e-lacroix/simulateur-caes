@@ -8,3 +8,4 @@ dist/
 rapports/**/*.png
 rapports/**/*.pdf
 .obsidian/
+resultats/

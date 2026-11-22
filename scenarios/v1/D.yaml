@@ -1,0 +1,37 @@
+# Architecture D : 3 étages, gravier direct. Une cuve après les étages de
+# compression 1, 2 et 3 (≈ 3, 12 et 50 bar), traversée par l'air comprimé
+# avant le refroidisseur. En décharge : cuve 3 → turbine 1, cuve 2 →
+# turbine 2, cuve 1 → turbine 3, avec bypass pour ne pas dépasser la cible.
+nom: D
+description: 3 étages, cuves de gravier traversées directement par l'air comprimé (cas C de Tola).
+architecture: D
+charge: v1/dormoy_charge_1_190_aspiration_chaude.yaml
+decharge: v1/dormoy_decharge_3etages.yaml
+pression_arret: registre:charge_55_190.pression_min
+cuves:
+  materiau: gravier_tola
+  # Volumes de base (m3), calcul personnel : besoin de chaque turbine
+  # (15,0 / 6,4 / 24,8 kWh pour les cuves 1 / 2 / 3, tableau 5 de Dormoy)
+  # divisé par 0,48 kWh/(m3·K) (gravier de Tola), par l'écart de
+  # température utile (≈ 147 / 120 / 150 K) et par un taux d'utilisation
+  # du lit de 0,6 (front thermique). Le script de la phase 5 balaie un
+  # facteur multiplicatif pour trouver l'optimum.
+  volumes: [0.35, 0.2, 0.7]
+  rapport_hauteur_diametre: 2
+  n_cellules: 30
+  pincement:
+    valeur: 0
+    unite: K
+    source: passage direct, pas d'échangeur
+  coefficient_perte:
+    valeur: 0
+    unite: W/m2K
+    source: isolation parfaite en phase 5 ; les pertes sont l'objet de la phase 6
+  bypass: true
+cycles:
+  nombre_max: 6
+  tolerance: 0.01
+  attente:
+    valeur: 1
+    unite: h
+    source: attente courte entre charge et décharge (choix de la phase 5)

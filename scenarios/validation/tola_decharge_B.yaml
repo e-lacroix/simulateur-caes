@@ -1,0 +1,75 @@
+# Chaîne de détente de Tola et al. (2022), cas B (même chaîne que le cas C, température d'entrée du tableau 6) : trois
+# turbines à rendement polytropique 0,86, air réchauffé à 170 °C avant
+# chaque étage, 24,5 kg/s pendant 3 h, caverne de 6500 m3 de 10 à 6,4 MPa.
+# Pas de détendeur : les étages se partagent le rapport total à parts
+# égales (Tola : « shared out among the three turbines »), qui glisse avec
+# la pression de la caverne. Le réchauffage est une source externe à la
+# température des cuves de Tola (le lit de gravier est validé à part,
+# phase 4) : les énergies du tableau 9 (9,41 / 9,53 / 9,54, total 28,48 MWh)
+# incluent la fin de décharge des cuves, pas ce scénario. Cas A et B :
+# mêmes fichiers avec 130 et 150 °C.
+
+nom: tola_decharge_B
+description: >
+  Détente de Tola 2022, cas B : trois turbines polytropiques (0,86) à
+  170 °C, pression glissante à répartition égale, 24,5 kg/s, 10 → 6,4 MPa.
+
+ambiance:
+  T_amb: registre:tola.T_amb
+  p_amb: registre:tola.p_amb
+  humidite_relative: registre:ambiance.humidite_relative_essai
+
+composants:
+  reservoir:
+    # Tola suppose un gaz parfait entre 15 et 55 °C dans la caverne (470 t
+    # à 6,4 MPa, 735 t à 10 MPa : masse volumique d'un air à ≈ 35 °C). Une
+    # caverne adiabatique chaufferait trop (charge en 3,9 h au lieu de 6) :
+    # modèle à échange fort avec l'ambiant, quasi isotherme (hypothèse).
+    type: reservoir_air
+    modele: K_global
+    volume: registre:tola.cave.volume
+    surface:
+      valeur: 1700
+      unite: m2
+      source: calcul personnel, sphère équivalente de 6500 m3
+    K_global:
+      valeur: 1000
+      unite: W/m2K
+      source: hypothèse « caverne quasi isotherme » (constante de temps ≈ 4 min), Tola ne décrit pas le modèle thermique
+  detendeur:
+    type: detente
+    modele: pression_glissante
+    p_min: registre:tola.cave.pression_min
+  chaudiere:
+    type: stockage_chaleur
+    modele: source_externe
+  turbine:
+    type: turbine
+    modele: polytropique_rendement
+    debit_massique: registre:tola.turbine.debit
+    rendement_polytropique: registre:tola.turbine.rendement_polytropique
+    rendement_mecanique:
+      valeur: 1
+      unite: "-"
+      source: Tola ne distingue pas de rendement mécanique
+    rendement_electrique: registre:tola.rendement_moteur_generateur
+    pression_sortie_finale: registre:tola.p_amb
+    etages:
+      - T_entree_cible: registre:tola.turbine.T_entree_cas_B
+      - T_entree_cible: registre:tola.turbine.T_entree_cas_B
+      - T_entree_cible: registre:tola.turbine.T_entree_cas_B
+
+decharge:
+  chaine: [reservoir, detendeur, chaudiere, turbine.1, chaudiere, turbine.2,
+           chaudiere, turbine.3]
+  reservoir_initial:
+    p: registre:tola.cave.pression_max
+    T: registre:tola.cave.T_min
+  dt:
+    valeur: 60
+    unite: s
+    source: choix numérique (décharge de 3 h)
+  duree_max: registre:tola.tes.duree_decharge
+
+simulation:
+  mode: decharge

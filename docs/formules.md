@@ -35,8 +35,24 @@
 | F27 | Coefficient d'échange air-cailloux : Wakao et Jeffreson | `caes/lit_gravier.py` | 4 |
 | F28 | Perte de charge d'Ergun | `caes/lit_gravier.py` | 4 |
 | F29 | Conduction axiale et pertes latérales du lit | `caes/lit_gravier.py` | 4 |
-| F30 | Couplage des cuves au banc : charge, bypass, pincement | `caes/integre.py` | 5 |
-| F31 | Exergie d'un lit de gravier | `caes/integre.py` | 5 |
+| F30 | Couplage des cuves au banc : charge, bypass, pincement | `caes/integre.py`, `caes/composants/stockage_chaleur.py` | 5 |
+| F31 | Exergie d'un lit de gravier | `caes/integre.py`, `caes/composants/stockage_chaleur.py` | 5 |
+| F32 | Conditions ambiantes : profil météo et air aspiré | `caes/ambiance.py` | 6 |
+| F33 | Assemblage d'une installation : chaînes, segments, liaisons | `caes/assembleur.py` | 6 |
+| F34 | Compression et détente à rendement isentropique | `caes/composants/compresseur/rendement.py`, `caes/composants/turbine/rendement.py` | 7 |
+| F35 | Compression et détente à rendement polytropique | `caes/composants/compresseur/rendement.py`, `caes/composants/turbine/rendement.py` | 7 |
+| F36 | Compression isotherme : borne inférieure du travail (éq. 8 de Baniamerian) | `caes/composants/compresseur/isotherme.py` | 7 |
+| F37 | Refroidisseur à pincement et perte de charge | `caes/composants/refroidisseur/pincement.py` | 7 |
+| F38 | Réservoir adiabatique et surpression d'entrée | `caes/composants/reservoir_air/__init__.py` | 7 |
+| F39 | Pression glissante et formule de Flügel (ellipse de Stodola) | `caes/composants/turbine/flugel.py` | 7 |
+| F40 | Stockage de chaleur à deux réservoirs de liquide (huile, eau sous pression) | `caes/composants/stockage_chaleur/deux_reservoirs.py` | 7 |
+| F41 | Pertes à travers un isolant : U = 1/(e/k + 1/h) | `caes/composants/isolation.py` | 7 |
+| F42 | Air humide : teneur en eau et saturation sous pression | `caes/composants/humidite.py` | 9 |
+| F43 | Point de rosée, condensation, givre, séparateur et sécheur | `caes/composants/humidite.py`, `caes/composants/secheur/`, `caes/composants/reservoir_air/` | 9 |
+| F44 | Masse d'un réservoir à paroi mince : m = S·p·(2 V_cyl + 1,5 V_fonds)/(σ/ρ) | `caes/analyse/masse.py` | 10 |
+| F45 | Sensibilité : un paramètre à la fois, indices de Sobol, propagation des incertitudes | `caes/analyse/sensibilite.py`, `caes/analyse/incertitudes.py` | 10 |
+| F46 | Dominance de Pareto et NSGA-II | `caes/analyse/pareto.py` | 10 |
+| F47 | Répartition d'une flotte de modules sur une demande variable | `caes/flotte.py` | 11 |
 
 ---
 
@@ -298,6 +314,7 @@ L'étage 4 prend le reste : β₄ = (p_refoulement / p_amb) / (β₁ · β₂ ·
 **Formule.** Sur un pas Δt :
 - masse : Δm = (ṁ_in − ṁ_out) · Δt ;
 - énergie : ΔU = ṁ_in · h_in · Δt − ṁ_out · h_out · Δt − Q_perte (éq. 13–14) ;
+- fuite lente pendant une attente (phase 11) : ṁ_out = f · m / 86 400 s, avec f la fraction de la masse perdue par jour (`fuite_par_jour`, 0 par défaut ; 0,5 %/j au registre, hypothèse) ; l'air qui fuit emporte son enthalpie à l'état du réservoir, comme un soutirage ;
 - pertes, modèle « K global » : Q_perte = K · A · (T − T_amb) · Δt, K = 8,8 W/(m²·K) ;
 - pertes, modèle « paroi » (éq. 21) : Q_perte = h_int · A · (T − T_paroi) · Δt, et la paroi évolue selon C_paroi · ΔT_paroi = h_int·A·(T − T_paroi)·Δt − h_ext·A·(T_paroi − T_amb)·Δt ;
 - puis T = T(ρ = m/V, u = U/m) par l'équation d'état (F02, méthode de Newton) et p = p(ρ, T).
@@ -329,7 +346,7 @@ E_él = (E_él − E_pol) + Q_poly + Q_refroidisseurs + E_air_perdu + Q_paroi + 
 - Q_refroidisseurs = ∫ ṁ_asp · Σ q_ref,i dt (F09) ;
 - E_air_perdu = ∫ (ṁ_asp − ṁ_rés) · (h_sortie − h_amb) dt : enthalpie emportée par l'air rejeté (volumétrique + sécheur) ;
 - Q_paroi = ∫ Q̇_perte dt (F12) ;
-- E_stockée = ΔU_réservoir − m_entrée · h_amb : énergie interne gagnée par le réservoir, comptée par rapport à l'enthalpie de l'air aspiré.
+- E_stockée = ΔU_réservoir − ∫ ṁ_rés · h_amb(t) dt : énergie interne gagnée par le réservoir, comptée par rapport à l'enthalpie de l'air aspiré (constante sans profil météo, d'où m_entrée · h_amb).
 
 **Niveau.** Loi fondamentale (premier principe sur le système complet).
 
@@ -341,7 +358,7 @@ E_él = (E_él − E_pol) + Q_poly + Q_refroidisseurs + E_air_perdu + Q_paroi + 
 
 **Exemple à la main.** Scénario A du rapport de validation : 373 kWh électriques = 124 (pertes moteur et mécanique) + 7 (chaleur de compression) + 241 (refroidisseurs) + 0,5 (air rejeté) + 40 (parois) − 39 (air stocké, négatif car il finit à peu près à l'ambiant avec une énergie interne massique inférieure à l'enthalpie entrée) = 373 kWh.
 
-**Source.** Convention du projet ; `caes/systeme.py`, fonction `simuler_charge`.
+**Source.** Convention du projet ; `caes/systeme.py`, fonction `simuler_charge` ; `caes/assembleur.py`, méthode `Installation.simuler_charge` (phase 6, chaîne de composants quelconque : les termes sont sommés maillon par maillon).
 
 ---
 
@@ -740,6 +757,370 @@ Sens = +1 : l'air entre en haut (charge) ; −1 : par le bas (décharge).
 **Exemple à la main.** 500 kg de gravier (C = 450 kJ/K) à 180 °C (453 K), ambiant 293 K : Ex = 450 × [(453 − 293) − 293 × ln(453/293)] = 450 × [160 − 293 × 0,4357] = 450 × 32,3 = **14,5 MJ = 4,0 kWh**, pour 20 kWh de chaleur stockée : la chaleur à 180 °C vaut 20 % de son énergie en travail.
 
 **Source.** Thermodynamique classique ; `caes/integre.py`, `exergie_cuve`.
+
+---
+
+## F32 : conditions ambiantes, profil météo et air aspiré
+
+**En bref.** Tout ce qui, dans l'installation, touche l'air extérieur lit la même fiche météo : les refroidisseurs y prennent leur air froid, le réservoir et les cuves y perdent leur chaleur, le compresseur y aspire son air, et le bilan d'exergie s'en sert comme « zéro ». C'est comme un thermostat unique pour toute la maison : on change un seul réglage et toutes les pièces suivent. Avec un profil météo, la température extérieure peut varier d'heure en heure pendant un transport de plusieurs semaines.
+
+**Formule.**
+- Sans profil : T_amb(t) = T_amb ; T_asp(t) = T_asp (par défaut T_amb).
+- Avec profil (points (tₖ, Tₖ) d'un CSV) : T_amb(t) = interpolation linéaire entre les points, bloquée aux bornes ; T_asp(t) = T_amb(t) + (T_asp − T_amb) : l'écart déclaré entre l'air aspiré et l'ambiant est conservé.
+- p_amb constante ; humidité relative φ (sans dimension) conservée pour le module humidité (phase 9).
+- État mort de l'exergie (F21 à F24) : (T₀, p₀) = (T_amb du bloc, p_amb), constant pendant une simulation.
+
+**Niveau.** Convention de modélisation (interpolation linéaire).
+
+**D'où elle vient.** Règle du plan v2 (21 novembre 2026) : les composants n'ont pas d'autre source de température ambiante. L'écart conservé pour l'air aspiré vient de la phase 1 : le compresseur de Dormoy aspire l'air du conteneur, réchauffé de ≈ 32 K par les machines ; cet échauffement dépend de la machine, pas de la saison.
+
+**Hypothèses et validité.** Le profil ne fait varier que la température (pas la pression ni l'humidité). L'état mort de l'exergie reste celui du bloc, même avec un profil : un bilan d'exergie avec T₀ variable n'a pas de sens simple. `Ambiance.verifier_validite` avertit en dehors de −50 à 50 °C et de 0,5 à 1,1 bar.
+
+**Pourquoi.** Alternative : donner à chaque composant sa propre température (comme dans les scénarios des phases 1 à 5, où `T_froid` des refroidisseurs et `T_amb` du réservoir étaient deux clés distinctes mais égales). Une seule source évite les incohérences et permet de comparer l'hiver et l'été en changeant un nombre (`D_hiver.yaml`, ou `--modifier ambiance.T_amb=-20degC`).
+
+**Exemple à la main.** Profil : 20 °C à t = 0, −10 °C à t = 5 h. À t = 2,5 h : T_amb = 20 + (−10 − 20) × 2,5/5 = **5 °C**. Air aspiré déclaré à 52 °C pour 20 °C d'ambiant (écart 32 K) : à t = 2,5 h, T_asp = 5 + 32 = **37 °C**.
+
+**Source.** Convention du projet ; `caes/ambiance.py`, classe `Ambiance`.
+
+---
+
+## F33 : assemblage d'une installation (chaînes, segments, liaisons)
+
+**En bref.** Une installation est décrite comme une liste de briques et l'ordre dans lequel l'air les traverse, comme on décrit un circuit électrique par ses composants et leurs fils. L'assembleur vérifie que les fils sont branchables (les pressions se suivent, chaque étage est là une fois, le réservoir est au bout) avant de lancer le calcul. Les prises sont normalisées : chaque brique reçoit l'air dans le même format (pression, température, débit) et le rend dans le même format, ce qui permet de remplacer une brique par une autre sans toucher au reste.
+
+**Formule.** Règles appliquées par `caes/assembleur.py` :
+1. Chaîne de charge : compresseur.1, [segment 1], compresseur.2, [segment 2], …, compresseur.N, [segment N], réservoir. Un segment contient, dans l'ordre voulu, des stockages de chaleur, des refroidisseurs, un sécheur, une perte de débit. L'état de l'air entre deux maillons est (p, T, ṁ) ; chaque maillon le transforme et déclare ses flux (travail, chaleur ajoutée avec sa source, chaleur retirée avec sa destination, débit perdu).
+2. Les lois en pression de la machine (rapports des étages, rendement mécanique, efficacité d'un refroidisseur) sont évaluées une fois par pas, à la pression de refoulement p_ref = max(p_réservoir, p_min), arrondie au 0,1 bar (F07). Le travail électrique est W_él = Σᵢ ṁᵢ wᵢ / (η_méc(p_ref) · η_él) (F08).
+3. L'air qui sort de la chaîne entre dans le réservoir par un laminage isenthalpique (F12) ; l'air perdu (sécheur, perte de débit) emporte (h − h_amb) à l'endroit où il est perdu (F13).
+4. Chaîne de décharge : réservoir, [détendeur], [réchauffeurs], turbine.1, [réchauffeurs], turbine.2, …, turbine.N. La consigne du détendeur égale la pression d'entrée de l'étage 1 ; la sortie de l'étage i, si elle dépasse l'entrée de l'étage i+1, est laminée à enthalpie constante avant les réchauffeurs de l'étage i+1 (DEPRAG : 11,5 → 11 bar, 3,5 → 3 bar). La cible de chaque réchauffeur est la température nominale d'entrée de l'étage qui suit ; sans réchauffeur, l'étage reçoit l'air tel quel.
+5. Sans turbine, le débit soutiré est imposé (essai « ventilation ») ; sans détendeur, la décharge s'arrête quand la pression du réservoir passe sous l'entrée de l'étage 1.
+6. Cycles : le même réservoir sert aux deux chaînes ; un composant « attente » fait passer le temps entre la charge et la décharge (pertes statiques, F12 et F29) ; le cycle est répété jusqu'à ce que l'électricité produite (et la chaleur restante dans les cuves) varie de moins que la tolérance.
+
+**Niveau.** Convention de modélisation (architecture logicielle) ; la physique de chaque maillon est dans sa propre fiche.
+
+**D'où elle vient.** Généralisation de la chaîne codée en dur des phases 1 à 5 (`caes/systeme.py`, `caes/integre.py`). La vérification de non-régression (`tests/test_non_regression.py`) montre que les chaînes de Dormoy et les architectures A à E donnent les mêmes chiffres à mieux que 0,1 % (en pratique, à la précision de la machine).
+
+**Hypothèses et validité.** Approche quasi stationnaire : la chaîne est en régime permanent à chaque pas, seuls le réservoir et les stockages ont une dynamique. Une machine par chaîne (un compresseur, une turbine) ; les variantes à plusieurs machines en parallèle viendront avec un besoin réel. La convention de Dormoy pour le rendement volumétrique (le travail s'applique au débit aspiré, la perte est appliquée après le dernier refroidisseur) est rendue explicite par le maillon `perte_debit`.
+
+**Pourquoi.** Pour qu'un chercheur décrive sa propre installation sans écrire de code, et pour que la bibliothèque de composants (phase 7) et le tableau de bord de validation (phase 8) s'appuient sur une interface unique. Alternative écartée : un graphe quelconque de composants (branches parallèles, recirculations), plus général mais sans cas d'usage dans les études lues.
+
+**Exemple à la main.** Chaîne `reservoir → detendeur → cuve_3 → turbine.1 → cuve_2 → turbine.2 → cuve_1 → turbine.3` : le détendeur doit être réglé à 40 bar (entrée de l'étage 1) ; l'étage 1 sort à 11,5 bar et l'étage 2 demande 11 bar, donc l'air est laminé de 11,5 à 11 bar avant la cuve 2 ; la cuve 2 vise 90 °C (cible de l'étage 2). Si on écrivait `turbine.2` avant `turbine.1`, l'assembleur refuserait : l'étage 2 sort à 3,5 bar, l'étage 1 demande 40 bar.
+
+**Source.** Convention du projet ; `caes/assembleur.py` (`construire_installation`, `_construire_charge`, `_construire_decharge`), `caes/composants/base.py`.
+
+---
+
+## F34 : compression et détente à rendement isentropique
+
+**En bref.** La machine parfaite comprimerait (ou détendrait) l'air sans frottement ni échange de chaleur : c'est la transformation « isentropique ». Une machine réelle a besoin de plus de travail pour comprimer, et en rend moins quand elle détend. Le rendement isentropique dit de combien : 0,86 pour les compresseurs de Shi, c'est 16 % de travail en plus que la machine parfaite. C'est le modèle le plus courant dans les études de grandes centrales.
+
+**Formule.**
+- Compression : h_out = h_in + (h_out,s − h_in) / η_s, avec h_out,s = h(p_out, s_in) l'enthalpie de sortie isentropique ; w = h_out − h_in ; q = 0.
+- Détente : h_out = h_in − η_s · (h_in − h_out,s) ; w = h_in − h_out.
+- Symboles : h [J/kg], s [J/(kg·K)], p [Pa], η_s [−]. L'air réel de CoolProp fournit s(p, T) et T(p, s).
+
+**Niveau.** Modèle physique classique (paramètre : η_s).
+
+**D'où elle vient.** Définition du rendement isentropique (rapport du travail idéal au travail réel pour un compresseur, l'inverse pour une turbine). Valeurs : Shi 2024, tableau 4 (compresseurs 86 %, turbines 90 %, d'après sa réf. [27]) ; Zhang S. 2025 (turbine 88 %).
+
+**Hypothèses et validité.** Rendement constant, indépendant de la charge, de la vitesse et du rapport de pression : vrai près du point nominal d'une turbomachine. Pas d'échange de chaleur pendant la compression (le refroidissement est fait par les refroidisseurs). `verifier_validite` vérifie 0 < η ≤ 1 ; le modèle « flugel » (F39) corrige η hors du point nominal.
+
+**Pourquoi.** Pour reproduire les études de grande échelle (Shi, Zhang S.) et montrer ce que change le passage d'un compresseur à pistons calibré (Dormoy, F04) à une turbomachine idéalisée. Alternative : le rendement polytropique (F35), préféré par Tola pour les compresseurs à plusieurs étages.
+
+**Exemple à la main.** Gaz parfait, γ = 1,4, air à 20 °C (293 K) comprimé de 1 à 4 bar : T_out,s = 293 × 4^0,286 = 435 K ; Δh_s = 1005 × (435 − 293) = 143 kJ/kg ; avec η_s = 0,86 : Δh = 143 / 0,86 = **166 kJ/kg** et T_out = 293 + 166/1,005 = **458 K (185 °C)** au lieu de 162 °C.
+
+**Source.** Shi 2024 (`shi.compresseur.rendement_isentropique`, `shi.turbine.rendement_isentropique`) ; Zhang S. 2025 (`zhangS.turbine.rendement_isentropique`).
+
+---
+
+## F35 : compression et détente à rendement polytropique
+
+**En bref.** Même idée que F34, mais le rendement est défini étage infinitésimal par étage infinitésimal, ce qui le rend indépendant du rapport de pression : c'est pour ça que les fabricants de compresseurs à plusieurs étages l'utilisent. Mathématiquement, il revient à choisir l'exposant n de la loi p·vⁿ = constante (F04) à partir du rendement.
+
+**Formule.**
+- Compression : T_out = T_in · β^((γ−1)/(γ·η_p)), soit (n−1)/n = (γ−1)/(γ·η_p) ; w = h_out − h_in ; q = 0.
+- Détente : T_out = T_in · (p_out/p_in)^(η_p·(γ−1)/γ).
+- γ = cp/cv évalué à l'entrée de l'étage (air réel), η_p [−].
+
+**Niveau.** Modèle physique classique (paramètre : η_p).
+
+**D'où elle vient.** Intégration du rendement isentropique sur des compressions élémentaires. Valeurs : Tola 2022, tableau 1 (compresseurs 0,88) et tableau 6 (turbines 0,86).
+
+**Hypothèses et validité.** γ constant le long de l'étage (vrai à quelques pour cent pour l'air entre 1 et 100 bar) ; compression adiabatique. À η_p = 1, F34 et F35 coïncident (test `test_polytropique_rendement_coincide_avec_isentropique_a_1`).
+
+**Pourquoi.** Tola l'utilise ; l'exposant équivalent n se compare directement aux indices calibrés de Dormoy (1,35 à 1,52) : avec η_p = 0,88 et γ = 1,4, n = 1/(1 − 0,286/0,88) = **1,48**, dans la plage de Dormoy.
+
+**Exemple à la main.** 1 → 4 bar, 293 K, η_p = 0,88 : exposant 0,286/0,88 = 0,325 ; T_out = 293 × 4^0,325 = **460 K (187 °C)**.
+
+**Source.** Tola 2022 (`tola.compresseur.rendement_polytropique`, `tola.turbine.rendement_polytropique`).
+
+---
+
+## F36 : compression isotherme, borne inférieure du travail
+
+**En bref.** Si on pouvait évacuer la chaleur exactement au rythme où la compression la produit, l'air resterait à sa température de départ et le travail serait le plus petit possible. Aucun compresseur ne fait mieux : c'est une borne, utile pour mesurer ce que coûte la chaleur de compression chez Dormoy. C'est comme le temps de trajet « sans aucun feu rouge » : on ne l'atteint jamais, mais il dit combien les feux coûtent.
+
+**Formule.** w = p_in · v_in · ln(β) par kg d'air (éq. 8 de Baniamerian : W = p·Q·ln r) ; T_out = T_in ; q = −w (toute la chaleur est rejetée pendant la compression). C'est le cas n = 1 de F05.
+
+**Niveau.** Loi fondamentale (gaz parfait, transformation réversible).
+
+**D'où elle vient.** Travail de compression ∫ v dp à T constante avec p·v = R·T.
+
+**Hypothèses et validité.** Gaz parfait et réversibilité : irréalisable (il faudrait un échange de chaleur infiniment efficace). `verifier_validite` le rappelle à chaque usage. Les pistons liquides s'en approchent (n ≈ 1,06, variante optionnelle de la phase 7, non implémentée).
+
+**Pourquoi.** Baniamerian s'en sert pour dimensionner un tuyau ; ici elle sert de référence : l'écart entre Dormoy (386 kWh) et la borne (303 kWh) est le coût de la chaleur de compression, que le gravier récupère en partie.
+
+**Exemple à la main.** 1 kg d'air à 1,013 bar et 20 °C comprimé à 190 bar : w = 287 × 293 × ln(187,6) = 84 100 × 5,23 = **440 kJ/kg** ; Dormoy dépense ≈ 2 fois plus avec ses quatre étages polytropiques et ses rendements.
+
+**Source.** Baniamerian 2025, éq. 8 ; `caes/composants/compresseur/isotherme.py`.
+
+---
+
+## F37 : refroidisseur à pincement et perte de charge
+
+**En bref.** Au lieu de dire « l'échangeur fait 90 % du travail possible » (F09), on dit « l'air ressort à 20 °C au-dessus de la source froide » : c'est l'écart minimal, ou pincement, qu'un échangeur de taille raisonnable ne peut pas franchir. C'est la façon de faire de Tola (20 K pour l'air, 10 K pour l'huile) et de Shi (10 K). L'air perd aussi un peu de pression en traversant l'échangeur.
+
+**Formule.** T_out = T_amb + δ si T_in > T_amb + δ, sinon T_out = T_in (l'échangeur ne réchauffe pas) ; q = h(p, T_in) − h(p, T_out) ; p_out = p_in − Δp, suivi d'un laminage isenthalpique (T corrigée à p_out). La chaleur au-dessus du seuil est comptée comme en F09.
+
+**Niveau.** Convention de dimensionnement (paramètres : δ, Δp).
+
+**D'où elle vient.** Tola 2022, tableau 2 (« minimum temperature difference ») ; Shi 2024, tableau 4 (PPTD 10 °C, pertes 0,04 MPa par échangeur).
+
+**Hypothèses et validité.** L'échangeur est assez grand pour atteindre le pincement quel que soit le débit ; δ ≥ 0 vérifié. Avec le compresseur de Dormoy (rapports fixes), une perte de charge n'est pas compensée : l'assembleur le signale ; avec un compresseur générique, le dernier étage compense (F33).
+
+**Pourquoi.** Nécessaire pour reproduire Tola et Shi, et pour la boucle d'air de l'architecture E (deux pincements). Alternative : l'efficacité calibrée (F09), seule possible quand on ne connaît que les mesures d'un banc.
+
+**Exemple à la main.** Air à 170 °C, ambiant 20 °C, δ = 20 K : sortie à **40 °C** ; chaleur retirée ≈ 1,02 × 130 = **133 kJ/kg**. Shi : chaque °C de pincement en plus coûte 0,35 point de rendement.
+
+**Source.** `tola.pincement_air`, `tola.pincement_huile`, `shi.pincement`, `shi.perte_charge_echangeur`.
+
+---
+
+## F38 : réservoir adiabatique et surpression d'entrée
+
+**En bref.** Une caverne de 100 000 m³ a si peu de paroi par mètre cube d'air que la chaleur n'a pas le temps de sortir pendant une charge : on la traite comme un réservoir sans échange (Shi). Pour les 20 bouteilles de Dormoy, c'est faux : la paroi compte, et Dormoy l'a mesuré. Le simulateur offre les deux pour montrer à partir de quelle taille on peut l'oublier.
+
+**Formule.** Le bilan F12 avec K = 0 : ΔU = ṁ_in·h_in·Δt − ṁ_out·h_out·Δt. L'air monte en température pendant la charge (Shi : 2,8 → 70 °C) et redescend à la décharge. Surpression d'entrée : la chaîne de compression doit fournir p_réservoir + Δp_entrée (Shi : 0,2 MPa).
+
+**Niveau.** Cas limite d'un modèle classique.
+
+**D'où elle vient.** Shi 2024, tableau 4 (« isovolumetric-adiabatic », pression 4 à 10 MPa, perte 0,2 MPa à l'entrée).
+
+**Hypothèses et validité.** Valable quand le temps caractéristique d'échange m·cv/(K·A) est long devant la charge. `verifier_validite` avertit sous 1000 m³. Sur Dormoy (5,86 m³), le réservoir adiabatique finit sa charge à 167 °C au lieu de 29 °C, et contient 35 % de masse en moins : le modèle à paroi est indispensable.
+
+**Pourquoi.** Pour le cas test de Shi (phase 8) et pour l'enseignement de l'échelle : « la physique change avec la taille ».
+
+**Exemple à la main.** 1 kg d'air à 20 °C enfermé, on en ajoute 1 kg à 40 °C (h ≈ cp·T) : sans paroi, l'énergie interne monte de cp·313 ≈ 314 kJ par kg entré, soit u = cv·T → T ≈ (0,718 × 293 + 1,005 × 313) / (2 × 0,718) ≈ 365 K (92 °C) : le remplissage chauffe (le travail de refoulement devient de la chaleur).
+
+**Source.** `shi.reservoir.pression_min`, `shi.reservoir.pression_max`, `shi.perte_charge_entree_reservoir`.
+
+---
+
+## F39 : pression glissante et formule de Flügel (ellipse de Stodola)
+
+**En bref.** Sans détendeur, la turbine reçoit l'air à la pression du réservoir, qui baisse pendant la décharge. Une turbine se comporte alors comme une buse : plus la pression d'entrée est haute, plus il passe d'air, selon une loi en racine carrée découverte par Stodola. Et quand elle s'éloigne de son point nominal, son rendement baisse : c'est la correction de Flügel. Chez Dormoy, remplacer le détendeur (190 → 40 bar) par une pression glissante est la piste la plus prometteuse après le gravier, mais la turbine DEPRAG n'est pas faite pour ça.
+
+**Formule.** Pour un étage de point nominal (p_in0, p_out0, T0, G0) :
+- débit (éq. 1 et 4 de Zhang) : G = G0 · √(T0/T_in) · √((p_in² − p_out²) / (p_in0² − p_out0²)) ;
+- débit réduit relatif Ġ = (G√T_in/p_in) / (G0√T0/p_in0), vitesse réduite relative ṅ = √(T0/T_in) (vitesse de rotation constante, éq. 5) ;
+- rendement (éq. 2 et 3) : η/η0 = [1 − t4·(1 − ṅ)²] · (ṅ/Ġ) · (2 − ṅ/Ġ), t4 = 0,3 ; plancher à 0,05 avec avertissement ;
+- plusieurs étages : on remonte la loi de l'ellipse depuis la sortie du dernier étage (pression fixée) et on cherche G tel que p_in,1 = pression disponible (bissection). La détente de chaque étage est isentropique à rendement η (F34).
+
+**Niveau.** Corrélation empirique (coefficients ajustés sur de grandes turbines).
+
+**D'où elle vient.** Zhang S. et al. 2025, § 3.1.1, éq. 1 à 7, d'après ses réf. [40] et [41] ; loi de l'ellipse de Stodola.
+
+**Hypothèses et validité.** Coefficient t4 ajusté sur de grosses turbines : pour la DEPRAG, aucune donnée hors du point nominal (avertissement statique). Le débit du pas est calculé avec les températures d'entrée du pas précédent (quasi stationnaire). Aux grands rapports de pression (p_in ≫ p_out), Ġ reste proche de 1 et la correction de rendement est faible : le modèle dit surtout que le débit croît comme la pression.
+
+**Pourquoi.** Shi suppose un rendement constant (borne optimiste, modèle `pression_glissante` + `isentropique`) ; Flügel est la seule formule publiée dans les études lues qui donne débit et rendement hors du point nominal. Alternatives listées par Zhang : éjecteur, tuyères, bypass (non vérifiées).
+
+**Exemple à la main.** DEPRAG étage 1 : 40 → 11,5 bar, 0,321 kg/s à 130 °C. À 80 bar d'entrée et même sortie : G = 0,321 × √((80² − 11,5²)/(40² − 11,5²)) = 0,321 × √(6268/3268) = 0,321 × 1,385 = **0,445 kg/s**. À 190 bar avec les trois étages qui s'ajustent, le simulateur trouve ≈ 1,5 kg/s au début de la décharge : le réservoir se vide en 15 min au lieu de 38.
+
+**Source.** `zhangS.flugel.t4`, `zhangS.turbine.rendement_isentropique` ; `caes/composants/turbine/flugel.py`.
+
+---
+
+## F40 : stockage de chaleur à deux réservoirs de liquide
+
+**En bref.** Au lieu de faire passer l'air dans du gravier, on fait passer sa chaleur dans un liquide qui va d'un réservoir froid à un réservoir chaud (charge), puis du chaud au froid (décharge). Chaque passage par l'échangeur coûte un pincement. L'huile thermique (Tola, cas B ; LTA-CAES de Wolf et Budt) supporte 300 °C mais coûte cher et brûle ; l'eau est bon marché mais bout : sous 18 bar, elle ne peut pas dépasser 207 °C, et c'est précisément ce qui limite les compresseurs de Shi.
+
+**Formule.** Réservoirs bien mélangés, liquide de chaleur massique c :
+- charge : le liquide froid (T_f) est chauffé à T_l = min(T_in − δ, T_max) ; l'air ressort à T_f + δ ; Q = ṁ_air·(h(T_in) − h(T_f + δ))·Δt ; masse déplacée Δm = Q / (c·(T_l − T_f)) ; T_chaud = moyenne pondérée ; si le réservoir froid est vide, l'air passe sans échange (stockage saturé, avertissement) ;
+- décharge : l'air (T_a) est chauffé à min(cible, T_c − δ) ; le liquide ressort à T_a + δ vers le réservoir froid ; Δm = Q / (c·(T_c − T_a − δ)) ; si le réservoir chaud est vide, pas de chaleur (pas d'appoint) ;
+- attente : chaque réservoir perd U·A·(T − T_amb) (relaxation exacte, F41) ;
+- énergie stockée Σ m·c·(T − T_ref) ; exergie Σ m·c·[(T − T₀) − T₀·ln(T/T₀)] (F31).
+- Eau : c = cp(p_cuve, T_moyenne) par CoolProp (IAPWS-95, Wagner et Pruß 2002, `wagner2002`), T_max = T_sat(p_cuve) − marge.
+
+**Niveau.** Modèle classique (bilans de mélange) ; paramètres mesurés ou publiés (c, δ, p_cuve).
+
+**D'où elle vient.** Tola 2022, cas B (Therminol 66, c = 1,494 kJ/kg·K à l'ambiant, δ = 10 K, tableau 2) ; Wolf et Budt 2014 (concept, rendement attendu 52 à 60 % via Bazdar, tableau 3) ; Shi 2024 (eau à 190 °C et 1,8 MPa, figure 7 ; réservoirs de 4784 et 4209 m³, tableau 5).
+
+**Hypothèses et validité.** c constant (pour l'huile, la valeur à l'ambiant de Tola sous-estime c à 160 °C) ; réservoirs parfaitement mélangés (pas de stratification) ; échangeur équilibré où les deux pincements sont atteints ; pas de perte de charge. Avertissements : liquide plafonné (ébullition ou T_max), réservoir froid vide, réservoir chaud vide, huile sans T_max.
+
+**Pourquoi.** C'est l'« huile de Dormoy » (deux réservoirs, § 3.3.5) rendue physique, et la réponse à la question originale du projet : l'eau est plafonnée par son ébullition, le gravier non. Alternative : l'huile idéale comptable (phase 5), conservée pour la non-régression.
+
+**Exemple à la main.** 1500 kg d'huile (c = 1,494 kJ/kg·K) de 20 à 160 °C : 1500 × 1,494 × 140 = 314 MJ = **87 kWh** de capacité ; l'air sort du compresseur à 170 °C, donc l'huile monte à 160 °C et la turbine 1 reçoit au mieux **150 °C** (deux pincements de 10 K).
+
+**Source.** `tola.huile.cp`, `tola.pincement_huile`, `shi.pincement`, `wolfbudt.rte` ; `caes/composants/stockage_chaleur/deux_reservoirs.py`.
+
+---
+
+## F41 : pertes à travers un isolant
+
+**En bref.** La chaleur traverse l'isolant d'une cuve comme l'eau traverse une éponge : lentement, d'autant plus lentement que l'isolant est épais et mauvais conducteur. On additionne les « résistances » de l'isolant et de l'air extérieur, et on obtient un coefficient global U qui dit combien de watts s'échappent par mètre carré et par degré d'écart. Avec 20 cm de laine minérale, une cuve de 0,7 m³ garde encore l'essentiel de sa chaleur après deux semaines ; une cuve de 0,2 m³ en perd davantage, parce qu'elle a plus de surface par litre.
+
+**Formule.** 1/U = e/k + 1/h_ext ; Q̇ = U·A·(T − T_amb) ; appliqué cellule par cellule au lit de gravier (F29) ou à chaque réservoir de liquide (F40), avec la relaxation exacte sur le pas : ΔT = (T − T_amb)·(1 − e^(−U·A·Δt/C)). Symboles : e [m], k [W/(m·K)], h_ext [W/(m²·K)], A [m²], C [J/K].
+
+**Niveau.** Loi fondamentale (conduction en régime permanent, résistances en série) ; paramètres mesurés ou tabulés.
+
+**D'où elle vient.** Loi de Fourier à travers une paroi plane ; convection extérieure. Laine minérale : k = 0,036 W/(m·K) à 20 °C, 0,047 à 100 °C, cp = 880 J/(kg·K) (Ablaoui et al. 2023, tableau 1, d'après un projet d'Eurocode ; plage ambiante 0,030 à 0,046 W/m·K) ; h_ext = 2,5 W/(m²·K), la valeur calibrée de Dormoy pour l'extérieur de ses réservoirs (air calme).
+
+**Hypothèses et validité.** Paroi plane (épaisseur petite devant le diamètre : à 20 cm sur 0,6 m de diamètre, l'erreur sur U est de l'ordre de 25 %, dans le sens prudent) ; k pris à 20 °C alors qu'il monte à 0,047 à 100 °C (sous-estimation des pertes d'au plus 30 % pour une cuve à 180 °C) ; pas de ponts thermiques ni de fond. L'ordre de grandeur se compare à l'autodécharge de 0,05 à 1 % par jour des grandes installations (Zhang Z. 2021, tableau 11) : une petite cuve perd plus.
+
+**Pourquoi.** C'est le paramètre central du scénario de transport (phase 11) ; le déclarer par un matériau et une épaisseur sourcés vaut mieux qu'un coefficient de perte choisi à la main.
+
+**Exemple à la main.** 20 cm de laine minérale : 1/U = 0,2/0,036 + 1/2,5 = 5,56 + 0,4 = 5,96 m²·K/W, U = **0,168 W/(m²·K)**. Cuve de 0,7 m³ (diamètre 0,76 m, hauteur 1,53 m, surface latérale 3,7 m²) à 180 °C, ambiant 20 °C : Q̇ = 0,168 × 3,7 × 160 = **100 W**, soit 2,4 kWh par jour sur les ≈ 50 kWh stockés : constante de temps ≈ 20 jours, cohérente avec le calcul personnel de la fiche Dormoy (23 jours pour 2 m³).
+
+**Source.** `materiau.laine_minerale.*` (ablaoui2023), `isolation.h_ext` ; `caes/composants/isolation.py`.
+
+---
+
+## F42 : air humide, teneur en eau et saturation sous pression
+
+**En bref.** L'air contient toujours un peu d'eau sous forme de vapeur, invisible. À une température donnée, il ne peut en porter qu'une quantité maximale (il est alors « saturé », 100 % d'humidité) ; cette quantité monte vite avec la température et **baisse quand on comprime** : à 190 bar, un kilo d'air à 45 °C ne peut garder que 0,4 g d'eau au lieu de 65 g à 1 bar. Comprimer, c'est donc essorer l'air : l'eau en trop se condense dans les refroidisseurs. C'est pour ça qu'un compresseur « pleure » de l'eau et qu'on met des purges sous les refroidisseurs.
+
+**Formule.**
+- Teneur en eau w [kg d'eau / kg d'air] = masse de vapeur par kg d'air ; pour un air à (T, p, φ) : w = HAPropsSI("W", T, p, R = φ) (CoolProp, air humide réel).
+- Saturation : w_sat(T, p) = w à φ = 1. Forme idéale : w_sat = 0,622 · f · p_ws(T) / (p − f · p_ws(T)), avec p_ws la pression de vapeur saturante (sur l'eau au-dessus de 0 °C, sur la glace en dessous) et f(T, p) le **facteur d'augmentation** (f ≈ 1,004 à 1 bar, ≈ 1,5 à 100 bar et 45 °C) : l'eau se dissout un peu plus dans l'air comprimé que ne le dit la loi idéale.
+- Si p_ws(T) approche p (air très chaud à basse pression), aucune condensation n'est possible : w_sat = ∞.
+- Au-delà de 10 MPa (domaine de la formulation), extrapolation à pression partielle de vapeur constante : w_sat(p) = w_sat(10 MPa) · 10 MPa / p, signalée.
+
+**Niveau.** Formulation de référence (ASHRAE RP-1485, Herrmann, Kretzschmar et Gatley 2009, implémentée dans CoolProp HumidAir).
+
+**D'où elle vient.** Équation d'état de l'air humide réel ajustée sur les mesures (viriel air–eau), dont découle le facteur d'augmentation ; CoolProp la reproduit.
+
+**Hypothèses et validité.** 10 Pa à 10 MPa, −143 à 350 °C. Le réservoir de Dormoy (19 MPa) est hors domaine : l'extrapolation sous-estime f, donc w_sat, donc **surestime** un peu la condensation (sens prudent). `w_saturation` et `point_de_rosee` avertissent au-delà de 10 MPa. Le débit `m_dot` des composants est de l'air (l'eau, au plus 3 %, est suivie à part) ; le bilan d'énergie reste celui de l'air sec, la chaleur latente est déclarée à part (F43).
+
+**Pourquoi.** Alternative : formules psychrométriques du gaz parfait (sans f) ; elles sous-estiment la teneur à saturation de 30 à 50 % à 100 bar, ce qui exagère la condensation. CoolProp est déjà une dépendance du projet.
+
+**Exemple à la main.** Air à 20 °C, 1 bar, 50 % : p_ws = 2,34 kPa ; w = 0,622 × 0,5 × 2,34 / (101,3 − 1,17) = **7,3 g/kg**. Le même air comprimé à 190 bar et refroidi à 45 °C (p_ws = 9,6 kPa, f ≈ 1,5 extrapolé) : w_sat ≈ 0,622 × 1,5 × 9,6 / 19 000 = **0,47 g/kg** : 94 % de l'eau aspirée s'est condensée dans les refroidisseurs.
+
+**Source.** `humidite.formulation`, `humidite.pression_max_validite` (herrmann2009) ; `caes/composants/humidite.py`.
+
+---
+
+## F43 : point de rosée, condensation, givre, séparateur et sécheur
+
+**En bref.** Le point de rosée est la température à laquelle l'air devient saturé quand on le refroidit : en dessous, l'eau en trop se dépose en gouttes (ou en givre sous 0 °C). Sous pression, le point de rosée monte : l'air qui sort du dernier refroidisseur à 45 °C et 190 bar a un point de rosée de 45 °C **à 190 bar**, mais de −27 °C une fois détendu à 1 bar. Un réservoir qui refroidit la nuit condense de l'eau au fond ; une turbine qui détend l'air à −60 °C le couvre de givre, qui bouche les passages et abîme les aubes. Le séparateur enlève les gouttes ; le sécheur enlève la vapeur, mais jette de l'air pour se régénérer.
+
+**Formule.**
+- Point de rosée T_r(p, w) : température telle que w_sat(T_r, p) = w (HAPropsSI "Tdp" ; sous 0 °C, point de givre sur la glace).
+- Mise à l'équilibre à (T, p) : w_vapeur = min(w_total, w_sat(T, p)), w_liquide = w_total − w_vapeur ; condensation si w_vapeur baisse, évaporation si l'air est sous-saturé ; **givre** si du liquide existe avec T < 0 °C.
+- Chaleur libérée : Q̇_lat = ṁ · Δw_condensé · [h_fg(T) + h_fusion si givre], h_fg de l'eau (IAPWS-95), h_fusion = 333,4 kJ/kg (Feistel et Wagner 2006).
+- Séparateur : w_liquide ← w_liquide · (1 − η_sép), eau retirée η_sép · w_liquide ; pas de perte d'air.
+- Sécheur par adsorption : w_vapeur ← min(w_vapeur, w_sat(T_rosée,sortie, p)), liquide drainé, débit d'air × efficacité (purge, F10).
+- Réservoir : eau_vapeur ≤ w_sat(T_rés, p_rés) · m_air, l'excès se condense au fond ; l'air qui sort emporte la vapeur, pas l'eau du fond.
+
+**Niveau.** Bilans d'équilibre (loi fondamentale : saturation) ; paramètres η_sép et T_rosée,sortie au niveau hypothèse.
+
+**D'où elle vient.** Équilibre liquide-vapeur à chaque état de l'air ; les composants l'appliquent après chaque transformation (compression : évaporation ; refroidisseur, cuve, détente, turbine, réservoir : condensation).
+
+**Hypothèses et validité.** Équilibre instantané (pas de cinétique de dépôt ni de surfusion) ; les gouttes et le givre sont entraînés par l'air jusqu'au prochain séparateur, réchauffeur ou réservoir ; pas de dissolution de gaz dans l'eau ; chaleur latente non couplée à la température de l'air (déclarée à part). L'air déjà présent dans le réservoir à l'instant initial vient d'une charge précédente par la même chaîne : il porte au plus la teneur que la chaîne refoule au premier pas, et au plus la saturation à son (T, p) (l'excès a été drainé avant, il n'est pas compté comme condensation). Sous 130 K (limite basse de RP-1485, F42), la pression de vapeur de la glace est négligeable : toute l'eau est supposée gelée, avec un avertissement, sans arrêter la simulation. Les avertissements « condensation » et « givre » marquent chaque composant où l'équilibre fait apparaître du liquide ou de la glace.
+
+**Pourquoi.** C'est la limite n° 2 de Dormoy : le sécheur jette 19 % de l'air. Suivre l'eau composant par composant dit où elle va et si un séparateur suffit. Alternative : un modèle d'adsorption dynamique du sécheur (isothermes, cycles de régénération) : non retenu, pas de données.
+
+**Exemple à la main.** Air du réservoir de Dormoy : 0,47 g/kg (F42). Détendu à 3 bar : w_sat à 3 bar vaut 0,47 g/kg à −12 °C environ : tout refroidissement en dessous givre. La turbine du cas de base sort à −60 °C : w_sat(−60 °C, 1 bar) ≈ 0,007 g/kg, donc **0,46 g de givre par kg d'air**, soit 0,15 g/s à 0,321 kg/s : 320 g de glace par décharge de 35 min. Réchauffé à 90 °C avant l'étage, l'air sort à 16 °C : aucun givre.
+
+**Source.** `eau.enthalpie_fusion` (feistel2006), `secheur.point_de_rosee_sortie`, `separateur.efficacite`, `secheur.appoint.efficacite` (hypothèses) ; `caes/composants/humidite.py` (`equilibrer`, `mettre_a_l_equilibre`), `caes/composants/secheur/`, `caes/composants/reservoir_air/`.
+
+## F44 : masse d'un réservoir d'air à paroi mince
+
+**En bref.** Un réservoir d'air comprimé est un ballon de métal ou de fibre : plus la pression est haute et plus le réservoir est gros, plus la paroi doit être épaisse pour ne pas éclater, donc plus il est lourd. La règle est simple : la masse de paroi est proportionnelle à la pression fois le volume, divisée par la « résistance spécifique » du matériau (sa résistance divisée par sa masse volumique). C'est comme un ballon de baudruche : pour souffler plus fort dedans, il faut un caoutchouc plus épais, et un ballon deux fois plus gros a une peau deux fois plus lourde à pression égale.
+
+**Formule.** Pour un cylindre de rayon r à fonds hémisphériques, la contrainte circonférentielle σ = p·r/t impose l'épaisseur t = S·p·r/σ_adm, et la masse de paroi vaut
+
+m = S · p · (2 V_cyl + 1,5 V_fonds) / (σ_adm / ρ)
+
+avec m [kg] la masse de paroi, S [−] le coefficient de sécurité (rapport pression d'éclatement / pression de conception), p [Pa] la pression de conception **relative**, V_cyl et V_fonds [m³] les volumes de la partie cylindrique et des deux fonds (V_fonds = 4πr³/3 ; les fonds hémisphériques, deux fois moins contraints, ont une paroi deux fois plus mince), σ_adm [Pa] la contrainte admissible et ρ [kg/m³] la masse volumique de la paroi. Quand le volume est inférieur à la sphère de diamètre donné, l'enveloppe est une sphère : m = 1,5 · S · p · V / (σ_adm / ρ). Pour une paroi composite à plusieurs couches, on n'utilise que le rapport σ_adm/ρ **équivalent**, calibré sur une bouteille connue.
+
+**Niveau.** Modèle classique (résistance des matériaux, paroi mince : t ≪ r) ; σ_adm/ρ paramètre calibré.
+
+**D'où elle vient.** Équilibre d'une demi-coque cylindrique : la pression sur le diamètre (p · 2r · L) est reprise par deux épaisseurs de paroi (2 · t · L · σ), d'où σ = p·r/t ; pour une sphère, la section est un cercle et σ = p·r/2t. La masse est l'épaisseur fois la surface fois ρ ; avec 2πrL = 2 V_cyl/r et 4πr² = 3 V_fonds/r, le rayon disparaît.
+
+**Hypothèses et validité.** Paroi mince (t/r < 0,1 : vérifié sur les bouteilles de Dormoy, 16 mm pour 186 mm) ; contrainte uniforme, pas de concentration aux raccords ni aux ouvertures, pas de fatigue ni de fluage ; masse des vannes, du col et des supports non comptée ; même coefficient de sécurité et même résistance spécifique pour tous les volumes. Le calcul renvoie une masse nulle sous la pression ambiante et refuse les volumes et diamètres négatifs.
+
+**Pourquoi celle-ci.** Pour un front de Pareto « électricité livrée contre masse », il faut une masse qui réagisse à la pression maximale et au volume avec le bon ordre de grandeur, sans concevoir chaque bouteille. La calibration sur le tableau 8 de Dormoy donne cet ordre de grandeur pour des bouteilles composites réelles ; la borne « tout aluminium 6061-T6 » montre ce que coûterait un réservoir sans fibre.
+
+**Exemple à la main.** Bouteille de Dormoy de 320 L, diamètre 0,372 m : r = 0,186 m, V_fonds = 4π(0,186)³/3 = 0,027 m³, V_cyl = 0,293 m³. Avec S = 2,25, p = 300 bar = 3,0 × 10⁷ Pa et (σ/ρ) = 385 kJ/kg : m = 2,25 × 3,0 × 10⁷ × (2 × 0,293 + 1,5 × 0,027) / 385 000 = 2,25 × 3,0 × 10⁷ × 0,627 / 385 000 ≈ 110 kg (mesuré : 107 kg ; la calibration est la moyenne des deux modèles, 320 L et 270 L). En aluminium seul (276 MPa / 2700 kg/m³ = 102 kJ/kg), la même bouteille pèserait 414 kg avec 45 mm de paroi : c'est pour ça que les bouteilles à 300 bar sont en fibre.
+
+**Source.** `reservoir.resistance_specifique_equivalente` (calibration, tableau 8 de Dormoy : masses, diamètre, volumes), `reservoir.pression_service` (300 bar, hypothèse d'après le cas à 300 bar de Dormoy § 3.3.2), `reservoir.coefficient_securite` (2,25, hypothèse), `reservoir.alu.limite_elastique` (asm1990), `reservoir.alu.masse_volumique` (ASM via Dormoy).
+
+## F45 : sensibilité et incertitudes (un paramètre à la fois, Sobol, propagation)
+
+**En bref.** Un simulateur a des dizaines de réglages, mais trois ou quatre seulement décident du résultat. Pour les trouver, on bouge chaque réglage d'un bout à l'autre de sa plage et on regarde de combien la sortie bouge (graphique « en tornade »), puis on bouge tous les réglages en même temps au hasard pour mesurer la part de chacun dans la variation totale (indices de Sobol). Enfin, on tire au hasard chaque donnée du registre dans sa fourchette pour obtenir une **fourchette** sur le résultat : un rendement de 17,2 % ne veut rien dire sans son « ± ». C'est comme goûter une recette : changer un ingrédient à la fois dit lequel compte ; en changer plusieurs ensemble révèle ceux qui ne comptent qu'en combinaison.
+
+**Formule.**
+- Un paramètre à la fois : balancement_i = |y(x_i = max) − y(x_i = min)|, les autres au nominal ; classement par balancement.
+- Sobol : pour y = f(x₁…x_d) avec des x_i indépendants, V(y) = Σ V_i + Σ V_ij + … ; l'indice de premier ordre S_i = V_i / V(y) = Var[E(y | x_i)] / V(y) est la part de la variance due à x_i seul, l'indice total S_Ti = 1 − Var[E(y | x_~i)] / V(y) inclut toutes ses interactions. Estimateur de Saltelli : deux matrices d'échantillons A et B (n lignes) et d matrices AB_i (A avec la colonne i de B) ; n(d + 2) évaluations ; implémentation `scipy.stats.sobol_indices`, intervalle de confiance par bootstrap.
+- Propagation : x_i ~ U(min_i, max_i) tirés par hypercube latin (n points) ; intervalle de la sortie (5e, 50e, 95e centiles) ; corrélation de rang de Spearman ρ(x_i, y) pour le sens de l'effet.
+
+**Niveau.** Méthodes statistiques standard (Sobol 1993, Saltelli 2002, McKay 1979).
+
+**D'où elle vient.** Décomposition de la variance d'une fonction de variables indépendantes (ANOVA fonctionnelle) ; l'hypercube latin stratifie chaque variable pour couvrir la plage avec peu de points.
+
+**Hypothèses et validité.** Paramètres indépendants, distribution uniforme dans la plage (le registre ne donne que des bornes, pas de loi) ; Sobol demande n puissance de 2 et reste bruité pour n < 64 (un indice un peu négatif vaut zéro ; l'intervalle bootstrap le dit) ; une simulation échouée est remplacée par le point nominal pour Sobol (biais signalé) et exclue des intervalles. Les plages « hypothèse ± 20 % » sont un choix de l'analyse, affiché.
+
+**Pourquoi celle-ci.** La tornade est la plus lisible pour un jury et suffit quand les effets s'additionnent ; Sobol est la méthode de référence quand on soupçonne des interactions (ici : la pression maximale et le volume des cuves agissent ensemble sur la chaleur disponible). La propagation par hypercube latin coûte moins cher qu'un Monte-Carlo brut pour la même précision sur les centiles.
+
+**Exemple à la main.** y = 3 x₁ + x₂ avec x₁, x₂ uniformes sur [0, 1] (variance 1/12 chacune) : V(y) = 9/12 + 1/12 = 10/12 ; S₁ = 9/10 = 0,9 et S₂ = 0,1 ; aucune interaction, donc S_T = S₁ (le test `test_indices_de_sobol_fonction_additive` le vérifie à 0,03 près avec n = 256).
+
+**Source.** `caes/analyse/sensibilite.py`, `caes/analyse/incertitudes.py` ; plages du registre (`valeur_min`, `valeur_max`) ; scipy ≥ 1.12 (`sobol_indices`, `qmc.LatinHypercube`).
+
+## F46 : dominance de Pareto et NSGA-II
+
+**En bref.** Quand on veut deux choses contraires (livrer plus d'électricité et peser moins), il n'y a pas « la » meilleure installation : il y a une famille de bons compromis. Une configuration est « dominée » si une autre fait au moins aussi bien partout et mieux quelque part ; les non-dominées forment le **front de Pareto**, une courbe où gagner d'un côté coûte forcément de l'autre. NSGA-II est un algorithme « génétique » : une population de configurations au hasard, on garde les moins dominées et les plus espacées, on les croise et on les mute, et on recommence ; après quelques générations la population dessine le front. Comme choisir un vélo : léger ou solide, le vendeur montre la gamme, pas un seul modèle.
+
+**Formule.**
+- Dominance (minimisation) : a ≺ b si f_k(a) ≤ f_k(b) pour tout k et f_k(a) < f_k(b) pour au moins un k. Un objectif à maximiser est pris avec le signe moins.
+- Rang de non-dominance : front 0 = points que personne ne domine ; on les retire, le front 1 est ce qui devient non dominé, etc.
+- Distance d'encombrement d'un point : somme, sur les objectifs, de l'écart entre ses deux voisins du même front (normalisé par l'étendue) ; infinie aux extrémités.
+- Sélection : tournoi binaire (rang plus petit, puis encombrement plus grand) ; croisement SBX d'indice η_c ; mutation polynomiale d'indice η_m et de probabilité 1/d par variable ; élitisme : parents et enfants réunis, on garde les N meilleurs par rang puis par encombrement.
+- Coude : point du front le plus loin de la corde joignant ses deux extrémités (objectifs normalisés).
+
+**Niveau.** Méthode d'optimisation standard (Deb, Pratap, Agarwal, Meyarivan 2002).
+
+**D'où elle vient.** Algorithmes évolutionnaires multi-objectifs ; NSGA-II ajoute au NSGA d'origine le tri rapide, l'élitisme et l'encombrement (sans paramètre de partage).
+
+**Hypothèses et validité.** Variables continues normalisées dans [0, 1] ; deux objectifs ici (le code accepte plus) ; le front obtenu est une **approximation** qui dépend de la population, du nombre de générations et de la graine : tous sont imprimés dans le rapport, ce que Wang 2020 ne fait pas. Une évaluation échouée (nan) reçoit une pénalité pire que tout point valide. Vérification : sur le problème test ZDT1 (front exact f₂ = 1 − √f₁), 24 individus et 40 générations donnent un front à moins de 3 % du front exact (`test_nsga2_approche_le_front_de_zdt1`).
+
+**Pourquoi celle-ci.** C'est l'algorithme des deux études lues (Wang 2020, Shi 2024) et le standard du domaine ; une grille suffirait pour deux variables (remarque de la fiche aa-caes), mais NSGA-II reste valable à trois variables et plus, ce qui est le cas ici (pression, volume des cuves, isolant). Implémenté en numpy plutôt que par `pymoo` pour ne pas ajouter de dépendance et pour que chaque étape soit lisible.
+
+**Exemple à la main.** Quatre configurations (électricité, masse) : A (40 kWh, 1300 kg), B (47 kWh, 1500 kg), C (40 kWh, 1500 kg), D (25 kWh, 900 kg). C est dominée par A (même électricité, plus lourde) ; A, B et D ne se dominent pas : elles forment le front. De D à A on gagne 15 kWh pour 400 kg ; de A à B, 7 kWh pour 200 kg : les deux pentes sont presque égales, pas de coude net, le choix dépend de ce que vaut un kilogramme en kilowattheures.
+
+**Source.** `caes/analyse/pareto.py` ; fiches `Études/études/others/wang-2020-optimisation-multiobjectif-caes/` et `aa-caes/` (méthode) ; Deb et al. 2002, IEEE Trans. Evol. Comput. 6(2), 182–197, https://doi.org/10.1109/4235.996017 (vérifié par Crossref ; article de méthode, pas de paramètre au registre).
+
+## F47 : répartition d'une flotte de modules sur une demande variable
+
+**En bref.** Un seul module d'air comprimé donne une puissance qui ne se règle pas finement et qui baisse en fin de décharge. Pour suivre la consommation d'un bâtiment, on en met plusieurs et on les allume ou on les éteint comme des radiateurs avec un thermostat : un de plus quand il en manque, un de moins quand il y en a trop. Ce que les modules en marche produisent en trop est perdu ; ce qui manque est de l'énergie non servie. Le nombre de modules nécessaire est le plus petit qui couvre presque toute la demande.
+
+**Formule.** À chaque pas Δt, avec P_k(τ_k) la puissance du module k après un temps de marche τ_k (courbe simulée une fois, F17–F20) et D(t) la demande :
+- P_marche = Σ P_k(τ_k) sur les modules en marche ;
+- si P_marche < D(t) et qu'il reste un module jamais démarré : on le démarre (τ = 0) ;
+- si P_marche − P_dernier ≥ D(t) + marge : le dernier démarré est mis en pause (τ figé, air conservé) ; marge = puissance nominale d'un module par défaut ;
+- fournie = min(P_marche, D) ; écrêtée = P_marche − fournie ; non servie = D − fournie ; τ_k += Δt pour les modules en marche.
+- Nombre nécessaire N : le plus petit N tel que l'énergie fournie ≥ 99,9 % de l'énergie demandée (recherche dichotomique à partir de E_demandée / E_module).
+
+**Niveau.** Règle de pilotage simple (modèle classique de « blocs » marche / arrêt), pas une loi physique.
+
+**D'où elle vient.** Pilotage par vanne ON/OFF avec hystérésis de Zhang S. 2025 (ouvrir à p_bas, fermer à p_haut), transposé d'un réservoir tampon à une flotte de modules ; le pas d'une seconde est le sien.
+
+**Hypothèses et validité.** Modules identiques et indépendants, courbe de puissance figée (celle de la décharge nominale : la pause ne change ni la pression ni la température du module, ce qui néglige ses pertes pendant la pause) ; démarrage instantané (la turbine DEPRAG démarre en quelques secondes, le gravier n'a pas d'inertie à vaincre, mais le simulateur ne le vérifie pas) ; pas de réservoir tampon ni de régulation continue : la finesse du suivi est celle d'un module (ici ≈ 60 kW face à 60–120 kW de demande) ; aucune limite au nombre de démarrages. La demande est un profil donné (CSV).
+
+**Pourquoi celle-ci.** Elle répond à la question posée (combien de modules, quelle énergie perdue) sans inventer une régulation que personne n'a publiée pour ces machines ; un réservoir tampon et un modèle de vanne (Zhang) pourront la remplacer quand les données existeront.
+
+**Exemple à la main.** Un module livre 40 kWh à ≈ 60 kW pendant 40 min. Demande constante de 100 kW pendant 72 h = 7 200 kWh : au moins 7 200 / 40 = 180 modules, deux en marche à la fois (120 kW ≥ 100), le troisième démarre quand le premier faiblit ; l'écrêtage (20 kW sur 120) coûte des modules en plus. Le rapport du scénario donne le nombre exact.
+
+**Source.** `caes/flotte.py` ; Zhang S. 2025 (`zhangS2025`, § 3 de la fiche `caes-perfo/pistes-simulation.md`) ; hypothèses `centre_urgence.*` du registre.
 
 ---
 

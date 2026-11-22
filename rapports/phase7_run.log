@@ -1,0 +1,19 @@
+[2 s] dormoy_charge_1_190_aspiration_chaude (charge) ; charge 386.2 kWh en 9.89 h
+[5 s] charge_compresseur_isentropique (charge) ; charge 445.3 kWh en 9.86 h
+[2 s] charge_compresseur_polytropique_rendement (charge) ; charge 465.0 kWh en 9.85 h
+[2 s] charge_compresseur_isotherme (charge) ; charge 303.5 kWh en 9.96 h ; 1 avertissement(s)
+[2 s] charge_refroidisseur_pincement (charge) ; charge 382.1 kWh en 9.90 h
+[5 s] charge_refroidisseur_perte_de_charge (charge) ; charge 448.3 kWh en 9.93 h
+[1 s] charge_secheur_aucun (charge) ; charge 310.4 kWh en 7.95 h
+[1 s] charge_reservoir_adiabatique (charge) ; charge 251.6 kWh en 6.44 h ; 2 avertissement(s)
+[2 s] dormoy_decharge_3etages (decharge) ; produit 39.04 kWh en 37.6 min, chaleur externe 44.6
+[5 s] decharge_turbine_isentropique (decharge) ; produit 33.12 kWh en 37.6 min, chaleur externe 57.4 ; 1 avertissement(s)
+[2 s] decharge_turbine_polytropique_rendement (decharge) ; produit 32.79 kWh en 37.6 min, chaleur externe 57.3 ; 1 avertissement(s)
+[4 s] decharge_pression_glissante (decharge) ; produit 38.96 kWh en 37.6 min, chaleur externe 69.6 ; 2 avertissement(s)
+[1 s] decharge_flugel (decharge) ; produit 41.05 kWh en 14.9 min, chaleur externe 60.8 ; 3 avertissement(s)
+[67 s] D (cycles) ; cycle 4 ; charge 239.5 kWh en 6.05 h ; produit 41.05 kWh en 39.5 min, chaleur cuve_3 30.2, cuve_2 6.4, cuve_1 14.8 ; RTE 17.1 % (17.1 % avec la chaleur externe) ; 4 avertissement(s)
+[3 s] cycles_huile_deux_reservoirs (cycles) ; cycle 3 ; charge 238.7 kWh en 6.05 h ; produit 41.05 kWh en 39.5 min, chaleur stockage 51.4 ; RTE 17.2 % (17.2 % avec la chaleur externe) ; 4 avertissement(s)
+[3 s] cycles_eau_sous_pression (cycles) ; cycle 3 ; charge 238.7 kWh en 6.05 h ; produit 41.05 kWh en 39.5 min, chaleur stockage 51.4 ; RTE 17.2 % (17.2 % avec la chaleur externe) ; 4 avertissement(s)
+[28 s] cycles_attente_sans_pertes_14j (cycles) ; cycle 2 (non stabilisé) ; charge 240.7 kWh en 6.09 h ; produit 41.22 kWh en 39.7 min, chaleur cuve_3 29.4, cuve_2 6.4, cuve_1 14.9 ; RTE 17.1 % (17.1 % avec la chaleur externe) ; 2 avertissement(s)
+[23 s] cycles_gravier_isolant_14j (cycles) ; cycle 2 (non stabilisé) ; charge 232.6 kWh en 5.98 h ; produit 37.37 kWh en 39.0 min, chaleur cuve_3 26.2, cuve_2 4.9, cuve_1 15.1 ; RTE 16.1 % (16.1 % avec la chaleur externe) ; 7 avertissement(s)
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase7\variantes.md

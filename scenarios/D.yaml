@@ -1,37 +1,241 @@
-# Architecture D : 3 étages, gravier direct. Une cuve après les étages de
-# compression 1, 2 et 3 (≈ 3, 12 et 50 bar), traversée par l'air comprimé
-# avant le refroidisseur. En décharge : cuve 3 → turbine 1, cuve 2 →
-# turbine 2, cuve 1 → turbine 3, avec bypass pour ne pas dépasser la cible.
+# Architecture D : 3 étages, gravier direct (cas C de Tola). Une cuve après
+# les étages de compression 1, 2 et 3 (≈ 3, 12 et 55 bar), traversée par
+# l'air comprimé avant le refroidisseur. En décharge : cuve 3 → turbine 1,
+# cuve 2 → turbine 2, cuve 1 → turbine 3, avec bypass pour ne pas dépasser
+# la cible. Isolation des cuves parfaite (coefficient_perte = 0) ; les
+# scénarios de transport (phase 11) y mettent un isolant réel.
+
 nom: D
 description: 3 étages, cuves de gravier traversées directement par l'air comprimé (cas C de Tola).
-architecture: D
-charge: dormoy_charge_1_190_aspiration_chaude.yaml
-decharge: dormoy_decharge_3etages.yaml
-pression_arret: registre:charge_55_190.pression_min
-cuves:
-  materiau: gravier_tola
+
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+  humidite_relative: registre:ambiance.humidite_relative_essai
+  T_aspiration:
+    valeur: 52
+    unite: degC
+    source: air du conteneur réchauffé par le compresseur, déduit du débit mesuré (phase 1)
+
+composants:
+  compresseur:
+    type: compresseur
+    modele: polytropique_dormoy
+    debit_volumique_aspire: registre:compresseur.debit_volumique_entree
+    debit_massique_aspire: null
+    rendement_electrique: registre:compresseur.rendement_electrique#moyen
+    rendement_mecanique_min: registre:compresseur.rendement_mecanique#min
+    rendement_mecanique_max: registre:compresseur.rendement_mecanique#max
+    pression_refoulement_min: registre:compresseur.pression_refoulement_min
+    pression_refoulement_max: registre:compresseur.pression_refoulement_max
+    etages:
+      - indice_polytropique: registre:compresseur.indice_polytropique_etage1
+        rapport_pression: registre:compresseur.rapport_compression_etage1
+      - indice_polytropique: registre:compresseur.indice_polytropique_etage2
+        rapport_pression: registre:compresseur.rapport_compression_etage2
+      - indice_polytropique: registre:compresseur.indice_polytropique_etage3
+        rapport_pression_min: registre:compresseur.rapport_compression_etage3#min
+        rapport_pression_max: registre:compresseur.rapport_compression_etage3#max
+      - indice_polytropique: registre:compresseur.indice_polytropique_etage4
+  refroidisseur_1:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage1
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_2:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage2
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_3:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage3
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_4:
+    type: refroidisseur
+    modele: efficacite
+    efficacite_min: registre:refroidisseur.efficacite_etage4#min
+    efficacite_max: registre:refroidisseur.efficacite_etage4#max
+    p_min: registre:compresseur.pression_refoulement_min
+    p_max: registre:compresseur.pression_refoulement_max
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refoulement:
+    type: perte_debit
+    modele: fraction
+    fraction_conservee: registre:compresseur.rendement_volumetrique
+  secheur:
+    type: secheur
+    modele: perte_debit
+    efficacite: registre:secheur.efficacite
+    point_de_rosee_sortie: registre:secheur.point_de_rosee_sortie
+  reservoir:
+    type: reservoir_air
+    modele: paroi
+    volume: registre:reservoir.volume_total
+    surface: registre:reservoir.surface_equivalente_totale
+    K_global: registre:reservoir.K_global
+    h_int: registre:reservoir.h_conv_int
+    h_ext: registre:reservoir.h_conv_ext
+    capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+  detendeur:
+    type: detente
+    modele: isenthalpique
+    p_consigne: registre:turbine.etage1.pression_entree
+    ecart_min: registre:detendeur.ecart_pression_min
+
   # Volumes de base (m3), calcul personnel : besoin de chaque turbine
   # (15,0 / 6,4 / 24,8 kWh pour les cuves 1 / 2 / 3, tableau 5 de Dormoy)
-  # divisé par 0,48 kWh/(m3·K) (gravier de Tola), par l'écart de
-  # température utile (≈ 147 / 120 / 150 K) et par un taux d'utilisation
-  # du lit de 0,6 (front thermique). Le script de la phase 5 balaie un
-  # facteur multiplicatif pour trouver l'optimum.
-  volumes: [0.35, 0.2, 0.7]
-  rapport_hauteur_diametre: 2
-  n_cellules: 30
-  pincement:
-    valeur: 0
-    unite: K
-    source: passage direct, pas d'échangeur
-  coefficient_perte:
-    valeur: 0
-    unite: W/m2K
-    source: isolation parfaite en phase 5 ; les pertes sont l'objet de la phase 6
-  bypass: true
-cycles:
+  # divisé par 0,48 kWh/(m3·K) (gravier de Tola), par l'écart de température
+  # utile (≈ 147 / 120 / 150 K) et par un taux d'utilisation du lit de 0,6
+  # (front thermique). Le balayage de la phase 5 confirme le coude à ×1.
+  cuve_1:
+    type: stockage_chaleur
+    modele: gravier
+    materiau: gravier_tola
+    diametre_particule: registre:materiau.gravier_tola.diametre_particule
+    volume:
+      valeur: 0.35
+      unite: m3
+      source: calcul personnel (voir ci-dessus), coude du balayage de la phase 5
+    rapport_hauteur_diametre: 2
+    n_cellules: 30
+    pression: etage
+    pincement:
+      valeur: 0
+      unite: K
+      source: passage direct, pas d'échangeur
+    coefficient_perte:
+      valeur: 0
+      unite: W/m2K
+      source: isolation parfaite ; les pertes sont l'objet des scénarios de transport
+    bypass: true
+  cuve_2:
+    type: stockage_chaleur
+    modele: gravier
+    materiau: gravier_tola
+    diametre_particule: registre:materiau.gravier_tola.diametre_particule
+    volume:
+      valeur: 0.2
+      unite: m3
+      source: calcul personnel (voir cuve_1)
+    rapport_hauteur_diametre: 2
+    n_cellules: 30
+    pression: etage
+    pincement:
+      valeur: 0
+      unite: K
+      source: passage direct, pas d'échangeur
+    coefficient_perte:
+      valeur: 0
+      unite: W/m2K
+      source: isolation parfaite
+    bypass: true
+  cuve_3:
+    type: stockage_chaleur
+    modele: gravier
+    materiau: gravier_tola
+    diametre_particule: registre:materiau.gravier_tola.diametre_particule
+    volume:
+      valeur: 0.7
+      unite: m3
+      source: calcul personnel (voir cuve_1)
+    rapport_hauteur_diametre: 2
+    n_cellules: 30
+    pression: etage
+    pincement:
+      valeur: 0
+      unite: K
+      source: passage direct, pas d'échangeur
+    coefficient_perte:
+      valeur: 0
+      unite: W/m2K
+      source: isolation parfaite
+    bypass: true
+
+  turbine:
+    type: turbine
+    modele: polytropique_deprag
+    debit_massique: registre:turbine.etage1.debit_massique
+    etages:
+      - p_entree: registre:turbine.etage1.pression_entree
+        p_sortie: registre:turbine.etage1.pression_sortie
+        indice_polytropique: registre:turbine.etage1.indice_polytropique
+        rendement_mecanique: registre:turbine.etage1.rendement_mecanique
+        rendement_electrique: registre:turbine.etage1.rendement_electrique
+        T_entree_cible: registre:turbine.etage1.temperature_entree
+      - p_entree: registre:turbine.etage2.pression_entree
+        p_sortie: registre:turbine.etage2.pression_sortie
+        indice_polytropique: registre:turbine.etage2.indice_polytropique
+        rendement_mecanique: registre:turbine.etage2.rendement_mecanique
+        rendement_electrique: registre:turbine.etage2.rendement_electrique
+        T_entree_cible: registre:turbine.etage2.temperature_entree
+      - p_entree: registre:turbine.etage3.pression_entree
+        p_sortie: registre:turbine.etage3.pression_sortie
+        indice_polytropique: registre:turbine.etage3.indice_polytropique
+        rendement_mecanique: registre:turbine.etage3.rendement_mecanique
+        rendement_electrique: registre:turbine.etage3.rendement_electrique
+        T_entree_cible: registre:turbine.etage3.temperature_entree
+  attente:
+    type: attente
+    modele: pertes_statiques
+    duree:
+      valeur: 1
+      unite: h
+      source: attente courte entre charge et décharge (choix de la phase 5)
+    dt:
+      valeur: 10
+      unite: min
+      source: choix numérique (pas des pertes statiques)
+
+charge:
+  chaine:
+    - compresseur.1
+    - cuve_1
+    - refroidisseur_1
+    - compresseur.2
+    - cuve_2
+    - refroidisseur_2
+    - compresseur.3
+    - cuve_3
+    - refroidisseur_3
+    - compresseur.4
+    - refroidisseur_4
+    - refoulement
+    - secheur
+    - reservoir
+  p_cible: registre:essai_charge.pression_finale
+  dt:
+    valeur: 30
+    unite: s
+    source: choix numérique de la phase 5 (charge de 6 à 10 h)
+  duree_max:
+    valeur: 24
+    unite: h
+    source: garde-fou
+
+decharge:
+  chaine:
+    - reservoir
+    - detendeur
+    - cuve_3
+    - turbine.1
+    - cuve_2
+    - turbine.2
+    - cuve_1
+    - turbine.3
+  dt:
+    valeur: 5
+    unite: s
+    source: choix numérique de la phase 5 (décharge de 40 min)
+  duree_max:
+    valeur: 3
+    unite: h
+    source: garde-fou
+
+simulation:
+  mode: cycles
+  attente: attente
+  p_initiale: registre:charge_55_190.pression_min
   nombre_max: 6
   tolerance: 0.01
-  attente:
-    valeur: 1
-    unite: h
-    source: attente courte entre charge et décharge (choix de la phase 5)

@@ -91,7 +91,7 @@ L'énergie « stockée dans l'air » est comptée par rapport à l'enthalpie de 
 | `fig10_energie_mesuree.csv` | absent | – | – |
 | `fig09_T_sortie_etage4_mesuree.csv` | absent | – | – |
 
-Aucune courbe n'était numérisée à la date de ce rapport : voir `data/validation/A_NUMERISER.md` (fig. 10, 8 et 9 en priorité).
+Aucune courbe n'était numérisée à la date de ce rapport : voir `data/validation/dormoy/A_NUMERISER.md` (fig. 10, 8 et 9 en priorité).
 
 ## 7. Hypothèses propres au modèle (niveau « hypothese » ou « calcul_personnel »)
 

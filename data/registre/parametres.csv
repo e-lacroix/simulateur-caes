@@ -167,6 +167,8 @@ air.R_specifique,Constante spécifique de l'air sec (R / M),287.05,,,J/kgK,lemmo
 air.cp_1bar_20C,Chaleur massique à pression constante de l'air,1006.1,,,J/kgK,lemmon2000,"équation d'état, via CoolProp","1,013 bar, 20 °C",mesure,Valeur constante du modèle « gaz parfait » de comparaison.
 ambiance.T_amb_essai_charge,Température ambiante pendant l'essai de charge,20,,,degC,dormoy2024,§3.1,non donnée par l'article,hypothese,"Hypothèse du projet. Le débit aspiré mesuré (0,052 kg/s) correspondrait à ≈ 52 °C à 1,013 bar avec 172,4 m3/h : l'air aspiré est sans doute plus chaud que l'ambiant, ou la mesure inclut autre chose. Voir rapports/phase1/validation_charge.md."
 ambiance.p_amb_essai,Pression atmosphérique pendant les essais,1.01325,,,bar,dormoy2024,§3.1,non donnée par l'article,hypothese,"Pression normale supposée (Shawinigan, ≈ 100 m d'altitude : ≈ 1,00 bar en moyenne)."
+ambiance.humidite_relative_essai,Humidité relative de l'air ambiant pendant les essais,50,,,%,dormoy2024,§3.1,non donnée par l'article,hypothese,Hypothèse du projet (valeur moyenne intérieure). Sert au bloc « ambiance » obligatoire des scénarios (phase 6) ; le module humidité (phase 9) l'utilisera pour le point de rosée.
+compresseur.pression_refoulement_max,Pression de refoulement maximale du compresseur pendant les essais (borne haute des lois calibrées),190,,,bar,dormoy2024,§3.1 ; fig. 8 ; fig. 10,"borne haute des lois linéaires en pression (rapport de l'étage 3, rendement mécanique, efficacité du refroidisseur 4)",calcul_personnel,Égale à la pression finale de l'essai de charge (essai_charge.pression_finale) : les lois « varie avec la pression » de Dormoy (formules.md#F07) sont calibrées entre 66 et 190 bar.
 compresseur.pression_refoulement_min,Pression de refoulement minimale du compresseur (soupape de pression minimale avant le sécheur),66,,,bar,dormoy2024,§3.1 ; fig. 8,pression de réservoir sous laquelle les rapports des étages 3 et 4 restent constants,calcul_personnel,"1,01325 × 3,25 × 3,75 × 3,54 × 1,52 = 66,4 bar, avec les rapports minimaux des étages 3 et 4. Dormoy parle d'un seuil de 60 bar. À vérifier sur la fig. 8 numérisée."
 compresseur.loi_rapport_etage3,Loi de variation du rapport de pression de l'étage 3,"linéaire en pression de refoulement, de 3,54 à p_refoulement_min jusqu'à 4,44 à 190 bar",,,texte,dormoy2024,§3.1 ; fig. 8,,hypothese,Dormoy dit « linear increase beyond the 60-bar threshold ». La pente exacte sera lue sur la fig. 8 numérisée. L'étage 4 prend le reste du rapport total.
 compresseur.loi_rendement_mecanique,Loi de variation du rendement mécanique du compresseur,"linéaire en pression de refoulement, de 69 % à p_refoulement_min jusqu'à 74 % à 190 bar",,,texte,dormoy2024,tableau 2 ; §3.2,,hypothese,"Dormoy donne seulement la plage 69-74 % « depending on reservoir pressure », sans le sens de variation. Hypothèse : croissant (meilleur rendement à forte charge). À confronter à la fig. 10."
@@ -223,3 +225,154 @@ tola.tes_ip.energie_stockee,Cuve TES-IP : énergie stockée,9.54,,,MWh,tola2022,
 tola.tes_hp.energie_stockee,Cuve TES-HP : énergie stockée,9.54,,,MWh,tola2022,tableau 8,,simulation_publiee,
 tola.tes.nb_cycles_stabilisation,Nombre de cycles simulés jusqu'au régime stable,20,,,-,tola2022,§3.3,,simulation_publiee,« full operational regime is reached » en moins de 20 cycles ; l'air converge plus vite que l'huile.
 tola.tes.fraction_sortie_constante,Fraction de la charge ou de la décharge pendant laquelle la température de sortie reste constante,0.67,,,-,tola2022,§3.3 ; fig. 4,,simulation_publiee,« about two thirds ».
+tola.compresseur.rendement_polytropique,"Rendement polytropique des compresseurs (CLP, CIP, CHP, CVHP au point nominal)",0.88,,,-,tola2022,tableau 1 ; §2.1,turbomachines commerciales (réf. [21] de Tola),simulation_publiee,
+tola.turbine.rendement_polytropique,Rendement polytropique des trois turbines,0.86,,,-,tola2022,tableau 6,,simulation_publiee,
+tola.rendement_moteur_generateur,Rendement du moteur et de la génératrice (mécanique → électrique),0.97,,,-,tola2022,§4,,simulation_publiee,
+tola.compresseur.T_sortie,"Température de sortie imposée des compresseurs CLP, CIP, CHP",170,,,degC,tola2022,tableau 1,les rapports de pression en découlent,simulation_publiee,
+tola.compresseur.T_entree,Température d'entrée des compresseurs après refroidissement,35,,,degC,tola2022,tableau 1 ; §2.1,,simulation_publiee,
+tola.pincement_air,Écart minimal de température des échangeurs air / air (cas A),20,,,K,tola2022,tableau 2 ; §2.1,,simulation_publiee,"Différence de température : pas de décalage de 273,15."
+tola.pincement_huile,Écart minimal de température des échangeurs air / huile (cas B),10,,,K,tola2022,tableau 2 ; §2.1,,simulation_publiee,"Différence de température : pas de décalage de 273,15."
+tola.huile.cp,Chaleur massique de l'huile thermique Therminol 66 (conditions ambiantes),1494,,,J/kgK,tola2022,tableau 2,à l'ambiant ; croît avec la température,simulation_publiee,
+tola.turbine.T_sortie_min,Température minimale de sortie de chaque turbine (vanne de laminage sinon),15,,,degC,tola2022,tableau 6,,simulation_publiee,
+tola.cave.pression_min,Pression minimale de la caverne,64,,,bar,tola2022,§2.2,,simulation_publiee,
+tola.cave.pression_max,Pression maximale de la caverne,100,,,bar,tola2022,§2.2,,simulation_publiee,
+tola.rte.cas_A,"Rendement aller-retour, cas A (air)",0.566,,,-,tola2022,tableau 10,,simulation_publiee,
+tola.rte.cas_B,"Rendement aller-retour, cas B (huile)",0.635,,,-,tola2022,tableau 10,,simulation_publiee,
+tola.rte.cas_C,"Rendement aller-retour, cas C (gravier direct)",0.674,,,-,tola2022,tableau 10,,simulation_publiee,"La conclusion dit « légèrement inférieur à 0,65 » : incohérence."
+shi.compresseur.rendement_isentropique,Rendement isentropique des compresseurs,0.86,,,-,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. Réf. [27] de Shi.
+shi.turbine.rendement_isentropique,Rendement isentropique des turbines,0.9,,,-,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. Réf. [27] de Shi.
+shi.rendement_mecanique,Rendement mécanique des compresseurs et des turbines,0.99,,,-,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.rendement_electrique,Rendement électrique des moteurs et des génératrices,0.98,,,-,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.pincement,Écart minimal de température (PPTD) des réchauffeurs et des refroidisseurs,10,,,K,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. Différence de température : pas de décalage.
+shi.perte_charge_echangeur,Perte de charge dans chaque échangeur,0.4,,,bar,shi2024,tableau 4,,simulation_publiee,"Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. 0,04 MPa."
+shi.perte_charge_entree_reservoir,Surpression requise à l'entrée du réservoir d'air,2,,,bar,shi2024,tableau 4 ; §4,,simulation_publiee,"Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. 0,2 MPa."
+shi.compresseur.T_sortie,Température de sortie imposée des compresseurs 1 à 3,200,,,degC,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.T_eau_froide,Température de l'eau froide à l'entrée des refroidisseurs,30,,,degC,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.T_amb,Température ambiante,25,,,degC,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.reservoir.pression_min,Pression minimale du réservoir d'air (réservoir isochore adiabatique),40,,,bar,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.reservoir.pression_max,Pression maximale du réservoir d'air,100,,,bar,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.puissance_decharge,Puissance de décharge,100000,,,kW,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.duree_decharge,Durée de décharge,6,,,h,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.duree_charge,Durée de charge,8,,,h,shi2024,tableau 4,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.rte,Rendement aller-retour au point de conception,0.6764,,,-,shi2024,tableau 5 ; §5,,simulation_publiee,"Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. 600 / 887,05 MWh."
+shi.eau.pression,Pression des réservoirs d'eau chaude et froide,18,,,bar,shi2024,figure 7,,simulation_publiee,"Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. 1,8 MPa ; eau chaude à 190 °C, eau froide à 30 °C."
+shi.eau.T_chaud,Température de l'eau chaude stockée,190,,,degC,shi2024,figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+eau.cp_source,Chaleur massique et saturation de l'eau liquide : équation d'état IAPWS-95 via CoolProp,"IAPWS-95 (CoolProp, Water)",,,texte,wagner2002,équation d'état,,mesure,Utilisée par le modèle eau_sous_pression (formules.md#F40).
+shi.eau.volume_chaud,Volume du réservoir d'eau chaude,4783.5,,,m3,shi2024,tableau 5,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+zhangS.flugel.t4,Coefficient t4 de la formule de Flügel modifiée (chute de rendement hors du point nominal),0.3,,,-,zhangS2025,éq. 3,turbines de grande taille ; à vérifier pour une petite turbine,simulation_publiee,"Valeur de la littérature reprise par Zhang (réf. [40], [41])."
+zhangS.turbine.rendement_isentropique,Rendement isentropique de la turbine au point nominal,0.88,,,-,zhangS2025,§4.1.1,turbine de 10 MW,simulation_publiee,Trop optimiste pour une petite turbine DEPRAG (53-73 % mécanique).
+zhangS.vanne.Cq,Coefficient de débit des vannes ON/OFF et de réglage,0.95,,,-,zhangS2025,§4.1.1 (tableau des paramètres),,simulation_publiee,
+zhangS.turbine.T_entree,Température d'entrée de la turbine au point nominal,336.88,,,K,zhangS2025,§4.1.1,,simulation_publiee,
+zhangS.turbine.pression_entree,Pression d'entrée de la turbine au point nominal,70,,,bar,zhangS2025,§4.1.1 ; §4.1.2,,simulation_publiee,
+zhangS.reservoir.pression_max,Pression maximale de la caverne,100,,,bar,zhangS2025,§4.1.1,,simulation_publiee,
+wolfbudt.rte,"Rendement aller-retour attendu d'un LTA-CAES (deux réservoirs de liquide, basse température)",,0.52,0.6,-,bazdar2022,"tableau 3 (d'après Wolf & Budt 2014, réf. [110])",,simulation_publiee,"Plage 52-60 %. Source primaire : wolfbudt2014 (DOI vérifié, PDF non récupéré)."
+wolfbudt.demarrage,Temps de démarrage d'un LTA-CAES,5,,,min,bazdar2022,tableau 3 (d'après Wolf & Budt 2014),,simulation_publiee,« < 5 min » ; stockage chaud (gravier) : 10-15 min.
+materiau.laine_minerale.conductivite,Conductivité thermique de la laine minérale à 20 °C (densité > 26 kg/m3),0.036,0.03,0.046,W/mK,ablaoui2023,"tableau 1 (projet d'Eurocode, réf. [19] d'Ablaoui)","20 °C, sec",fabricant,"Valeur tabulée d'un projet de norme, pas une mesure des auteurs. Plage ambiante 0,030-0,046 W/m·K (réf. [13] d'Ablaoui)."
+materiau.laine_minerale.conductivite_100C,Conductivité thermique de la laine minérale à 100 °C,0.047,,,W/mK,ablaoui2023,tableau 1,100 °C,fabricant,Interpolation linéaire admise entre 20 et 100 °C (note du tableau).
+materiau.laine_minerale.cp,Chaleur massique de la laine minérale à 20 °C,880,,,J/kgK,ablaoui2023,tableau 1,20 °C,fabricant,
+materiau.laine_minerale.masse_volumique,Masse volumique de la laine minérale testée par Ablaoui,114,,,kg/m3,ablaoui2023,§4 ; tableau 4,échantillons testés,mesure,Le tableau 1 vaut pour > 26 kg/m3.
+isolation.h_ext,Coefficient d'échange convectif extérieur d'une cuve isolée (air calme),2.5,,,W/m2K,dormoy2024,"§2.2.5 (h_conv,ext des réservoirs)","même valeur que les réservoirs d'air de Dormoy (air calme, extérieur du conteneur)",calibration,Réutilisation de reservoir.h_conv_ext pour la face externe de l'isolant d'une cuve : hypothèse de même convection naturelle.
+zhangZ.autodecharge_tes,Autodécharge d'un stockage de chaleur (grandes installations),,0.05,1.0,%,zhangZ2021,tableau 11,par jour,simulation_publiee,"Plage 0,05-1 % par jour ; valeur générique de revue, sans source par ligne."
+tola.T_amb,Température ambiante (entrée du compresseur basse pression),15,,,degC,tola2022,tableau 1,,simulation_publiee,
+tola.p_amb,Pression ambiante (entrée du compresseur basse pression),1.01,,,bar,tola2022,tableau 1,,simulation_publiee,"0,101 MPa."
+tola.compresseur.debit_entree,Débit massique d'air à l'entrée du compresseur basse pression,12.35,,,kg/s,tola2022,tableau 7 ; tableau 10,,simulation_publiee,"Décroît légèrement le long de la chaîne (condensation) : 12,35 / 12,35 / 12,31 / 12,28 kg/s."
+tola.compresseur.CLP.rapport,Rapport de pression du compresseur basse pression (CLP),3.8,,,-,tola2022,tableau 1,,simulation_publiee,
+tola.compresseur.CIP.rapport,Rapport de pression du compresseur moyenne pression (CIP),3.1,,,-,tola2022,tableau 1,,simulation_publiee,
+tola.compresseur.CHP.rapport,Rapport de pression du compresseur haute pression (CHP),3.1,,,-,tola2022,tableau 1,,simulation_publiee,
+tola.compresseur.CLP.puissance,Puissance électrique du compresseur CLP (constante pendant la charge),1980,,,kW,tola2022,tableau 7,,simulation_publiee,"Électrique : 1,98 MW × 6 h = 11,9 MWh (tableau 7), rendement moteur 0,97 compris."
+tola.compresseur.CLP.energie,Énergie électrique du compresseur CLP sur la charge de 6 h,11.9,,,MWh,tola2022,tableau 7,,simulation_publiee,
+tola.compresseur.CIP.puissance,Puissance électrique du compresseur CIP (constante pendant la charge),1730,,,kW,tola2022,tableau 7,,simulation_publiee,"Électrique : 1,98 MW × 6 h = 11,9 MWh (tableau 7), rendement moteur 0,97 compris."
+tola.compresseur.CIP.energie,Énergie électrique du compresseur CIP sur la charge de 6 h,10.38,,,MWh,tola2022,tableau 7,,simulation_publiee,
+tola.compresseur.CHP.puissance,Puissance électrique du compresseur CHP (constante pendant la charge),1720,,,kW,tola2022,tableau 7,,simulation_publiee,"Électrique : 1,98 MW × 6 h = 11,9 MWh (tableau 7), rendement moteur 0,97 compris."
+tola.compresseur.CHP.energie,Énergie électrique du compresseur CHP sur la charge de 6 h,10.31,,,MWh,tola2022,tableau 7,,simulation_publiee,
+tola.compresseur.CVHP.puissance,"Puissance électrique du compresseur très haute pression (CVHP), de 6,4 à 10 MPa",,790,1550,kW,tola2022,tableau 7,,simulation_publiee,
+tola.compresseur.CVHP.energie,Énergie électrique du compresseur CVHP sur la charge,7.16,,,MWh,tola2022,tableau 7,,simulation_publiee,
+tola.compresseur.energie_totale,Énergie électrique totale de la chaîne de compression (6 h),39.76,,,MWh,tola2022,tableau 7 ; tableau 10,,simulation_publiee,"39,8 MWh au tableau 10."
+tola.turbine.debit,Débit massique d'air des turbines,24.5,,,kg/s,tola2022,tableau 10,,simulation_publiee,
+tola.turbine.T_entree_cas_A,"Température d'entrée nominale des turbines, cas A",130,,,degC,tola2022,tableau 6,,simulation_publiee,
+tola.turbine.energie_cas_A,"Énergie électrique produite par les trois turbines sur 3 h, cas A",23.92,,,MWh,tola2022,tableau 9 ; tableau 10,,simulation_publiee,
+tola.turbine.puissance_max_cas_A,"Puissance électrique maximale des trois turbines (début de décharge), cas A",8300,,,kW,tola2022,tableau 9 ; tableau 10,,simulation_publiee,
+tola.turbine.T_entree_cas_B,"Température d'entrée nominale des turbines, cas B",150,,,degC,tola2022,tableau 6,,simulation_publiee,
+tola.turbine.energie_cas_B,"Énergie électrique produite par les trois turbines sur 3 h, cas B",26.82,,,MWh,tola2022,tableau 9 ; tableau 10,,simulation_publiee,
+tola.turbine.puissance_max_cas_B,"Puissance électrique maximale des trois turbines (début de décharge), cas B",9500,,,kW,tola2022,tableau 9 ; tableau 10,,simulation_publiee,
+tola.turbine.T_entree_cas_C,"Température d'entrée nominale des turbines, cas C",170,,,degC,tola2022,tableau 6,,simulation_publiee,
+tola.turbine.energie_cas_C,"Énergie électrique produite par les trois turbines sur 3 h, cas C",28.48,,,MWh,tola2022,tableau 9 ; tableau 10,,simulation_publiee,
+tola.turbine.puissance_max_cas_C,"Puissance électrique maximale des trois turbines (début de décharge), cas C",10000,,,kW,tola2022,tableau 9 ; tableau 10,,simulation_publiee,
+tola.turbine.THP.energie_cas_C,"Énergie produite par la turbine THP, cas C",9.41,,,MWh,tola2022,tableau 9,,simulation_publiee,
+tola.turbine.TIP.energie_cas_C,"Énergie produite par la turbine TIP, cas C",9.53,,,MWh,tola2022,tableau 9,,simulation_publiee,
+tola.turbine.TLP.energie_cas_C,"Énergie produite par la turbine TLP, cas C",9.54,,,MWh,tola2022,tableau 9,,simulation_publiee,
+tola.cave.volume,Volume de la caverne,6500,,,m3,tola2022,§3.2,,simulation_publiee,"Calculé par Tola avec l'hypothèse du gaz parfait pour 264,6 t d'air de décharge."
+tola.cave.masse_min,Masse d'air dans la caverne à la pression minimale,470,,,t,tola2022,§3.2,,simulation_publiee,
+tola.cave.masse_max,Masse d'air dans la caverne en fin de charge,735,,,t,tola2022,§3.2,,simulation_publiee,
+tola.cave.T_min,Température minimale de l'air dans la caverne,15,,,degC,tola2022,§2.2,,simulation_publiee,Plage 15-55 °C imposée « to avoid structural issues ».
+tola.cave.T_max,Température maximale de l'air dans la caverne,55,,,degC,tola2022,§2.2,,simulation_publiee,
+tola.rte.energie_decharge_cas_C,"Énergie produite, cas C (tableau 10)",28.5,,,MWh,tola2022,tableau 10,,simulation_publiee,
+shi.p_amb,Pression ambiante,1,,,bar,shi2024,figure 7,,simulation_publiee,"Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. 0,1 MPa."
+shi.debit_charge,Débit massique d'air pendant la charge,198.35,,,kg/s,shi2024,figure 7 ; §5,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.debit_decharge,Débit massique d'air pendant la décharge,260.15,,,kg/s,shi2024,figure 7 ; §5,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.puissance_1,Puissance électrique du compresseur 1 quand le réservoir est à 7 MPa,36230,,,kW,shi2024,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.puissance_2,Puissance électrique du compresseur 2 quand le réservoir est à 7 MPa,33140,,,kW,shi2024,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.puissance_3,Puissance électrique du compresseur 3 quand le réservoir est à 7 MPa,33150,,,kW,shi2024,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.puissance_4,Puissance électrique du compresseur 4 quand le réservoir est à 7 MPa,10270,,,kW,shi2024,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.puissance_1,Puissance électrique de la turbine 1 quand le réservoir est à 7 MPa,20440,,,kW,shi2024,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.puissance_2,Puissance électrique de la turbine 2 quand le réservoir est à 7 MPa,39800,,,kW,shi2024,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.puissance_3,Puissance électrique de la turbine 3 quand le réservoir est à 7 MPa,39770,,,kW,shi2024,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.p_sortie_1,Pression de sortie du compresseur 1,4.3,,,bar,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.p_sortie_2,Pression de sortie du compresseur 2,14.0,,,bar,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.p_sortie_3,Pression de sortie du compresseur 3,48.6,,,bar,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.p_sortie_4,Pression de sortie du compresseur 4 (réservoir à 7 MPa),75.5,,,bar,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur.T_sortie_4,Température de sortie du compresseur 4 (réservoir à 7 MPa),90,,,degC,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.refroidisseur.T_sortie_air,Température de l'air à la sortie des refroidisseurs,40,,,degC,shi2024,figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.T_entree,"Température d'entrée des turbines (eau à 190 °C, pincement 10 K)",180,,,degC,shi2024,figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.p_sortie_1,Pression de sortie de la turbine 1,32.6,,,bar,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.p_entree_2,"Pression d'entrée de la turbine 2 (après le réchauffeur, 0,04 MPa de perte)",32.2,,,bar,shi2024,figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.p_sortie_2,Pression de sortie de la turbine 2,5.9,,,bar,shi2024,figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.p_entree_3,Pression d'entrée de la turbine 3,5.5,,,bar,shi2024,figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.p_sortie_3,Pression de sortie de la turbine 3,1,,,bar,shi2024,figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.T_sortie_1,Température de sortie de la turbine 1 (réservoir à 7 MPa),100,,,degC,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.T_sortie_2,Température de sortie de la turbine 2 (réservoir à 7 MPa),24,,,degC,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.turbine.T_sortie_3,Température de sortie de la turbine 3 (réservoir à 7 MPa),24,,,degC,shi2024,figure 7,réservoir à 7 MPa,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.reservoir.volume,Volume du réservoir d'air,118000,,,m3,shi2024,tableau 5 ; §5,,simulation_publiee,"Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. 1,18 × 10^5 m3."
+shi.masse_air,Masse d'air stockée par cycle,5712.5,,,t,shi2024,tableau 5,,simulation_publiee,"Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. 198,35 kg/s × 8 h."
+shi.masse_eau,Masse d'eau stockée par cycle,4193.7,,,t,shi2024,tableau 5,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.eau.volume_froid,Volume du réservoir d'eau froide,4208.8,,,m3,shi2024,tableau 5,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.compresseur4.duree_fonctionnement,Durée de fonctionnement du compresseur 4 pendant la charge de 8 h,7.04,,,h,shi2024,tableau 5 ; §5,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. Inactif tant que la sortie du compresseur 3 dépasse la pression du réservoir.
+shi.energie_charge,Énergie électrique consommée par cycle,887.05,,,MWh,shi2024,tableau 5 ; §5,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.energie_decharge,Énergie électrique produite par cycle,600,,,MWh,shi2024,tableau 5,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+shi.reservoir.T_min,Température de l'air dans le réservoir en début de charge,2.78,,,degC,shi2024,§4 (texte) ; figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage. Plage 3-70 °C sur la figure 7.
+shi.reservoir.T_max,Température de l'air dans le réservoir en fin de charge,70,,,degC,shi2024,figure 7,,simulation_publiee,Prépublication SSRN non révisée par les pairs : à signaler à chaque usage.
+humidite.formulation,Propriétés de l'air humide : formulation ASHRAE RP-1485 via CoolProp (HAPropsSI),RP-1485 (CoolProp HumidAir),,,texte,herrmann2009,article entier,,mesure,"Inclut le facteur d'augmentation f(T, p) de la solubilité de l'eau dans l'air comprimé (formules.md#F42)."
+humidite.pression_max_validite,Pression maximale de validité de la formulation d'air humide,100,,,bar,herrmann2009,résumé ; §2,"10 Pa à 10 MPa, −143 à 350 °C",simulation_publiee,"Au-delà (réservoir de Dormoy à 190 bar), le simulateur extrapole à pression partielle de vapeur constante et le signale."
+eau.enthalpie_fusion,Enthalpie de fusion de la glace Ih au point triple,333.4,,,kJ/kg,feistel2006,tableau des propriétés au point triple,"273,16 K, 611,657 Pa",mesure,Sert à la chaleur libérée par le givre (formules.md#F43).
+secheur.point_de_rosee_sortie,Point de rosée sous pression à la sortie d'un sécheur par adsorption,-40,,,degC,dormoy2024,"§2.1 (sécheur par adsorption, non spécifié)",valeur usuelle des sécheurs par adsorption sans chaleur (classe ISO 8573-1 : 2),hypothese,"Dormoy ne donne pas le point de rosée de son sécheur : hypothèse du projet, à remplacer par la fiche technique."
+separateur.efficacite,Fraction de l'eau liquide entraînée retenue par un séparateur cyclonique ou à coalescence,0.98,,,-,dormoy2024,§2.1 (non décrit),gouttelettes après un refroidisseur,hypothese,Hypothèse du projet (ordre de grandeur des séparateurs industriels) ; aucune donnée dans les études lues.
+secheur.appoint.efficacite,Fraction du débit conservée par un petit sécheur d'appoint (purge réduite),0.95,,,-,dormoy2024,§2.1 (non décrit),"après un séparateur, air déjà proche de la saturation à basse teneur",hypothese,Hypothèse du projet : purge de 5 % au lieu de 19 % pour un sécheur dimensionné sur une charge en eau bien plus faible.
+reservoir.alu.limite_elastique,Limite d'élasticité de l'aluminium 6061-T6 (valeur typique),276,,,MPa,asm1990,propriétés typiques de l'alliage 6061-T6,20 °C,fabricant,Valeur typique (40 ksi) ; résistance à la traction 310 MPa. Sert de borne « tout aluminium » dans le calcul de masse F44.
+reservoir.pression_service,Pression de service des réservoirs composites de Dormoy,300,,,bar,dormoy2024,§3.3.2 (cas à 300 bar),,hypothese,L'article simule une charge à 300 bar avec les mêmes réservoirs ; leur pression nominale n'est pas publiée.
+reservoir.coefficient_securite,Coefficient de sécurité (rapport pression d'éclatement / pression de service) retenu pour un réservoir composite,2.25,,,-,dormoy2024,non publié,,hypothese,"Hypothèse du projet : rapport d'éclatement courant des bouteilles composites à liner métallique (ordre de grandeur de l'industrie, aucune source à DOI lue) ; à remplacer par la norme applicable."
+reservoir.resistance_specifique_equivalente,"Résistance spécifique équivalente (σ_adm / ρ) de la paroi composite des réservoirs de Dormoy, déduite de leur masse",385.0,374.0,395.0,kJ/kg,dormoy2024supp,"tableau 8 (masse, diamètre, volume)","paroi mince, pression de service 300 bar, coefficient 2,25",calibration,"Calcul personnel F44 : (σ/ρ) = S · p · (2 V_cyl + 1,5 V_fonds) / m, pour les bouteilles de 320 L (107 kg) et 270 L (95 kg) ; l'aluminium 6061-T6 seul donne 102 kJ/kg (276 MPa / 2700 kg/m3)."
+reservoir.fuite_par_jour,Fraction de la masse d'air perdue par jour par fuites lentes pendant une attente,0.5,,,%,dormoy2024,non publié (l'essai de 10 h ne montre pas de fuite),,hypothese,Ordre de grandeur choisi par le projet pour les scénarios de transport ; 0 par défaut dans les composants. À remplacer par une mesure d'étanchéité.
+megapack.energie,Énergie disponible d'un Megapack « 4-Hour Standard »,3080.4,,,kWh,tesla2020,"page 2, Standard System Specifications","25 °C, jour 1, pertes thermiques incluses",fabricant,
+megapack.puissance,Puissance d'un Megapack « 4-Hour Standard »,770.1,,,kW,tesla2020,page 2,,fabricant,
+megapack.rendement_aller_retour,Rendement aller-retour d'un Megapack 4 h,90,,,%,tesla2020,page 2,"25 °C, jour 1",fabricant,
+megapack.masse,Masse maximale à l'expédition d'un Megapack standard,25400,,,kg,tesla2020,"page 2, Mechanical and Mounting",,fabricant,
+megapack.longueur,Longueur de l'enveloppe d'un Megapack,7.168,,,m,tesla2020,page 2,,fabricant,
+megapack.largeur,Profondeur de l'enveloppe d'un Megapack,1.659,,,m,tesla2020,page 2,,fabricant,
+megapack.hauteur,Hauteur de l'enveloppe d'un Megapack,2.522,,,m,tesla2020,page 2,,fabricant,
+megapack.T_min,Température ambiante minimale de fonctionnement d'un Megapack,-30,,,degC,tesla2020,page 2,,fabricant,
+groupe_diesel.puissance,"Puissance électrique de secours (standby) de la génératrice Cat D100 GC, 60 Hz",100,,,kW,caterpillar2020,page 1,,fabricant,
+groupe_diesel.conso_100,"Consommation de carburant à 100 % de charge (triphasé, avec ventilateur)",27.9,,,L/h,caterpillar2020,"page 1, Fuel Consumption",,fabricant,
+groupe_diesel.conso_75,Consommation à 75 % de charge,22.5,,,L/h,caterpillar2020,page 1,,fabricant,
+groupe_diesel.conso_50,Consommation à 50 % de charge,16.7,,,L/h,caterpillar2020,page 1,,fabricant,
+groupe_diesel.masse,Masse à sec de la génératrice D100 GC,1008,,,kg,caterpillar2020,"page 2, Weights & Dimensions",,fabricant,
+groupe_diesel.pci,Pouvoir calorifique inférieur du diesel n° 2 (18 390 BTU/lb),42.78,,,MJ/kg,caterpillar2020,"page 2, note 2",,calcul_personnel,"18 390 BTU/lb × 2,326 kJ/kg par BTU/lb."
+groupe_diesel.masse_volumique,Masse volumique du diesel n° 2 à 35° API,850,,,kg/m3,caterpillar2020,"page 2, note 2",,calcul_personnel,"Densité = 141,5 / (131,5 + 35) = 0,850."
+batterie.cout_2030_bas,"Coût projeté (bas) d'une batterie lithium-ion de 4 h en 2030, dollars américains de 2022",245,,,$/kWh,nrel2023,résumé (notice OSTI),,simulation_publiee,Coût du système installé par kWh de capacité.
+batterie.cout_2030_moyen,"Coût projeté (moyen) d'une batterie lithium-ion de 4 h en 2030, dollars américains de 2022",326,,,$/kWh,nrel2023,résumé (notice OSTI),,simulation_publiee,Coût du système installé par kWh de capacité.
+batterie.cout_2030_haut,"Coût projeté (haut) d'une batterie lithium-ion de 4 h en 2030, dollars américains de 2022",403,,,$/kWh,nrel2023,résumé (notice OSTI),,simulation_publiee,Coût du système installé par kWh de capacité.
+caes.cout_reservoir_hors_sol,Coût du stockage d'air hors sol (réservoirs) par kWh,,200,250,$/kWh,dormoy2024,tableau 1 (d'après Bazdar et al. 2022),,simulation_publiee,Fourchette citée par Dormoy pour un CAES à réservoirs hors sol.
+centre_urgence.puissance_moyenne,Puissance moyenne d'un centre d'urgence,100,,,kW,dormoy2024,plan v2 du projet (scénario 3),,hypothese,"Choix du projet ; 7,2 MWh sur 72 h."
+centre_urgence.duree,Autonomie visée d'un centre d'urgence,72,,,h,dormoy2024,plan v2 du projet (scénario 3),,hypothese,
+centre_urgence.facteur_jour,Multiplicateur de la demande de jour (6 h à 22 h),1.2,,,-,dormoy2024,non publié,,hypothese,"Profil jour/nuit de moyenne 1 : (16 × 1,2 + 8 × 0,6) / 24 = 1. À remplacer par un profil mesuré (données ouvertes d'un bâtiment)."
+centre_urgence.facteur_nuit,Multiplicateur de la demande de nuit (22 h à 6 h),0.6,,,-,dormoy2024,non publié,,hypothese,
+meteo.amplitude_journaliere,Demi-amplitude de la variation journalière de la température extérieure dans les profils d'exemple,5,,,K,dormoy2024,non publié,,hypothese,"Sinusoïde de 24 h autour de la moyenne (−20 °C en hiver, 30 °C en été) ; à remplacer par des normales climatiques."

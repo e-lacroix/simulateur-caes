@@ -164,7 +164,7 @@ def main() -> None:
     # ------------------------------------------------------------------
     # 1. Essai mesuré
     # ------------------------------------------------------------------
-    sc_essai = charger_scenario("dormoy_decharge_essai.yaml", reg)
+    sc_essai = charger_scenario("v1/dormoy_decharge_essai.yaml", reg)
     r_iso = simuler_decharge(sc_essai)
     r_ch = simuler_decharge(sc_essai.avec({"detendeur.modele": "cheayb"},
                                           "cheayb"))
@@ -241,10 +241,10 @@ def main() -> None:
     # ------------------------------------------------------------------
     # 2. Cas de base
     # ------------------------------------------------------------------
-    sc_base = charger_scenario("dormoy_decharge_base.yaml", reg)
-    sc_ch_A = charger_scenario("dormoy_charge_1_190.yaml", reg)
+    sc_base = charger_scenario("v1/dormoy_decharge_base.yaml", reg)
+    sc_ch_A = charger_scenario("v1/dormoy_charge_1_190.yaml", reg)
     sc_ch_B = charger_scenario(
-        "dormoy_charge_1_190_aspiration_chaude.yaml", reg)
+        "v1/dormoy_charge_1_190_aspiration_chaude.yaml", reg)
     E_ref = reg["cas_base.energie_produite"].valeur
     E_cons_ref = reg["cas_base.energie_consommee"].valeur
     p_arret = reg.si("cas_base.pression_arret")
@@ -342,14 +342,14 @@ def main() -> None:
     # ------------------------------------------------------------------
     # 3. Trois étages
     # ------------------------------------------------------------------
-    sc3 = charger_scenario("dormoy_decharge_3etages.yaml", reg)
+    sc3 = charger_scenario("v1/dormoy_decharge_3etages.yaml", reg)
     r3 = simuler_decharge(sc3)
     r3_20 = simuler_decharge(sc3.avec(
         {"reservoir.T_initiale": 293.15, "reservoir.T_paroi_initiale": 293.15},
         "T20"))
-    ch55_A = simuler_charge(charger_scenario("dormoy_charge_55_190.yaml", reg))
+    ch55_A = simuler_charge(charger_scenario("v1/dormoy_charge_55_190.yaml", reg))
     ch55_B = simuler_charge(charger_scenario(
-        "dormoy_charge_55_190.yaml", reg).avec(
+        "v1/dormoy_charge_55_190.yaml", reg).avec(
         {"compresseur.debit_massique_aspire": None,
          "ambiance.T_aspiration": sc_ch_B["ambiance.T_aspiration"]},
         "aspiration_chaude"))

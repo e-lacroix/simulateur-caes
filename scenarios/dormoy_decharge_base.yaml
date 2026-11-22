@@ -1,6 +1,7 @@
 # Cas de base simulé par Dormoy et al. (2024), § 3.3 : 5,86 m3 à 190 bar,
 # un seul étage de détente (le dernier étage de la turbine DEPRAG, 3 → 1 bar),
-# sans réchauffage. Référence : 16,93 kWh produits.
+# sans réchauffage. Référence : 16,93 kWh produits (le simulateur donne
+# ≈ 14,3 kWh : écart de −15 % non expliqué, voir JOURNAL.md).
 
 nom: dormoy_decharge_base
 description: >
@@ -10,52 +11,56 @@ description: >
 ambiance:
   T_amb: registre:ambiance.T_amb_essai_charge
   p_amb: registre:ambiance.p_amb_essai
+  humidite_relative: registre:ambiance.humidite_relative_essai
 
-reservoir:
-  volume: registre:reservoir.volume_total
-  surface: registre:reservoir.surface_equivalente_totale
-  modele_thermique: paroi
-  K_global: registre:reservoir.K_global
-  h_int: registre:reservoir.h_conv_int
-  h_ext: registre:reservoir.h_conv_ext
-  capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
-  p_initiale: registre:essai_charge.pression_finale
-  T_initiale: registre:cas_base.temperature_initiale_decharge
-  T_paroi_initiale: registre:cas_base.temperature_initiale_decharge
+composants:
+  reservoir:
+    type: reservoir_air
+    modele: paroi
+    volume: registre:reservoir.volume_total
+    surface: registre:reservoir.surface_equivalente_totale
+    K_global: registre:reservoir.K_global
+    h_int: registre:reservoir.h_conv_int
+    h_ext: registre:reservoir.h_conv_ext
+    capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
 
-detendeur:
-  modele: isenthalpique
-  p_consigne: registre:turbine.etage3.pression_entree
-  ecart_min: registre:detendeur.ecart_pression_min
-  cheayb:
-    a1: registre:detendeur.cheayb.a1
-    a2: registre:detendeur.cheayb.a2
-    a3: registre:detendeur.cheayb.a3
-    a4: registre:detendeur.cheayb.a4
-    b1: registre:detendeur.cheayb.b1
-    b2: registre:detendeur.cheayb.b2
-    b3: registre:detendeur.cheayb.b3
-    b4: registre:detendeur.cheayb.b4
-    p_min_validite: registre:detendeur.cheayb.pression_min_validite
-    p_max_validite: registre:detendeur.cheayb.pression_max_validite
+  detendeur:
+    type: detente
+    modele: isenthalpique
+    p_consigne: registre:turbine.etage3.pression_entree
+    ecart_min: registre:detendeur.ecart_pression_min
+    cheayb:
+      a1: registre:detendeur.cheayb.a1
+      a2: registre:detendeur.cheayb.a2
+      a3: registre:detendeur.cheayb.a3
+      a4: registre:detendeur.cheayb.a4
+      b1: registre:detendeur.cheayb.b1
+      b2: registre:detendeur.cheayb.b2
+      b3: registre:detendeur.cheayb.b3
+      b4: registre:detendeur.cheayb.b4
+      p_min_validite: registre:detendeur.cheayb.pression_min_validite
+      p_max_validite: registre:detendeur.cheayb.pression_max_validite
+
+  turbine:
+    type: turbine
+    modele: polytropique_deprag
+    debit_massique: registre:turbine.etage3.debit_massique
+    etages:
+      # Un seul étage : l'étage 3 de la DEPRAG (3 → 1 bar).
+      - p_entree: registre:turbine.etage3.pression_entree
+        p_sortie: registre:turbine.etage3.pression_sortie
+        indice_polytropique: registre:turbine.etage3.indice_polytropique
+        rendement_mecanique: registre:turbine.etage3.rendement_mecanique
+        rendement_electrique: registre:turbine.etage3.rendement_electrique
+        # null = pas de cible de réchauffage (cas de base).
+        T_entree_cible: null
 
 decharge:
-  mode: turbine
-
-turbine:
-  debit_massique: registre:turbine.etage3.debit_massique
-  source_chaleur: externe
-  etages:
-    - p_entree: registre:turbine.etage3.pression_entree
-      p_sortie: registre:turbine.etage3.pression_sortie
-      indice_polytropique: registre:turbine.etage3.indice_polytropique
-      rendement_mecanique: registre:turbine.etage3.rendement_mecanique
-      rendement_electrique: registre:turbine.etage3.rendement_electrique
-      # null = pas de réchauffage (cas de base). Mettre
-      # registre:turbine.etage3.temperature_entree pour réchauffer à 90 °C.
-      T_entree_cible: null
-
-simulation:
+  chaine: [reservoir, detendeur, turbine.1]
+  reservoir_initial:
+    p: registre:essai_charge.pression_finale
+    T: registre:cas_base.temperature_initiale_decharge
+    T_paroi: registre:cas_base.temperature_initiale_decharge
   dt:
     valeur: 1
     unite: s
@@ -64,3 +69,6 @@ simulation:
     valeur: 3
     unite: h
     source: garde-fou contre une boucle infinie
+
+simulation:
+  mode: decharge

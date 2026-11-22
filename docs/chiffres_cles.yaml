@@ -1,0 +1,57 @@
+# Chiffres cités dans les pages d'explication, à retrouver dans les rapports
+# régénérés (vérifié par `python generer_tout.py --etapes verifier`).
+# Chaque entrée : la page, le rapport, une expression régulière dont le
+# groupe 1 est la valeur dans le rapport, la mise en forme (`format`,
+# `facteur`, `decimale`) qui doit donner exactement le texte de la page.
+
+- description: rendement de D (phase 11, Dormoy avec gravier)
+  page: docs/phase-11-explication.md
+  rapport: rapports/scenarios/dormoy_gravier.md
+  motif: '\| \*\*D\*\* \|(?:[^|]*\|){6} ([0-9.]+) % \|'
+  format: "{:.1f} %"
+- description: rendement de D par −20 °C (phase 11)
+  page: docs/phase-11-explication.md
+  rapport: rapports/scenarios/dormoy_gravier.md
+  motif: '\| \*\*D hiver\*\* \|(?:[^|]*\|){6} ([0-9.]+) % \|'
+  format: "{:.1f} %"
+- description: chaleur restante après 14 jours sous 20 cm (phase 11, transport)
+  page: docs/phase-11-explication.md
+  rapport: rapports/scenarios/transport.md
+  motif: '\| 20 cm \| 14 j \|(?:[^|]*\|){3} ([0-9]+) % \|'
+  format: "{:.0f} %"
+- description: électricité livrée après 7 jours sous 20 cm (phase 11)
+  page: docs/phase-11-explication.md
+  rapport: rapports/scenarios/transport.md
+  motif: '\| 20 cm \| 7 j \|(?:[^|]*\|){4} ([0-9.]+) \|'
+  format: "{:.1f} kWh"
+- description: nombre de modules du centre d'urgence (phase 11)
+  page: docs/phase-11-explication.md
+  rapport: rapports/scenarios/centre_urgence.md
+  motif: '\| base \| jour / nuit \| \*\*([0-9]+)\*\*'
+  format: "{:.0f} modules"
+- description: masse de la flotte (phase 11)
+  page: docs/phase-11-explication.md
+  rapport: rapports/scenarios/centre_urgence.md
+  motif: '\| base \| jour / nuit \| \*\*[0-9]+\*\*(?:[^|]*\|){6} ([0-9]+) \|'
+  format: "{:.0f} tonnes"
+- description: rendement nominal de D isolée (phase 10)
+  page: docs/phase-10-explication.md
+  rapport: rapports/phase10/analyse.md
+  motif: '\| Rendement aller-retour \(sans chaleur externe\) \| ([0-9.]+) \|'
+  format: "{:.1f} %"
+  facteur: 100
+- description: indice total de Sobol du rendement mécanique (phase 10)
+  page: docs/phase-10-explication.md
+  rapport: rapports/phase10/analyse.md
+  motif: '## 4\..*?\| 1 \| Rendement mécanique du compresseur \(facteur\) \| [0-9.-]+ \| ([0-9.]+) \|'
+  format: "{:.2f}"
+- description: rendement de B avec séparateurs seuls (phase 9)
+  page: docs/phase-09-explication.md
+  rapport: rapports/phase9/humidite.md
+  motif: '\| `B_separateur.yaml` \|(?:[^|]*\|){2} ([0-9.]+) % \|'
+  format: "{:.1f} %"
+- description: rendement de B avec le sécheur de Dormoy (phase 9)
+  page: docs/phase-09-explication.md
+  rapport: rapports/phase9/humidite.md
+  motif: '\| `B_secheur_adsorption.yaml` \|(?:[^|]*\|){2} ([0-9.]+) % \|'
+  format: "{:.1f} %"

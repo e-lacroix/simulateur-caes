@@ -1,0 +1,32 @@
+# Architecture E : 3 étages, gravier + boucle d'air (cas A de Tola). Les
+# cuves sont à pression atmosphérique ; un échangeur transfère la chaleur
+# de l'air comprimé à une boucle d'air qui charge la cuve, et un second la
+# rend à la turbine. Chaque échangeur coûte un pincement de 20 K.
+nom: E
+description: 3 étages, cuves de gravier à 1 bar alimentées par une boucle d'air, deux échangeurs à 20 K de pincement.
+architecture: E
+charge: v1/dormoy_charge_1_190_aspiration_chaude.yaml
+decharge: v1/dormoy_decharge_3etages.yaml
+pression_arret: registre:charge_55_190.pression_min
+cuves:
+  materiau: gravier_tola
+  # Mêmes volumes de base que D (voir D.yaml).
+  volumes: [0.35, 0.2, 0.7]
+  rapport_hauteur_diametre: 2
+  n_cellules: 30
+  pincement:
+    valeur: 20
+    unite: K
+    source: écart minimal des échangeurs air-air chez Tola (tableau 2, 20 °C pour l'air)
+  coefficient_perte:
+    valeur: 0
+    unite: W/m2K
+    source: isolation parfaite en phase 5 ; les pertes sont l'objet de la phase 6
+  bypass: true
+cycles:
+  nombre_max: 6
+  tolerance: 0.01
+  attente:
+    valeur: 1
+    unite: h
+    source: attente courte entre charge et décharge (choix de la phase 5)

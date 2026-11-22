@@ -1,0 +1,76 @@
+id,grandeur,valeur,valeur_min,valeur_max,unite,localisation,conditions,niveau_preuve
+refroidisseur.nb_etages,Nombre d'étages de refroidissement,4.0,,,-,tableau 7,,fabricant
+refroidisseur.debit_volumique_air_froid,Débit volumique de la source froide (air ambiant) du refroidisseur,11000.0,,,m3/h,tableau 7,,fabricant
+refroidisseur.efficacite_etage1,"Efficacité NTU calibrée du refroidisseur, étage 1",82.0,,,%,tableau 2,charge 1 → 190 bar,calibration
+refroidisseur.efficacite_etage2,"Efficacité NTU calibrée du refroidisseur, étage 2",85.0,,,%,tableau 2,charge 1 → 190 bar,calibration
+refroidisseur.efficacite_etage3,"Efficacité NTU calibrée du refroidisseur, étage 3",88.0,,,%,tableau 2,charge 1 → 190 bar,calibration
+refroidisseur.efficacite_etage4,"Efficacité NTU calibrée du refroidisseur, étage 4 (plage)",,74.0,85.0,%,tableau 2 ; §3.2,croît avec la pression du réservoir,calibration
+dormoy_modele.charge.MAPE_max,MAPE maximal du modèle de Dormoy sur la charge (tous paramètres),3.58,,,%,tableau 3,,simulation_publiee
+dormoy_modele.charge.T_etage4.RMSE_calibre,RMSE de la température de sortie de l'étage 4 après calibration,2.83,,,degC,§3.2 ; fig. 9,,simulation_publiee
+dormoy_modele.charge.T_etage4.MAPE_calibre,MAPE de la température de sortie de l'étage 4 après calibration,1.9,,,%,§3.2 ; fig. 9,,simulation_publiee
+dormoy_modele.decharge.MAPE_max_reservoir,MAPE maximal du modèle de Dormoy sur la décharge (réservoir),1.1,,,%,tableau 4,,simulation_publiee
+dormoy_modele.decharge.MAPE_detendeur_isenthalpique,"MAPE de la température de sortie du détendeur, modèle isenthalpique",0.39,,,%,tableau 4,,simulation_publiee
+dormoy_modele.decharge.MAPE_detendeur_cheayb,"MAPE de la température de sortie du détendeur, modèle de Cheayb",0.21,,,%,tableau 4,,simulation_publiee
+cas_base.energie_produite,"Énergie produite, cas de base simulé (1 étage, sans réchauffage, 190 bar, 5,86 m3)",16.93,,,kWh,§3.3,,simulation_publiee
+cas_base.energie_consommee,"Énergie consommée, cas de base simulé",366.75,,,kWh,§3.3,,simulation_publiee
+cas_base.rte_annonce,Rendement aller-retour annoncé pour le cas de base,4.3,,,%,§3.3,,simulation_publiee
+cas_base.rte_recalcule,Rendement aller-retour recalculé pour le cas de base,4.6,,,%,§3.3,,calcul_personnel
+cas_etages.energie_consommee_1etage,Énergie de charge avec turbine à 1 étage (pression de travail minimale basse),380.0,,,kWh,§3.3.4,,simulation_publiee
+cas_etages.energie_consommee_3etages,Énergie de charge avec turbine à 3 étages (recharge depuis ~55 bar),290.0,,,kWh,§3.3.4,,simulation_publiee
+cas_etages.rte_1etage_prechauffe,RTE avec 1 étage et réchauffage,5.5,,,%,§3.3.4 ; fig. 16,,simulation_publiee
+cas_etages.rte_3etages_prechauffe,RTE avec 3 étages et réchauffage,16.0,,,%,§3.3.4 ; fig. 16 ; §4,,simulation_publiee
+turbine.etage1.pression_entree,"Turbine DEPRAG, étage 1 : Pression d'entrée",40.0,,,bar,tableau 9,conditions nominales,fabricant
+turbine.etage2.pression_entree,"Turbine DEPRAG, étage 2 : Pression d'entrée",11.0,,,bar,tableau 9,conditions nominales,fabricant
+turbine.etage3.pression_entree,"Turbine DEPRAG, étage 3 : Pression d'entrée",3.0,,,bar,tableau 9,conditions nominales,fabricant
+turbine.etage1.pression_sortie,"Turbine DEPRAG, étage 1 : Pression de sortie",11.5,,,bar,tableau 9,conditions nominales,fabricant
+turbine.etage2.pression_sortie,"Turbine DEPRAG, étage 2 : Pression de sortie",3.5,,,bar,tableau 9,conditions nominales,fabricant
+turbine.etage3.pression_sortie,"Turbine DEPRAG, étage 3 : Pression de sortie",1.0,,,bar,tableau 9,conditions nominales,fabricant
+turbine.etage1.temperature_entree,"Turbine DEPRAG, étage 1 : Température d'entrée (réchauffage requis)",130.0,,,degC,tableau 9,conditions nominales,fabricant
+turbine.etage2.temperature_entree,"Turbine DEPRAG, étage 2 : Température d'entrée (réchauffage requis)",90.0,,,degC,tableau 9,conditions nominales,fabricant
+turbine.etage3.temperature_entree,"Turbine DEPRAG, étage 3 : Température d'entrée (réchauffage requis)",90.0,,,degC,tableau 9,conditions nominales,fabricant
+turbine.etage1.temperature_sortie,"Turbine DEPRAG, étage 1 : Température de sortie",59.2,,,degC,tableau 9,conditions nominales,fabricant
+turbine.etage2.temperature_sortie,"Turbine DEPRAG, étage 2 : Température de sortie",20.7,,,degC,tableau 9,conditions nominales,fabricant
+turbine.etage3.temperature_sortie,"Turbine DEPRAG, étage 3 : Température de sortie",16.0,,,degC,tableau 9,conditions nominales,fabricant
+turbine.etage1.rapport_detente,"Turbine DEPRAG, étage 1 : Rapport de détente (p_sortie / p_entrée)",0.29,,,-,tableau 9,conditions nominales,fabricant
+turbine.etage2.rapport_detente,"Turbine DEPRAG, étage 2 : Rapport de détente (p_sortie / p_entrée)",0.32,,,-,tableau 9,conditions nominales,fabricant
+turbine.etage3.rapport_detente,"Turbine DEPRAG, étage 3 : Rapport de détente (p_sortie / p_entrée)",0.34,,,-,tableau 9,conditions nominales,fabricant
+turbine.etage1.indice_polytropique,"Turbine DEPRAG, étage 1 : Indice polytropique calculé",1.19,,,-,tableau 9,conditions nominales,fabricant
+turbine.etage2.indice_polytropique,"Turbine DEPRAG, étage 2 : Indice polytropique calculé",1.23,,,-,tableau 9,conditions nominales,fabricant
+turbine.etage3.indice_polytropique,"Turbine DEPRAG, étage 3 : Indice polytropique calculé",1.27,,,-,tableau 9,conditions nominales,fabricant
+turbine.etage1.debit_massique,"Turbine DEPRAG, étage 1 : Débit massique nominal",0.321,,,kg/s,tableau 9,conditions nominales,fabricant
+turbine.etage2.debit_massique,"Turbine DEPRAG, étage 2 : Débit massique nominal",0.321,,,kg/s,tableau 9,conditions nominales,fabricant
+turbine.etage3.debit_massique,"Turbine DEPRAG, étage 3 : Débit massique nominal",0.321,,,kg/s,tableau 9,conditions nominales,fabricant
+turbine.etage1.rendement_mecanique,"Turbine DEPRAG, étage 1 : Rendement mécanique",53.0,,,%,tableau 9,conditions nominales,fabricant
+turbine.etage2.rendement_mecanique,"Turbine DEPRAG, étage 2 : Rendement mécanique",64.0,,,%,tableau 9,conditions nominales,fabricant
+turbine.etage3.rendement_mecanique,"Turbine DEPRAG, étage 3 : Rendement mécanique",73.0,,,%,tableau 9,conditions nominales,fabricant
+turbine.etage1.rendement_electrique,"Turbine DEPRAG, étage 1 : Rendement électrique de la génératrice",90.0,,,%,tableau 9,conditions nominales,fabricant
+turbine.etage2.rendement_electrique,"Turbine DEPRAG, étage 2 : Rendement électrique de la génératrice",91.0,,,%,tableau 9,conditions nominales,fabricant
+turbine.etage3.rendement_electrique,"Turbine DEPRAG, étage 3 : Rendement électrique de la génératrice",92.0,,,%,tableau 9,conditions nominales,fabricant
+turbine.etage1.puissance_mecanique,"Turbine DEPRAG, étage 1 : Puissance mécanique",22.1,,,kW,tableau 9,conditions nominales,fabricant
+turbine.etage2.puissance_mecanique,"Turbine DEPRAG, étage 2 : Puissance mécanique",22.0,,,kW,tableau 9,conditions nominales,fabricant
+turbine.etage3.puissance_mecanique,"Turbine DEPRAG, étage 3 : Puissance mécanique",23.7,,,kW,tableau 9,conditions nominales,fabricant
+turbine.etage1.puissance_electrique,"Turbine DEPRAG, étage 1 : Puissance électrique",20.0,,,kW,tableau 9,conditions nominales,fabricant
+turbine.etage2.puissance_electrique,"Turbine DEPRAG, étage 2 : Puissance électrique",20.1,,,kW,tableau 9,conditions nominales,fabricant
+turbine.etage3.puissance_electrique,"Turbine DEPRAG, étage 3 : Puissance électrique",21.8,,,kW,tableau 9,conditions nominales,fabricant
+turbine.etage1.puissance_chaleur_requise,Puissance thermique requise pour réchauffer l'air avant la turbine 1 (plage),,33.5,38.0,kW,tableau 5,"190 → 55 bar, 3 étages, 0,321 kg/s",simulation_publiee
+turbine.etage2.puissance_chaleur_requise,Puissance thermique requise pour réchauffer l'air avant la turbine 2,9.6,,,kW,tableau 5,"190 → 55 bar, 3 étages, 0,321 kg/s",simulation_publiee
+turbine.etage3.puissance_chaleur_requise,Puissance thermique requise pour réchauffer l'air avant la turbine 3,22.5,,,kW,tableau 5,"190 → 55 bar, 3 étages, 0,321 kg/s",simulation_publiee
+turbine.etage1.energie_chaleur_requise,"Énergie thermique requise avant la turbine 1, sur la décharge",24.8,,,kWh,tableau 5,"décharge de 40 min, 190 → 55 bar",simulation_publiee
+turbine.etage2.energie_chaleur_requise,"Énergie thermique requise avant la turbine 2, sur la décharge",6.4,,,kWh,tableau 5,"décharge de 40 min, 190 → 55 bar",simulation_publiee
+turbine.etage3.energie_chaleur_requise,"Énergie thermique requise avant la turbine 3, sur la décharge",15.0,,,kWh,tableau 5,"décharge de 40 min, 190 → 55 bar",simulation_publiee
+refroidisseur.etage1.puissance_chaleur_sup130,"Puissance thermique récupérable au-dessus de 130 °C, refroidisseur 1",1.9,,,kW,tableau 6,"charge 55 → 190 bar, 0,052 kg/s",simulation_publiee
+refroidisseur.etage1.energie_chaleur_sup130,"Énergie thermique récupérable au-dessus de 130 °C, refroidisseur 1",12.5,,,kWh,tableau 6,"charge 55 → 190 bar sur 6,8 h",simulation_publiee
+refroidisseur.etage2.puissance_chaleur_sup130,"Puissance thermique récupérable au-dessus de 130 °C, refroidisseur 2",3.8,,,kW,tableau 6,"charge 55 → 190 bar, 0,052 kg/s",simulation_publiee
+refroidisseur.etage2.energie_chaleur_sup130,"Énergie thermique récupérable au-dessus de 130 °C, refroidisseur 2",23.4,,,kWh,tableau 6,"charge 55 → 190 bar sur 6,8 h",simulation_publiee
+refroidisseur.etage3.puissance_chaleur_sup130,"Puissance thermique récupérable au-dessus de 130 °C, refroidisseur 3",5.0,,,kW,tableau 6,"charge 55 → 190 bar, 0,052 kg/s",simulation_publiee
+refroidisseur.etage3.energie_chaleur_sup130,"Énergie thermique récupérable au-dessus de 130 °C, refroidisseur 3",30.0,,,kWh,tableau 6,"charge 55 → 190 bar sur 6,8 h",simulation_publiee
+refroidisseur.etage4.puissance_chaleur_sup130,"Puissance thermique récupérable au-dessus de 130 °C, refroidisseur 4",3.5,,,kW,tableau 6,"charge 55 → 190 bar, 0,052 kg/s",simulation_publiee
+refroidisseur.etage4.energie_chaleur_sup130,"Énergie thermique récupérable au-dessus de 130 °C, refroidisseur 4",6.3,,,kWh,tableau 6,"charge 55 → 190 bar sur 6,8 h",simulation_publiee
+refroidisseur.energie_chaleur_sup130_totale,Énergie thermique totale récupérable au-dessus de 130 °C (4 refroidisseurs),72.2,,,kWh,tableau 6 ; §3.3.5,"charge 55 → 190 bar sur 6,8 h",simulation_publiee
+refroidisseur.energie_chaleur_totale,Énergie thermique totale rejetée par les 4 refroidisseurs (toutes températures),189.2,,,kWh,§3.3.5,"charge 55 → 190 bar sur 6,8 h",simulation_publiee
+charge_55_190.duree,Durée de la charge simulée de 55 à 190 bar,6.8,,,h,§3.3.5,,simulation_publiee
+charge_55_190.pression_min,Pression minimale de travail du banc avec turbine à 3 étages,55.0,,,bar,§3.3.5,,simulation_publiee
+refroidisseur.loi_efficacite_etage4,Loi de variation de l'efficacité du refroidisseur 4,"linéaire en pression de refoulement, de 74 % à p_refoulement_min jusqu'à 85 % à 190 bar",,,texte,§3.2,,hypothese
+cas_base.turbine,"Détendeur du cas de base (1 étage, sans réchauffage)","étage 3 de la turbine DEPRAG (3 → 1 bar, n = 1,27, 0,321 kg/s)",,,texte,§3.3,,simulation_publiee
+cas_base.pression_arret,"Pression d'arrêt de la décharge, cas de base (3 bar + 15 bar d'écart)",18.0,,,bar,§2.1 ; §3.3 ; tableau 9 (supp.),,calcul_personnel
+cas_base.temperature_initiale_decharge,Température initiale de l'air et des parois pour les cas de décharge simulés,55.0,,,degC,§3.1 ; §3.3 ; tableau 5,non donnée par l'article pour les cas simulés,hypothese

@@ -1,0 +1,490 @@
+
+===== generer_tout 2026-11-22 10:22 : verifier =====
+  ok  rendement de D (phase 11, Dormoy avec gravier) → 17,1 %
+  ok  rendement de D par −20 °C (phase 11) → 19,5 %
+  ok  chaleur restante après 14 jours sous 20 cm (phase 11, transport) → 50 %
+  NON électricité livrée après 7 jours sous 20 cm (phase 11) → motif introuvable dans le rapport
+  ok  nombre de modules du centre d'urgence (phase 11) → 192 modules
+  ok  masse de la flotte (phase 11) → 710 tonnes
+  ok  rendement nominal de D isolée (phase 10) → 17,2 %
+  NON indice total de Sobol du rendement mécanique (phase 10) → 0,18
+  ok  rendement de B avec séparateurs seuls (phase 9) → 20,7 %
+  ok  rendement de B avec le sécheur de Dormoy (phase 9) → 16,8 %
+
+===== generer_tout 2026-11-22 10:23 : verifier =====
+  ok  rendement de D (phase 11, Dormoy avec gravier) → 17,1 %
+  ok  rendement de D par −20 °C (phase 11) → 19,5 %
+  ok  chaleur restante après 14 jours sous 20 cm (phase 11, transport) → 50 %
+  NON électricité livrée après 7 jours sous 20 cm (phase 11) → 39,0 kWh
+  ok  nombre de modules du centre d'urgence (phase 11) → 192 modules
+  ok  masse de la flotte (phase 11) → 710 tonnes
+  ok  rendement nominal de D isolée (phase 10) → 17,2 %
+  ok  indice total de Sobol du rendement mécanique (phase 10) → 0,39
+  ok  rendement de B avec séparateurs seuls (phase 9) → 20,7 %
+  ok  rendement de B avec le sécheur de Dormoy (phase 9) → 16,8 %
+
+===== generer_tout 2026-11-22 10:26 : verifier =====
+  ok  rendement de D (phase 11, Dormoy avec gravier) → 17,1 %
+  ok  rendement de D par −20 °C (phase 11) → 19,5 %
+  ok  chaleur restante après 14 jours sous 20 cm (phase 11, transport) → 50 %
+  ok  électricité livrée après 7 jours sous 20 cm (phase 11) → 39,0 kWh
+  ok  nombre de modules du centre d'urgence (phase 11) → 192 modules
+  ok  masse de la flotte (phase 11) → 710 tonnes
+  ok  rendement nominal de D isolée (phase 10) → 17,2 %
+  ok  indice total de Sobol du rendement mécanique (phase 10) → 0,39
+  ok  rendement de B avec séparateurs seuls (phase 9) → 20,7 %
+  ok  rendement de B avec le sécheur de Dormoy (phase 9) → 16,8 %
+
+===== generer_tout 2026-11-22 10:26 : registre, scenarios, validation, non_regression, tableau_de_bord, tableau_1000, phase5, phase7, phase9, analyse, exemples, api =====
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe -I data/registre/generer_registre_phase0.py
+26 r�f�rences ; 377 param�tres ; doublons : aucun
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe scenarios/variantes/generer_variantes.py
+écrit : charge_compresseur_isentropique.yaml
+écrit : charge_compresseur_polytropique_rendement.yaml
+écrit : charge_compresseur_isotherme.yaml
+écrit : charge_refroidisseur_pincement.yaml
+écrit : charge_refroidisseur_perte_de_charge.yaml
+écrit : charge_secheur_aucun.yaml
+écrit : charge_reservoir_adiabatique.yaml
+écrit : decharge_turbine_isentropique.yaml
+écrit : decharge_turbine_polytropique_rendement.yaml
+écrit : decharge_pression_glissante.yaml
+écrit : decharge_flugel.yaml
+écrit : cycles_huile_deux_reservoirs.yaml
+écrit : cycles_eau_sous_pression.yaml
+écrit : cycles_gravier_isolant_14j.yaml
+écrit : cycles_attente_sans_pertes_14j.yaml
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe scenarios/humidite/generer_humidite.py
+écrit : A_secheur_adsorption.yaml
+écrit : A_separateur.yaml
+écrit : A_separateur_appoint.yaml
+écrit : B_secheur_adsorption.yaml
+écrit : B_separateur.yaml
+écrit : B_separateur_appoint.yaml
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe scenarios/exemples/generer_exemples.py
+écrit : scenarios\exemples\transport\transport.yaml
+écrit : scenarios\exemples\transport\transport_appoint.yaml
+écrit : scenarios\exemples\transport\meteo_hiver.csv
+écrit : scenarios\exemples\transport\meteo_ete.csv
+écrit : scenarios\exemples\centre_urgence\module.yaml
+écrit : scenarios\exemples\centre_urgence\demande_72h.csv
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe validation/dormoy_charge.py
+A : base (20 °C partout, 0,052 kg/s) -> dormoy_charge_1_190 : 9.89 h, 373.0 kWh, 37.7 kW, T finale 28.6 °C, résidu du bilan 0.000 %
+B : aspiration à 52 °C -> dormoy_charge_1_190_aspiration_chaude : 9.89 h, 386.2 kWh, 39.1 kW, T finale 28.6 °C, résidu du bilan 0.000 %
+C : A + débit réservoir mesuré 0,032 -> dormoy_charge_1_190_debit_mesure : 10.83 h, 408.6 kWh, 37.7 kW, T finale 27.9 °C, résidu du bilan 0.000 %
+D : B + débit réservoir mesuré 0,032 -> dormoy_charge_1_190_aspiration_chaude_debit_mesure : 10.83 h, 423.1 kWh, 39.1 kW, T finale 27.9 °C, résidu du bilan 0.000 %
+A : base (55→190) -> dormoy_charge_55_190 : 6.86 h, 267.2 kWh, 39.0 kW, T finale 28.6 °C, résidu du bilan 0.000 %
+B : aspiration à 52 °C (55→190) -> dormoy_charge_55_190_aspiration_chaude : 6.86 h, 276.3 kWh, 40.3 kW, T finale 28.6 °C, résidu du bilan 0.000 %
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase1\validation_charge.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe validation/dormoy_decharge.py
+essai : dormoy_decharge_essai : 37.3 min, 0.00 kWh, chaleur 0.0 kWh, p finale 50.0 bar, masse morte 163 kg, résidu 0.000 %
+base : dormoy_decharge_base : 51.5 min, 14.35 kWh, chaleur 0.0 kWh, p finale 18.0 bar, masse morte 138 kg, résidu -0.000 %
+3 étages : dormoy_decharge_3etages : 37.6 min, 39.04 kWh, chaleur 44.6 kWh, p finale 55.0 bar, masse morte 407 kg, résidu 0.000 %
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase2\validation_decharge.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe validation/lit_gravier.py
+Tola : 97 s de calcul
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase4\validation_lit_gravier.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe validation/non_regression_phase6.py
+[3 s] A (cycles) ; cycle 2 ; charge 324.5 kWh en 8.26 h ; produit 14.05 kWh en 53.9 min, chaleur  ; RTE 4.3 % (4.3 % avec la chaleur externe) ; 4 avertissement(s)
+[4 s] B (cycles) ; cycle 3 ; charge 243.2 kWh en 6.03 h ; produit 40.96 kWh en 39.4 min, chaleur externe 51.2 ; RTE 16.8 % (13.9 % avec la chaleur externe) ; 2 avertissement(s)
+[3 s] C (cycles) ; cycle 3 ; charge 243.2 kWh en 6.03 h ; produit 40.96 kWh en 39.4 min, chaleur huile 51.2 ; RTE 16.8 % (16.8 % avec la chaleur externe) ; 3 avertissement(s)
+[42 s] D (cycles) ; cycle 4 ; charge 239.5 kWh en 6.05 h ; produit 41.05 kWh en 39.5 min, chaleur cuve_3 30.2, cuve_2 6.4, cuve_1 14.8 ; RTE 17.1 % (17.1 % avec la chaleur externe) ; 10 avertissement(s)
+[41 s] E (cycles) ; cycle 4 ; charge 239.4 kWh en 6.05 h ; produit 41.01 kWh en 39.5 min, chaleur cuve_3 30.2, cuve_2 6.4, cuve_1 14.7 ; RTE 17.1 % (17.1 % avec la chaleur externe) ; 9 avertissement(s)
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase6\non_regression.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe validation/tableau_de_bord.py
+[14 s] Dormoy 2024, essai de charge mesuré (§ 3.1, 20 réservoirs, 5,86 m³) : 3 lignes
+[14 s] Dormoy 2024, essai de décharge mesuré (§ 3.1, 8 réservoirs, 2,56 m³) : 2 lignes
+[14 s] Dormoy 2024, simulations publiées et données fabricant (tableaux 5, 6, 9 ; § 3.3) : 15 lignes
+[34 s] Tola 2022, LT-ACAES de 10 MW (tableaux 1, 6 à 10) : 16 lignes
+[40 s] Shi 2024, A-CAES de 100 MW (prépublication non révisée ; tableau 4, figure 7, tableau 5) : 15 lignes
+51 lignes : 30 reproduites, 20 expliquées, 1 non expliquées ; rapport : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\validation\tableau_de_bord.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe rapports/tableau_1000_unites.py
+base -> C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase3\tableau_1000_base.md cascade_base.png
+3etages -> C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase3\tableau_1000_3etages.md cascade_3etages.png
+base_chargeA -> C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase3\tableau_1000_base_chargeA.md cascade_base_chargeA.png
+synthèse : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase3\exergie.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe rapports/phase5_architectures.py
+[1 s] A : cycle 2, charge 324.5 kWh, produit 14.05 kWh, RTE 4.3 %, chaleur {}
+[1 s] B : cycle 3, charge 243.2 kWh, produit 40.96 kWh, RTE 16.8 %, chaleur {'externe': 51.204514881871944}
+[1 s] C : cycle 3, charge 243.2 kWh, produit 40.96 kWh, RTE 16.8 %, chaleur {'huile_ideale': 51.204514881871944}
+[36 s] D : cycle 4, charge 239.5 kWh, produit 41.05 kWh, RTE 17.1 %, chaleur {'cuve_3': 30.2265382425023, 'cuve_2': 6.35804202427004, 'cuve_1': 14.834909702030146}
+[35 s] E : cycle 4, charge 239.4 kWh, produit 41.01 kWh, RTE 17.1 %, chaleur {'cuve_3': 30.23411979089211, 'cuve_2': 6.35804202427004, 'cuve_1': 14.654069573054011}
+  [24 s] D k=0.25: 34.90 kWh, T min -4 / -46 / -65
+  [25 s] D k=0.5: 40.32 kWh, T min 99 / 62 / 28
+  [24 s] D k=1.0: 41.05 kWh, T min 130 / 90 / 90
+  [24 s] D k=2.0: 41.13 kWh, T min 130 / 90 / 90
+  [25 s] D k=4.0: 41.13 kWh, T min 130 / 90 / 90
+  [25 s] E k=0.25: 33.38 kWh, T min -5 / -49 / -75
+  [24 s] E k=0.5: 38.87 kWh, T min 55 / 34 / 9
+  [25 s] E k=1.0: 41.01 kWh, T min 130 / 90 / 74
+  [25 s] E k=2.0: 41.13 kWh, T min 130 / 90 / 90
+  [25 s] E k=4.0: 41.22 kWh, T min 130 / 90 / 90
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase5\architectures.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe rapports/phase7_variantes.py
+[3 s] dormoy_charge_1_190_aspiration_chaude (charge) ; charge 386.2 kWh en 9.89 h ; 2 avertissement(s)
+[5 s] charge_compresseur_isentropique (charge) ; charge 445.3 kWh en 9.86 h ; 2 avertissement(s)
+[3 s] charge_compresseur_polytropique_rendement (charge) ; charge 465.0 kWh en 9.85 h ; 2 avertissement(s)
+[4 s] charge_compresseur_isotherme (charge) ; charge 303.5 kWh en 9.96 h ; 6 avertissement(s)
+[3 s] charge_refroidisseur_pincement (charge) ; charge 382.1 kWh en 9.90 h ; 2 avertissement(s)
+[5 s] charge_refroidisseur_perte_de_charge (charge) ; charge 448.3 kWh en 9.93 h ; 2 avertissement(s)
+[3 s] charge_secheur_aucun (charge) ; charge 310.4 kWh en 7.95 h ; 3 avertissement(s)
+[2 s] charge_reservoir_adiabatique (charge) ; charge 251.6 kWh en 6.44 h ; 4 avertissement(s)
+[3 s] dormoy_decharge_3etages (decharge) ; produit 39.04 kWh en 37.6 min, chaleur externe 44.6 ; 1 avertissement(s)
+[2 s] decharge_turbine_isentropique (decharge) ; produit 33.12 kWh en 37.6 min, chaleur externe 57.4 ; 2 avertissement(s)
+[1 s] decharge_turbine_polytropique_rendement (decharge) ; produit 32.79 kWh en 37.6 min, chaleur externe 57.3 ; 2 avertissement(s)
+[4 s] decharge_pression_glissante (decharge) ; produit 38.96 kWh en 37.6 min, chaleur externe 69.6 ; 5 avertissement(s)
+[2 s] decharge_flugel (decharge) ; produit 41.05 kWh en 14.9 min, chaleur externe 60.8 ; 8 avertissement(s)
+[92 s] D (cycles) ; cycle 4 ; charge 239.5 kWh en 6.05 h ; produit 41.05 kWh en 39.5 min, chaleur cuve_3 30.2, cuve_2 6.4, cuve_1 14.8 ; RTE 17.1 % (17.1 % avec la chaleur externe) ; 10 avertissement(s)
+[11 s] cycles_huile_deux_reservoirs (cycles) ; cycle 3 ; charge 238.7 kWh en 6.05 h ; produit 41.05 kWh en 39.5 min, chaleur stockage 51.4 ; RTE 17.2 % (17.2 % avec la chaleur externe) ; 7 avertissement(s)
+[6 s] cycles_eau_sous_pression (cycles) ; cycle 3 ; charge 238.7 kWh en 6.05 h ; produit 41.05 kWh en 39.5 min, chaleur stockage 51.4 ; RTE 17.2 % (17.2 % avec la chaleur externe) ; 7 avertissement(s)
+[20 s] cycles_attente_sans_pertes_14j (cycles) ; cycle 2 (non stabilisé) ; charge 240.7 kWh en 6.09 h ; produit 41.22 kWh en 39.7 min, chaleur cuve_3 29.4, cuve_2 6.4, cuve_1 14.9 ; RTE 17.1 % (17.1 % avec la chaleur externe) ; 8 avertissement(s)
+[18 s] cycles_gravier_isolant_14j (cycles) ; cycle 2 (non stabilisé) ; charge 232.6 kWh en 5.98 h ; produit 37.37 kWh en 39.0 min, chaleur cuve_3 26.2, cuve_2 4.9, cuve_1 15.1 ; RTE 16.1 % (16.1 % avec la chaleur externe) ; 14 avertissement(s)
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase7\variantes.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe rapports/phase9_humidite.py
+[4 s] A_secheur_adsorption (cycles) ; cycle 2 ; charge 324.5 kWh en 8.26 h ; produit 14.05 kWh en 53.9 min, chaleur  ; RTE 4.3 % (4.3 % avec la chaleur externe) ; 4 avertissement(s)
+[3 s] A_separateur (cycles) ; cycle 2 ; charge 259.8 kWh en 6.62 h ; produit 13.99 kWh en 53.3 min, chaleur  ; RTE 5.4 % (5.4 % avec la chaleur externe) ; 5 avertissement(s)
+[3 s] A_separateur_appoint (cycles) ; cycle 2 ; charge 274.3 kWh en 6.98 h ; produit 14.01 kWh en 53.5 min, chaleur  ; RTE 5.1 % (5.1 % avec la chaleur externe) ; 4 avertissement(s)
+[3 s] B_secheur_adsorption (cycles) ; cycle 2 (non stabilisé) ; charge 243.9 kWh en 6.05 h ; produit 40.87 kWh en 39.3 min, chaleur externe 51.0 ; RTE 16.8 % (13.9 % avec la chaleur externe) ; 2 avertissement(s)
+[3 s] B_separateur (cycles) ; cycle 2 (non stabilisé) ; charge 196.1 kWh en 4.87 h ; produit 40.53 kWh en 39.0 min, chaleur externe 50.3 ; RTE 20.7 % (16.4 % avec la chaleur externe) ; 5 avertissement(s)
+[3 s] B_separateur_appoint (cycles) ; cycle 2 (non stabilisé) ; charge 206.6 kWh en 5.12 h ; produit 40.61 kWh en 39.1 min, chaleur externe 50.5 ; RTE 19.7 % (15.8 % avec la chaleur externe) ; 2 avertissement(s)
+[2 s] A -20 °C 30 % : givre 0.008 kg, réservoir 0.054 kg
+[2 s] A -20 °C 60 % : givre 0.008 kg, réservoir 0.054 kg
+[2 s] A -20 °C 90 % : givre 0.008 kg, réservoir 0.054 kg
+[2 s] A 0 °C 30 % : givre 0.034 kg, réservoir 0.205 kg
+[1 s] A 0 °C 60 % : givre 0.034 kg, réservoir 0.205 kg
+[1 s] A 0 °C 90 % : givre 0.034 kg, réservoir 0.205 kg
+[1 s] A 20 °C 30 % : givre 0.115 kg, réservoir 0.612 kg
+[1 s] A 20 °C 60 % : givre 0.115 kg, réservoir 0.612 kg
+[1 s] A 20 °C 90 % : givre 0.115 kg, réservoir 0.612 kg
+[2 s] A 30 °C 30 % : givre 0.194 kg, réservoir 0.992 kg
+[1 s] A 30 °C 60 % : givre 0.194 kg, réservoir 0.992 kg
+[1 s] A 30 °C 90 % : givre 0.194 kg, réservoir 0.992 kg
+[2 s] B -20 °C 30 % : givre 0.005 kg, réservoir 0.042 kg
+[1 s] B -20 °C 60 % : givre 0.005 kg, réservoir 0.042 kg
+[2 s] B -20 °C 90 % : givre 0.005 kg, réservoir 0.042 kg
+[2 s] B 0 °C 30 % : givre 0.012 kg, réservoir 0.162 kg
+[1 s] B 0 °C 60 % : givre 0.012 kg, réservoir 0.162 kg
+[1 s] B 0 °C 90 % : givre 0.012 kg, réservoir 0.162 kg
+[1 s] B 20 °C 30 % : givre 0.006 kg, réservoir 0.485 kg
+[1 s] B 20 °C 60 % : givre 0.006 kg, réservoir 0.485 kg
+[1 s] B 20 °C 90 % : givre 0.006 kg, réservoir 0.485 kg
+[2 s] B 30 °C 30 % : givre 0.000 kg, réservoir 0.793 kg
+[1 s] B 30 °C 60 % : givre 0.000 kg, réservoir 0.793 kg
+[1 s] B 30 °C 90 % : givre 0.000 kg, réservoir 0.793 kg
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase9\humidite.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe -m caes analyser scenarios/analyse/D.yaml --sortie rapports/phase10
+analyse « D_isolee » : 10 paramètres, 6 sorties, 10 processus, étapes tornade, sobol, incertitudes, pareto
+  tornade : 2/20 [33 s]
+  tornade : 4/20 [33 s]
+  tornade : 6/20 [33 s]
+  tornade : 8/20 [33 s]
+  tornade : 10/20 [33 s]
+  tornade : 12/20 [47 s]
+  tornade : 14/20 [48 s]
+  tornade : 16/20 [48 s]
+  tornade : 18/20 [48 s]
+  tornade : 20/20 [50 s]
+  sobol : 4/32 [33 s]
+  sobol : 8/32 [34 s]
+  sobol : 12/32 [48 s]
+  sobol : 16/32 [52 s]
+  sobol : 20/32 [62 s]
+  sobol : 24/32 [72 s]
+  sobol : 28/32 [78 s]
+  sobol : 32/32 [81 s]
+  sobol : 4/32 [112 s]
+  sobol : 8/32 [112 s]
+  sobol : 12/32 [119 s]
+  sobol : 16/32 [132 s]
+  sobol : 20/32 [142 s]
+  sobol : 24/32 [149 s]
+  sobol : 28/32 [155 s]
+  sobol : 32/32 [160 s]
+  sobol : 40/320 [253 s]
+  sobol : 80/320 [361 s]
+  sobol : 120/320 [472 s]
+  sobol : 160/320 [593 s]
+  sobol : 200/320 [715 s]
+  sobol : 240/320 [829 s]
+  sobol : 280/320 [946 s]
+  sobol : 320/320 [1057 s]
+C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Lib\site-packages\scipy\stats\_resampling.py:155: RuntimeWarning: invalid value encountered in divide
+  a_hat = 1/6 * sum(nums) / sum(dens)**(3/2)
+C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Lib\site-packages\scipy\_lib\_util.py:365: DegenerateDataWarning: The BCa confidence interval cannot be calculated. This problem is known to occur when the distribution is degenerate or the statistic is np.min.
+  return fun(*args, **kwargs)
+  incertitudes : 6/48 [38 s]
+  incertitudes : 12/48 [68 s]
+  incertitudes : 18/48 [69 s]
+  incertitudes : 24/48 [98 s]
+  incertitudes : 30/48 [99 s]
+  incertitudes : 36/48 [126 s]
+  incertitudes : 42/48 [150 s]
+  incertitudes : 48/48 [151 s]
+  pareto : 2/16 [34 s]
+  pareto : 4/16 [34 s]
+  pareto : 6/16 [34 s]
+  pareto : 8/16 [34 s]
+  pareto : 10/16 [34 s]
+  pareto : 12/16 [42 s]
+  pareto : 14/16 [42 s]
+  pareto : 16/16 [42 s]
+  pareto : 1/15 [69 s]
+  pareto : 2/15 [73 s]
+  pareto : 3/15 [73 s]
+  pareto : 4/15 [74 s]
+  pareto : 5/15 [74 s]
+  pareto : 6/15 [74 s]
+  pareto : 7/15 [74 s]
+  pareto : 8/15 [74 s]
+  pareto : 9/15 [74 s]
+  pareto : 10/15 [76 s]
+  pareto : 11/15 [79 s]
+  pareto : 12/15 [79 s]
+  pareto : 13/15 [83 s]
+  pareto : 14/15 [83 s]
+  pareto : 15/15 [86 s]
+  pareto : génération 1/12, meilleurs objectifs [  54.3837619  2814.99005383]
+  pareto : 1/12 [111 s]
+  pareto : 2/12 [116 s]
+  pareto : 3/12 [117 s]
+  pareto : 4/12 [117 s]
+  pareto : 5/12 [117 s]
+  pareto : 6/12 [117 s]
+  pareto : 7/12 [117 s]
+  pareto : 8/12 [117 s]
+  pareto : 9/12 [117 s]
+  pareto : 10/12 [117 s]
+  pareto : 11/12 [118 s]
+  pareto : 12/12 [123 s]
+  pareto : génération 2/12, meilleurs objectifs [  54.68654929 2532.91258726]
+  pareto : 1/15 [152 s]
+  pareto : 2/15 [152 s]
+  pareto : 3/15 [152 s]
+  pareto : 4/15 [152 s]
+  pareto : 5/15 [152 s]
+  pareto : 6/15 [152 s]
+  pareto : 7/15 [152 s]
+  pareto : 8/15 [152 s]
+  pareto : 9/15 [152 s]
+  pareto : 10/15 [152 s]
+  pareto : 11/15 [153 s]
+  pareto : 12/15 [161 s]
+  pareto : 13/15 [161 s]
+  pareto : 14/15 [161 s]
+  pareto : 15/15 [161 s]
+  pareto : génération 3/12, meilleurs objectifs [  54.68654929 2518.41363966]
+  pareto : 2/16 [190 s]
+  pareto : 4/16 [190 s]
+  pareto : 6/16 [190 s]
+  pareto : 8/16 [190 s]
+  pareto : 10/16 [190 s]
+  pareto : 12/16 [199 s]
+  pareto : 14/16 [199 s]
+  pareto : 16/16 [201 s]
+  pareto : génération 4/12, meilleurs objectifs [  54.817017   2477.70316199]
+  pareto : 1/15 [216 s]
+  pareto : 2/15 [225 s]
+  pareto : 3/15 [225 s]
+  pareto : 4/15 [229 s]
+  pareto : 5/15 [230 s]
+  pareto : 6/15 [230 s]
+  pareto : 7/15 [230 s]
+  pareto : 8/15 [230 s]
+  pareto : 9/15 [230 s]
+  pareto : 10/15 [230 s]
+  pareto : 11/15 [240 s]
+  pareto : 12/15 [240 s]
+  pareto : 13/15 [240 s]
+  pareto : 14/15 [240 s]
+  pareto : 15/15 [240 s]
+  pareto : génération 5/12, meilleurs objectifs [  54.82643805 2326.38649772]
+  pareto : 1/15 [258 s]
+  pareto : 2/15 [269 s]
+  pareto : 3/15 [269 s]
+  pareto : 4/15 [269 s]
+  pareto : 5/15 [269 s]
+  pareto : 6/15 [269 s]
+  pareto : 7/15 [269 s]
+  pareto : 8/15 [269 s]
+  pareto : 9/15 [269 s]
+  pareto : 10/15 [269 s]
+  pareto : 11/15 [272 s]
+  pareto : 12/15 [280 s]
+  pareto : 13/15 [280 s]
+  pareto : 14/15 [280 s]
+  pareto : 15/15 [283 s]
+  pareto : génération 6/12, meilleurs objectifs [  55.13962728 2326.38649772]
+  pareto : 2/16 [312 s]
+  pareto : 4/16 [312 s]
+  pareto : 6/16 [312 s]
+  pareto : 8/16 [313 s]
+  pareto : 10/16 [313 s]
+  pareto : 12/16 [323 s]
+  pareto : 14/16 [326 s]
+  pareto : 16/16 [326 s]
+  pareto : génération 7/12, meilleurs objectifs [  55.13962728 2238.86370574]
+  pareto : 1/15 [350 s]
+  pareto : 2/15 [350 s]
+  pareto : 3/15 [355 s]
+  pareto : 4/15 [355 s]
+  pareto : 5/15 [356 s]
+  pareto : 6/15 [356 s]
+  pareto : 7/15 [356 s]
+  pareto : 8/15 [356 s]
+  pareto : 9/15 [356 s]
+  pareto : 10/15 [356 s]
+  pareto : 11/15 [363 s]
+  pareto : 12/15 [369 s]
+  pareto : 13/15 [370 s]
+  pareto : 14/15 [373 s]
+  pareto : 15/15 [373 s]
+  pareto : génération 8/12, meilleurs objectifs [  55.13962728 2238.86370574]
+  pareto : 1/15 [407 s]
+  pareto : 2/15 [407 s]
+  pareto : 3/15 [407 s]
+  pareto : 4/15 [408 s]
+  pareto : 5/15 [408 s]
+  pareto : 6/15 [408 s]
+  pareto : 7/15 [408 s]
+  pareto : 8/15 [408 s]
+  pareto : 9/15 [408 s]
+  pareto : 10/15 [408 s]
+  pareto : 11/15 [415 s]
+  pareto : 12/15 [415 s]
+  pareto : 13/15 [416 s]
+  pareto : 14/15 [421 s]
+  pareto : 15/15 [421 s]
+  pareto : génération 9/12, meilleurs objectifs [  55.13962728 2216.42503833]
+  pareto : 1/14 [452 s]
+  pareto : 2/14 [452 s]
+  pareto : 3/14 [452 s]
+  pareto : 4/14 [452 s]
+  pareto : 5/14 [452 s]
+  pareto : 6/14 [452 s]
+  pareto : 7/14 [452 s]
+  pareto : 8/14 [452 s]
+  pareto : 9/14 [452 s]
+  pareto : 10/14 [452 s]
+  pareto : 11/14 [454 s]
+  pareto : 12/14 [459 s]
+  pareto : 13/14 [459 s]
+  pareto : 14/14 [461 s]
+  pareto : génération 10/12, meilleurs objectifs [  55.13962728 2163.2548049 ]
+  pareto : 1/14 [490 s]
+  pareto : 2/14 [490 s]
+  pareto : 3/14 [490 s]
+  pareto : 4/14 [495 s]
+  pareto : 5/14 [496 s]
+  pareto : 6/14 [496 s]
+  pareto : 7/14 [496 s]
+  pareto : 8/14 [496 s]
+  pareto : 9/14 [496 s]
+  pareto : 10/14 [496 s]
+  pareto : 11/14 [503 s]
+  pareto : 12/14 [504 s]
+  pareto : 13/14 [504 s]
+  pareto : 14/14 [504 s]
+  pareto : génération 11/12, meilleurs objectifs [  55.13962728 2111.4322666 ]
+  pareto : 2/16 [537 s]
+  pareto : 4/16 [537 s]
+  pareto : 6/16 [537 s]
+  pareto : 8/16 [537 s]
+  pareto : 10/16 [537 s]
+  pareto : 12/16 [547 s]
+  pareto : 14/16 [547 s]
+  pareto : 16/16 [547 s]
+  pareto : génération 12/12, meilleurs objectifs [  55.30098744 2111.4322666 ]
+rapport écrit : rapports\phase10\analyse.md (1819 s)
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe rapports/scenarios_dormoy_gravier.py
+6 scénarios (6 processus)
+  1/6 [13 s]
+  2/6 [15 s]
+  3/6 [16 s]
+  4/6 [82 s]
+  5/6 [82 s]
+  6/6 [82 s]
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\scenarios\dormoy_gravier.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe rapports/scenarios_transport.py
+lot principal : 36 simulations, 10 processus
+  1/36 [33 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  2/36 [33 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  3/36 [34 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  4/36 [34 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  5/36 [34 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  6/36 [35 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  7/36 [35 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  8/36 [35 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  9/36 [35 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  10/36 [35 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  11/36 [56 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  12/36 [58 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  13/36 [58 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  14/36 [58 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  15/36 [58 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  16/36 [58 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  17/36 [58 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  18/36 [59 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  19/36 [62 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  20/36 [64 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  21/36 [90 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  22/36 [92 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  23/36 [94 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  24/36 [95 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  25/36 [95 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  26/36 [95 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  27/36 [95 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  28/36 [95 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  29/36 [96 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  30/36 [98 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  31/36 [111 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  32/36 [113 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  33/36 [113 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  34/36 [113 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  35/36 [113 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  36/36 [113 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+lot appoint : 6 simulations
+  1/6 [141 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  2/6 [141 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  3/6 [141 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  4/6 [141 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  5/6 [142 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  6/6 [142 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\scenarios\transport.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe rapports/scenarios_centre_urgence.py
+3 modules à simuler (10 processus)
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\scenarios\centre_urgence.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe rapports/scenarios_grande_echelle.py
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\scenarios\grande_echelle.md
+
+$ C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\.venv\Scripts\python.exe docs/generer_api.py
+écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\docs\api.md (50 modules)
+
+===== generer_tout 2026-11-22 12:12 : verifier =====
+  ok  rendement de D (phase 11, Dormoy avec gravier) → 17,1 %
+  ok  rendement de D par −20 °C (phase 11) → 19,5 %
+  ok  chaleur restante après 14 jours sous 20 cm (phase 11, transport) → 50 %
+  ok  électricité livrée après 7 jours sous 20 cm (phase 11) → 39,0 kWh
+  ok  nombre de modules du centre d'urgence (phase 11) → 192 modules
+  ok  masse de la flotte (phase 11) → 710 tonnes
+  ok  rendement nominal de D isolée (phase 10) → 17,2 %
+  ok  indice total de Sobol du rendement mécanique (phase 10) → 0,39
+  ok  rendement de B avec séparateurs seuls (phase 9) → 20,7 %
+  ok  rendement de B avec le sécheur de Dormoy (phase 9) → 16,8 %

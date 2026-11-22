@@ -94,7 +94,7 @@ def main() -> None:
     resultats: dict[str, ResultatIntegre] = {}
     for code in ("A", "B", "C", "D", "E"):
         t0 = time.perf_counter()
-        resultats[code] = simuler_cycles(f"{code}.yaml", reg)
+        resultats[code] = simuler_cycles(f"v1/{code}.yaml", reg)
         print(f"[{time.perf_counter() - t0:.0f} s] {resultats[code].resume()}")
     L.append("## 1. Tableau comparatif (dernier cycle)\n")
     L.append("| Arch. | Cycles | Charge (kWh) | Produit (kWh) | RTE sans "
@@ -196,12 +196,12 @@ def main() -> None:
     courbes: dict[str, tuple[list[float], list[float]]] = {}
     lignes_dim = []
     for code in ("D", "E"):
-        base = [float(v) for v in charger_scenario(f"{code}.yaml",
+        base = [float(v) for v in charger_scenario(f"v1/{code}.yaml",
                                                    reg)["cuves.volumes"]]
         xs, ys = [], []
         for k in facteurs:
             vols = [k * v for v in base]
-            sc = charger_scenario(f"{code}.yaml", reg).avec(
+            sc = charger_scenario(f"v1/{code}.yaml", reg).avec(
                 {"cycles.nombre_max": 4, "cuves.n_cellules": 20}, f"k{k:g}")
             t0 = time.perf_counter()
             r = simuler_cycles(sc, reg, volumes_m3=vols)

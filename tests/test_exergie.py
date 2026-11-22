@@ -118,11 +118,11 @@ def test_compression_polytropique_bilan_d_etage(parfait: AirParfait) -> None:
 @pytest.fixture(scope="module")
 def chaine(registre: Registre):
     sc_c = charger_scenario(
-        "dormoy_charge_1_190_aspiration_chaude.yaml", registre
+        "v1/dormoy_charge_1_190_aspiration_chaude.yaml", registre
     ).avec({"reservoir.p_initiale": registre.si("cas_base.pression_arret")},
            "depuis18")
     ch = simuler_charge(sc_c)
-    sc_d = charger_scenario("dormoy_decharge_base.yaml", registre).avec(
+    sc_d = charger_scenario("v1/dormoy_decharge_base.yaml", registre).avec(
         {"reservoir.p_initiale": ch.series["p_res_pa"].iloc[-1],
          "reservoir.T_initiale": ch.series["T_res_K"].iloc[-1],
          "reservoir.T_paroi_initiale": ch.series["T_paroi_K"].iloc[-1]},
@@ -181,7 +181,7 @@ def test_detendeur_domine_les_pertes_du_cas_de_base(chaine) -> None:
 
 
 def test_regle_du_bilan_de_chaleur_3_etages(registre: Registre) -> None:
-    d = simuler_decharge(charger_scenario("dormoy_decharge_3etages.yaml",
+    d = simuler_decharge(charger_scenario("v1/dormoy_decharge_3etages.yaml",
                                           registre))
     b = bilan_exergie_decharge(d)
     assert b.exergie_rechauffage_j > 0.0

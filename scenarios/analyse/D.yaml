@@ -1,0 +1,113 @@
+# Analyse de référence de la phase 10 : architecture D (3 étages, cuves
+# de gravier traversées par l'air comprimé) avec 20 cm de laine minérale
+# autour des cuves, attente d'un jour, deux cycles. Pas de temps doublés
+# par rapport au scénario (charge 60 s, décharge 10 s) pour tenir
+# l'analyse sous l'heure sur dix processus (≈ 50 min) : l'écart sur le rendement
+# avec les pas d'origine est donné dans le rapport (section 2 du
+# JOURNAL, phase 10).
+#
+#     python -m caes analyser scenarios/analyse/D.yaml --sortie rapports/phase10
+
+nom: D_isolee
+description: Architecture D (gravier direct, cas C de Tola) avec isolant de laine minérale et un jour d'attente ; dix paramètres, Sobol, incertitudes du registre, Pareto électricité livrée contre masse.
+scenario: ../variantes/cycles_gravier_isolant_14j.yaml
+modifications_de_base:
+  - composants.attente.duree=1j
+  - simulation.nombre_max=2
+  - charge.dt=60s
+  - decharge.dt=10s
+
+sorties:
+  - rte_sans_chaleur
+  - energie_produite_kwh
+  - energie_consommee_kwh
+  - masse_totale_kg
+  - pertes_attente_kwh
+  - decharge.T_rejet_min_degC
+
+parametres:
+  - nom: p_max
+    chemin: charge.p_cible
+    etiquette: Pression maximale du réservoir
+    unite: bar
+    plage: {min: 120, max: 250}
+  - nom: volume_cuves
+    chemins: [composants.cuve_1.volume, composants.cuve_2.volume,
+              composants.cuve_3.volume]
+    etiquette: Volume des trois cuves (facteur)
+    facteur: {min: 0.5, max: 2.0}
+  - nom: diametre_particule
+    chemins: [composants.cuve_1.diametre_particule,
+              composants.cuve_2.diametre_particule,
+              composants.cuve_3.diametre_particule]
+    etiquette: Diamètre des particules de gravier
+    unite: m
+    plage: {min: 0.01, max: 0.05}
+  - nom: epaisseur_isolant
+    chemins: [composants.cuve_1.isolation.epaisseur,
+              composants.cuve_2.isolation.epaisseur,
+              composants.cuve_3.isolation.epaisseur]
+    etiquette: Épaisseur de laine minérale
+    unite: m
+    plage: {min: 0.05, max: 0.3}
+  - nom: duree_attente
+    chemin: composants.attente.duree
+    etiquette: Durée d'attente entre charge et décharge
+    unite: h
+    plage: {min: 1, max: 168}
+  - nom: T_amb
+    chemin: ambiance.T_amb
+    etiquette: Température ambiante
+    unite: degC
+    plage: {min: -20, max: 30}
+  - nom: humidite
+    chemin: ambiance.humidite_relative
+    etiquette: Humidité relative ambiante
+    unite: "-"
+    plage: {min: 0.3, max: 0.9}
+  - nom: rendement_electrique
+    chemin: composants.compresseur.rendement_electrique
+    etiquette: Rendement électrique du compresseur
+    unite: "%"
+    plage: registre
+  - nom: rendement_mecanique
+    chemins: [composants.compresseur.rendement_mecanique_min,
+              composants.compresseur.rendement_mecanique_max]
+    etiquette: Rendement mécanique du compresseur (facteur)
+    facteur: {min: 0.93, max: 1.07}
+  - nom: efficacite_refroidisseurs
+    chemins: [composants.refroidisseur_1.efficacite,
+              composants.refroidisseur_2.efficacite,
+              composants.refroidisseur_3.efficacite,
+              composants.refroidisseur_4.efficacite_min,
+              composants.refroidisseur_4.efficacite_max]
+    etiquette: Efficacité des refroidisseurs (facteur)
+    facteur: {min: 0.9, max: 1.05}
+
+sobol:
+  n: 32
+  graine: 1
+
+incertitudes:
+  n: 48
+  graine: 1
+  parametres: [rendement_electrique, rendement_mecanique,
+               efficacite_refroidisseurs, diametre_particule]
+
+pareto:
+  objectifs:
+    - {sortie: energie_produite_kwh, sens: max}
+    - {sortie: masse_totale_kg, sens: min}
+  variables: [p_max, volume_cuves, epaisseur_isolant]
+  population: 16
+  generations: 12
+  p_croisement: 0.9
+  eta_croisement: 15
+  eta_mutation: 20
+  graine: 1
+
+masse:
+  pression: charge.p_cible
+  diametre: registre:reservoir.diametre_interieur
+  resistance_specifique: registre:reservoir.resistance_specifique_equivalente
+  coefficient_securite: registre:reservoir.coefficient_securite

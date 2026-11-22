@@ -1,0 +1,180 @@
+# Fichier généré par scenarios/variantes/generer_variantes.py : ne pas éditer à la main.
+nom: cycles_eau_sous_pression
+description: 'Architecture D avec un stockage à deux réservoirs d''eau sous pression
+  (18 bar, Shi 2024) : la température est plafonnée par l''ébullition alors que
+  les compresseurs de Dormoy sortent à 170-195 °C.'
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+  humidite_relative: registre:ambiance.humidite_relative_essai
+  T_aspiration:
+    valeur: 52
+    unite: degC
+    source: air du conteneur réchauffé par le compresseur, déduit du débit mesuré
+      (phase 1)
+composants:
+  compresseur:
+    type: compresseur
+    modele: polytropique_dormoy
+    debit_volumique_aspire: registre:compresseur.debit_volumique_entree
+    debit_massique_aspire: null
+    rendement_electrique: registre:compresseur.rendement_electrique#moyen
+    rendement_mecanique_min: registre:compresseur.rendement_mecanique#min
+    rendement_mecanique_max: registre:compresseur.rendement_mecanique#max
+    pression_refoulement_min: registre:compresseur.pression_refoulement_min
+    pression_refoulement_max: registre:compresseur.pression_refoulement_max
+    etages:
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage1
+      rapport_pression: registre:compresseur.rapport_compression_etage1
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage2
+      rapport_pression: registre:compresseur.rapport_compression_etage2
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage3
+      rapport_pression_min: registre:compresseur.rapport_compression_etage3#min
+      rapport_pression_max: registre:compresseur.rapport_compression_etage3#max
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage4
+  refroidisseur_1:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage1
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_2:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage2
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_3:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage3
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_4:
+    type: refroidisseur
+    modele: efficacite
+    efficacite_min: registre:refroidisseur.efficacite_etage4#min
+    efficacite_max: registre:refroidisseur.efficacite_etage4#max
+    p_min: registre:compresseur.pression_refoulement_min
+    p_max: registre:compresseur.pression_refoulement_max
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refoulement:
+    type: perte_debit
+    modele: fraction
+    fraction_conservee: registre:compresseur.rendement_volumetrique
+  secheur:
+    type: secheur
+    modele: perte_debit
+    efficacite: registre:secheur.efficacite
+    point_de_rosee_sortie: registre:secheur.point_de_rosee_sortie
+  reservoir:
+    type: reservoir_air
+    modele: paroi
+    volume: registre:reservoir.volume_total
+    surface: registre:reservoir.surface_equivalente_totale
+    K_global: registre:reservoir.K_global
+    h_int: registre:reservoir.h_conv_int
+    h_ext: registre:reservoir.h_conv_ext
+    capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+  detendeur:
+    type: detente
+    modele: isenthalpique
+    p_consigne: registre:turbine.etage1.pression_entree
+    ecart_min: registre:detendeur.ecart_pression_min
+  turbine:
+    type: turbine
+    modele: polytropique_deprag
+    debit_massique: registre:turbine.etage1.debit_massique
+    etages:
+    - p_entree: registre:turbine.etage1.pression_entree
+      p_sortie: registre:turbine.etage1.pression_sortie
+      indice_polytropique: registre:turbine.etage1.indice_polytropique
+      rendement_mecanique: registre:turbine.etage1.rendement_mecanique
+      rendement_electrique: registre:turbine.etage1.rendement_electrique
+      T_entree_cible: registre:turbine.etage1.temperature_entree
+    - p_entree: registre:turbine.etage2.pression_entree
+      p_sortie: registre:turbine.etage2.pression_sortie
+      indice_polytropique: registre:turbine.etage2.indice_polytropique
+      rendement_mecanique: registre:turbine.etage2.rendement_mecanique
+      rendement_electrique: registre:turbine.etage2.rendement_electrique
+      T_entree_cible: registre:turbine.etage2.temperature_entree
+    - p_entree: registre:turbine.etage3.pression_entree
+      p_sortie: registre:turbine.etage3.pression_sortie
+      indice_polytropique: registre:turbine.etage3.indice_polytropique
+      rendement_mecanique: registre:turbine.etage3.rendement_mecanique
+      rendement_electrique: registre:turbine.etage3.rendement_electrique
+      T_entree_cible: registre:turbine.etage3.temperature_entree
+  attente:
+    type: attente
+    modele: pertes_statiques
+    duree:
+      valeur: 1
+      unite: h
+      source: attente courte entre charge et décharge (choix de la phase 5)
+    dt:
+      valeur: 10
+      unite: min
+      source: choix numérique (pas des pertes statiques)
+  stockage:
+    type: stockage_chaleur
+    modele: eau_sous_pression
+    masse:
+      valeur: 600
+      unite: kg
+      source: 'calcul personnel : 57 kWh / (4,2 kJ/kg·K × 150 K) ≈ 330 kg, arrondi
+        avec marge'
+    pression_cuve:
+      valeur: 18
+      unite: bar
+      source: 'Shi 2024, figure 7 : eau chaude à 190 °C et 1,8 MPa'
+    pincement: registre:shi.pincement
+    marge_ebullition:
+      valeur: 5
+      unite: K
+      source: marge de sécurité sous T_sat (choix du projet)
+charge:
+  chaine:
+  - compresseur.1
+  - stockage
+  - refroidisseur_1
+  - compresseur.2
+  - stockage
+  - refroidisseur_2
+  - compresseur.3
+  - stockage
+  - refroidisseur_3
+  - compresseur.4
+  - refroidisseur_4
+  - refoulement
+  - secheur
+  - reservoir
+  p_cible: registre:essai_charge.pression_finale
+  dt:
+    valeur: 30
+    unite: s
+    source: choix numérique de la phase 5 (charge de 6 à 10 h)
+  duree_max:
+    valeur: 24
+    unite: h
+    source: garde-fou
+decharge:
+  chaine:
+  - reservoir
+  - detendeur
+  - stockage
+  - turbine.1
+  - stockage
+  - turbine.2
+  - stockage
+  - turbine.3
+  dt:
+    valeur: 5
+    unite: s
+    source: choix numérique de la phase 5 (décharge de 40 min)
+  duree_max:
+    valeur: 3
+    unite: h
+    source: garde-fou
+simulation:
+  mode: cycles
+  attente: attente
+  p_initiale: registre:charge_55_190.pression_min
+  nombre_max: 4
+  tolerance: 0.01

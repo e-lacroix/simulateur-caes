@@ -1,7 +1,7 @@
 # Essai de décharge mesuré par Dormoy et al. (2024), § 3.1 : 8 réservoirs de
 # 320 L (2,56 m3) à 190 bar et 55 °C, détendeur réglé à 35 bar, arrêt à
 # 50 bar, 38 min, 0,148 kg/s mesurés au débitmètre. Pas de turbine : l'air
-# est rejeté après le détendeur (mode « ventilation »).
+# est rejeté après le détendeur (débit imposé, « ventilation »).
 
 nom: dormoy_decharge_essai
 description: >
@@ -12,40 +12,44 @@ description: >
 ambiance:
   T_amb: registre:ambiance.T_amb_essai_charge
   p_amb: registre:ambiance.p_amb_essai
+  humidite_relative: registre:ambiance.humidite_relative_essai
 
-reservoir:
-  volume: registre:essai_decharge.volume
-  surface: registre:essai_decharge.surface
-  modele_thermique: paroi
-  K_global: registre:reservoir.K_global
-  h_int: registre:reservoir.h_conv_int
-  h_ext: registre:reservoir.h_conv_ext
-  capacite_thermique_paroi: registre:essai_decharge.capacite_thermique_paroi
-  p_initiale: registre:essai_decharge.pression_initiale
-  T_initiale: registre:essai_decharge.temperature_initiale
-  T_paroi_initiale: registre:essai_decharge.temperature_paroi_initiale
+composants:
+  reservoir:
+    type: reservoir_air
+    modele: paroi
+    volume: registre:essai_decharge.volume
+    surface: registre:essai_decharge.surface
+    K_global: registre:reservoir.K_global
+    h_int: registre:reservoir.h_conv_int
+    h_ext: registre:reservoir.h_conv_ext
+    capacite_thermique_paroi: registre:essai_decharge.capacite_thermique_paroi
 
-detendeur:
-  modele: isenthalpique
-  p_consigne: registre:essai_decharge.pression_consigne_detendeur
-  ecart_min: registre:detendeur.ecart_pression_min
-  cheayb:
-    a1: registre:detendeur.cheayb.a1
-    a2: registre:detendeur.cheayb.a2
-    a3: registre:detendeur.cheayb.a3
-    a4: registre:detendeur.cheayb.a4
-    b1: registre:detendeur.cheayb.b1
-    b2: registre:detendeur.cheayb.b2
-    b3: registre:detendeur.cheayb.b3
-    b4: registre:detendeur.cheayb.b4
-    p_min_validite: registre:detendeur.cheayb.pression_min_validite
-    p_max_validite: registre:detendeur.cheayb.pression_max_validite
+  detendeur:
+    type: detente
+    modele: isenthalpique   # ou cheayb (coefficients ci-dessous), isotherme (diagnostic)
+    p_consigne: registre:essai_decharge.pression_consigne_detendeur
+    ecart_min: registre:detendeur.ecart_pression_min
+    cheayb:
+      a1: registre:detendeur.cheayb.a1
+      a2: registre:detendeur.cheayb.a2
+      a3: registre:detendeur.cheayb.a3
+      a4: registre:detendeur.cheayb.a4
+      b1: registre:detendeur.cheayb.b1
+      b2: registre:detendeur.cheayb.b2
+      b3: registre:detendeur.cheayb.b3
+      b4: registre:detendeur.cheayb.b4
+      p_min_validite: registre:detendeur.cheayb.pression_min_validite
+      p_max_validite: registre:detendeur.cheayb.pression_max_validite
 
 decharge:
-  mode: ventilation
-  debit_impose: registre:essai_decharge.debit_massique
-
-simulation:
+  chaine: [reservoir, detendeur]
+  # Sans turbine, le débit soutiré est imposé (débitmètre de l'essai).
+  debit: registre:essai_decharge.debit_massique
+  reservoir_initial:
+    p: registre:essai_decharge.pression_initiale
+    T: registre:essai_decharge.temperature_initiale
+    T_paroi: registre:essai_decharge.temperature_paroi_initiale
   dt:
     valeur: 1
     unite: s
@@ -54,3 +58,6 @@ simulation:
     valeur: 3
     unite: h
     source: garde-fou contre une boucle infinie
+
+simulation:
+  mode: decharge

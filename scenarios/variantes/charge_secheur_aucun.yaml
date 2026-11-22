@@ -1,0 +1,102 @@
+# Fichier généré par scenarios/variantes/generer_variantes.py : ne pas éditer à la main.
+nom: charge_secheur_aucun
+description: 'Charge de Dormoy sans sécheur (modèle « aucun ») : ce que coûte réellement
+  le sécheur.'
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+  humidite_relative: registre:ambiance.humidite_relative_essai
+  T_aspiration:
+    valeur: 52
+    unite: degC
+    source: 'déduite du débit aspiré mesuré (registre compresseur.debit_massique_entree_moyen,
+      0,052 kg/s) et du débit volumique de 172,4 m3/h à 1,013 bar ; hypothèse «
+      air du conteneur réchauffé par le compresseur »
+
+      '
+composants:
+  compresseur:
+    type: compresseur
+    modele: polytropique_dormoy
+    debit_volumique_aspire: registre:compresseur.debit_volumique_entree
+    debit_massique_aspire: null
+    rendement_electrique: registre:compresseur.rendement_electrique#moyen
+    rendement_mecanique_min: registre:compresseur.rendement_mecanique#min
+    rendement_mecanique_max: registre:compresseur.rendement_mecanique#max
+    pression_refoulement_min: registre:compresseur.pression_refoulement_min
+    pression_refoulement_max: registre:compresseur.pression_refoulement_max
+    etages:
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage1
+      rapport_pression: registre:compresseur.rapport_compression_etage1
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage2
+      rapport_pression: registre:compresseur.rapport_compression_etage2
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage3
+      rapport_pression_min: registre:compresseur.rapport_compression_etage3#min
+      rapport_pression_max: registre:compresseur.rapport_compression_etage3#max
+    - indice_polytropique: registre:compresseur.indice_polytropique_etage4
+  refroidisseur_1:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage1
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_2:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage2
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_3:
+    type: refroidisseur
+    modele: efficacite
+    efficacite: registre:refroidisseur.efficacite_etage3
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refroidisseur_4:
+    type: refroidisseur
+    modele: efficacite
+    efficacite_min: registre:refroidisseur.efficacite_etage4#min
+    efficacite_max: registre:refroidisseur.efficacite_etage4#max
+    p_min: registre:compresseur.pression_refoulement_min
+    p_max: registre:compresseur.pression_refoulement_max
+    T_seuil_chaleur_utile: registre:turbine.etage1.temperature_entree
+  refoulement:
+    type: perte_debit
+    modele: fraction
+    fraction_conservee: registre:compresseur.rendement_volumetrique
+  secheur:
+    type: secheur
+    modele: aucun
+  reservoir:
+    type: reservoir_air
+    modele: K_global
+    volume: registre:reservoir.volume_total
+    surface: registre:reservoir.surface_equivalente_totale
+    K_global: registre:reservoir.K_global
+    h_int: registre:reservoir.h_conv_int
+    h_ext: registre:reservoir.h_conv_ext
+    capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+charge:
+  chaine:
+  - compresseur.1
+  - refroidisseur_1
+  - compresseur.2
+  - refroidisseur_2
+  - compresseur.3
+  - refroidisseur_3
+  - compresseur.4
+  - refroidisseur_4
+  - refoulement
+  - secheur
+  - reservoir
+  reservoir_initial:
+    p: registre:essai_charge.pression_initiale
+    T: registre:ambiance.T_amb_essai_charge
+  p_cible: registre:essai_charge.pression_finale
+  dt:
+    valeur: 10
+    unite: s
+    source: choix numérique ; l'écart avec dt = 1 s est inférieur à 0,1 % (tests)
+  duree_max:
+    valeur: 24
+    unite: h
+    source: garde-fou contre une boucle infinie
+simulation:
+  mode: charge

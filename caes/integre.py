@@ -1,6 +1,6 @@
 """Système intégré : banc de Dormoy + cuves de gravier (phase 5).
 
-Cinq architectures, décrites par un scénario ``scenarios/A.yaml`` à
+Cinq architectures, décrites par un scénario ``scenarios/v1/A.yaml`` à
 ``E.yaml`` :
 
 * A : base Dormoy, 1 étage, sans réchauffage ;

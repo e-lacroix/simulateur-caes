@@ -1,0 +1,56 @@
+# Essai de décharge mesuré par Dormoy et al. (2024), § 3.1 : 8 réservoirs de
+# 320 L (2,56 m3) à 190 bar et 55 °C, détendeur réglé à 35 bar, arrêt à
+# 50 bar, 38 min, 0,148 kg/s mesurés au débitmètre. Pas de turbine : l'air
+# est rejeté après le détendeur (mode « ventilation »).
+
+nom: dormoy_decharge_essai
+description: >
+  Essai de décharge mesuré (190 → 50 bar, 2,56 m3, 38 min). Sert à valider
+  le réservoir en décharge (modèle « paroi », h_int et h_ext calibrés) et
+  les deux modèles de détendeur (isenthalpique, Cheayb).
+
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+
+reservoir:
+  volume: registre:essai_decharge.volume
+  surface: registre:essai_decharge.surface
+  modele_thermique: paroi
+  K_global: registre:reservoir.K_global
+  h_int: registre:reservoir.h_conv_int
+  h_ext: registre:reservoir.h_conv_ext
+  capacite_thermique_paroi: registre:essai_decharge.capacite_thermique_paroi
+  p_initiale: registre:essai_decharge.pression_initiale
+  T_initiale: registre:essai_decharge.temperature_initiale
+  T_paroi_initiale: registre:essai_decharge.temperature_paroi_initiale
+
+detendeur:
+  modele: isenthalpique
+  p_consigne: registre:essai_decharge.pression_consigne_detendeur
+  ecart_min: registre:detendeur.ecart_pression_min
+  cheayb:
+    a1: registre:detendeur.cheayb.a1
+    a2: registre:detendeur.cheayb.a2
+    a3: registre:detendeur.cheayb.a3
+    a4: registre:detendeur.cheayb.a4
+    b1: registre:detendeur.cheayb.b1
+    b2: registre:detendeur.cheayb.b2
+    b3: registre:detendeur.cheayb.b3
+    b4: registre:detendeur.cheayb.b4
+    p_min_validite: registre:detendeur.cheayb.pression_min_validite
+    p_max_validite: registre:detendeur.cheayb.pression_max_validite
+
+decharge:
+  mode: ventilation
+  debit_impose: registre:essai_decharge.debit_massique
+
+simulation:
+  dt:
+    valeur: 1
+    unite: s
+    source: pas d'acquisition de Dormoy (§ 3.1)
+  duree_max:
+    valeur: 3
+    unite: h
+    source: garde-fou contre une boucle infinie

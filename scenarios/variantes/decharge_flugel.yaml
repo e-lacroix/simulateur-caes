@@ -1,0 +1,74 @@
+# Fichier généré par scenarios/variantes/generer_variantes.py : ne pas éditer à la main.
+nom: decharge_flugel
+description: 'Pression glissante avec la formule de Flügel (Zhang S. 2025) : le
+  débit et le rendement de la turbine DEPRAG suivent la pression du réservoir ;
+  très loin du point nominal (40 bar) au début.'
+ambiance:
+  T_amb: registre:ambiance.T_amb_essai_charge
+  p_amb: registre:ambiance.p_amb_essai
+  humidite_relative: registre:ambiance.humidite_relative_essai
+composants:
+  reservoir:
+    type: reservoir_air
+    modele: paroi
+    volume: registre:reservoir.volume_total
+    surface: registre:reservoir.surface_equivalente_totale
+    K_global: registre:reservoir.K_global
+    h_int: registre:reservoir.h_conv_int
+    h_ext: registre:reservoir.h_conv_ext
+    capacite_thermique_paroi: registre:reservoir.capacite_thermique_paroi
+  detendeur:
+    type: detente
+    modele: pression_glissante
+    p_min: registre:charge_55_190.pression_min
+  chaudiere:
+    type: stockage_chaleur
+    modele: source_externe
+  turbine:
+    type: turbine
+    modele: flugel
+    debit_massique: registre:turbine.etage1.debit_massique
+    rendement_isentropique: registre:zhangS.turbine.rendement_isentropique
+    rendement_mecanique: registre:shi.rendement_mecanique
+    rendement_electrique: registre:shi.rendement_electrique
+    etages:
+    - p_entree: registre:turbine.etage1.pression_entree
+      p_sortie: registre:turbine.etage1.pression_sortie
+      rendement_mecanique: registre:turbine.etage1.rendement_mecanique
+      rendement_electrique: registre:turbine.etage1.rendement_electrique
+      T_entree_cible: registre:turbine.etage1.temperature_entree
+    - p_entree: registre:turbine.etage2.pression_entree
+      p_sortie: registre:turbine.etage2.pression_sortie
+      rendement_mecanique: registre:turbine.etage2.rendement_mecanique
+      rendement_electrique: registre:turbine.etage2.rendement_electrique
+      T_entree_cible: registre:turbine.etage2.temperature_entree
+    - p_entree: registre:turbine.etage3.pression_entree
+      p_sortie: registre:turbine.etage3.pression_sortie
+      rendement_mecanique: registre:turbine.etage3.rendement_mecanique
+      rendement_electrique: registre:turbine.etage3.rendement_electrique
+      T_entree_cible: registre:turbine.etage3.temperature_entree
+    t4: registre:zhangS.flugel.t4
+decharge:
+  chaine:
+  - reservoir
+  - detendeur
+  - chaudiere
+  - turbine.1
+  - chaudiere
+  - turbine.2
+  - chaudiere
+  - turbine.3
+  reservoir_initial:
+    p: registre:essai_charge.pression_finale
+    T: registre:cas_base.temperature_initiale_decharge
+    T_paroi: registre:cas_base.temperature_initiale_decharge
+  dt:
+    valeur: 1
+    unite: s
+    source: pas d'acquisition de Dormoy (§ 3.1)
+  duree_max:
+    valeur: 3
+    unite: h
+    source: garde-fou contre une boucle infinie
+simulation:
+  mode: decharge

@@ -12,6 +12,7 @@ Les CSV générés sont versionnés eux aussi, pour qu'un lecteur sans
 Python puisse les ouvrir dans un tableur.
 """
 import csv
+import math
 import pathlib
 
 D = "dormoy2024"
@@ -155,6 +156,92 @@ references = [
      "libre (CC BY), PDF non récupéré (site bloqué aux robots)", "",
      "Réf. [21] de Tola 2022. Modèle de lit compact en A-CAES. À "
      "télécharger à la main."),
+    ("wolfbudt2014", "Wolf D., Budt M.", 2014,
+     "LTA-CAES - A low-temperature approach to Adiabatic Compressed Air "
+     "Energy Storage",
+     "Applied Energy, 125, 158-164",
+     "https://doi.org/10.1016/j.apenergy.2014.03.013", "article_revise",
+     "payant ; DOI vérifié via Crossref le 21 nov. 2026 ; PDF non "
+     "récupéré", "",
+     "Concept du stockage de chaleur à deux réservoirs de liquide (huile) "
+     "à basse température. Valeurs reprises via Bazdar 2022 (tableau 3) "
+     "et Tola 2022 (cas B)."),
+    ("ablaoui2023",
+     "Ablaoui E.M., Malendowski M., Szymkuc W., Pozorski Z.", 2023,
+     "Determination of Thermal Properties of Mineral Wool Required for the "
+     "Safety Analysis of Sandwich Panels Subjected to Fire Loads",
+     "Materials, 16(17), 5852",
+     "https://doi.org/10.3390/ma16175852", "article_revise",
+     "libre (CC BY) ; texte lu sur PMC (PMC10488771) le 21 nov. 2026", "",
+     "Tableau 1 : conductivité et chaleur massique de la laine minérale "
+     "(densité > 26 kg/m3) selon un projet d'Eurocode ; plage ambiante "
+     "0,030-0,046 W/m·K citée à sa réf. [13]."),
+    ("wagner2002", "Wagner W., Pruß A.", 2002,
+     "The IAPWS Formulation 1995 for the Thermodynamic Properties of "
+     "Ordinary Water Substance for General and Scientific Use",
+     "Journal of Physical and Chemical Reference Data, 31(2), 387-535",
+     "https://doi.org/10.1063/1.1461829", "article_revise",
+     "payant ; DOI vérifié via Crossref le 21 nov. 2026 ; équation "
+     "implémentée dans CoolProp (fluide « Water »)", "",
+     "Propriétés de l'eau liquide (cp, température de saturation) pour "
+     "le stockage à eau sous pression (phase 7)."),
+    ("herrmann2009", "Herrmann S., Kretzschmar H.-J., Gatley D.P.", 2009,
+     "Thermodynamic Properties of Real Moist Air, Dry Air, Steam, Water, "
+     "and Ice (RP-1485)",
+     "HVAC&R Research, 15(5), 961-986",
+     "https://doi.org/10.1080/10789669.2009.10390874", "article_revise",
+     "payant ; DOI vérifié via Crossref le 21 nov. 2026 ; formulation "
+     "implémentée dans CoolProp (HumidAir, HAPropsSI)", "",
+     "Air humide réel avec facteur d'augmentation de la solubilité de "
+     "l'eau ; domaine 10 Pa à 10 MPa, −143 à 350 °C."),
+    ("tesla2020", "Tesla Inc.", 2020,
+     "Megapack Datasheet (active), rev. 2.1",
+     "fiche technique du fabricant, 10 décembre 2020",
+     "https://www.fes-group.co.uk/wp-content/uploads/2021/02/"
+     "Megapack-Datasheet.pdf", "fiche_fabricant",
+     "PDF vérifié le 22 nov. 2026 (copie publique chez un intégrateur) ; "
+     "les fiches plus récentes (Megapack 2 XL, 2025) sont chiffrées et "
+     "n'ont pas pu être lues",
+     "data/sources/tesla2020_megapack/"
+     "Megapack_datasheet_rev2.1_2020-12-10.pdf",
+     "Batterie lithium-ion en conteneur : énergie, puissance, masse, "
+     "rendement aller-retour ; sert de comparaison au centre d'urgence."),
+    ("caterpillar2020", "Caterpillar Inc.", 2020,
+     "Cat D100 GC Diesel Generator Sets, Standby 60 Hz (LEHE2663-02)",
+     "fiche technique du fabricant, décembre 2020",
+     "https://csdieselgenerators.com/Images/Generators/2954/"
+     "CAT-D100GC-spec-sheet.pdf", "fiche_fabricant",
+     "PDF vérifié le 22 nov. 2026 (copie publique chez un distributeur)",
+     "data/sources/caterpillar2020_d100gc/LEHE2663-02_D100GC.pdf",
+     "Génératrice diesel de 100 kW : consommation à 50, 75 et 100 % de "
+     "charge, masse ; sert de comparaison au centre d'urgence."),
+    ("nrel2023", "Cole W., Karmakar A.", 2023,
+     "Cost Projections for Utility-Scale Battery Storage: 2023 Update "
+     "(NREL/TP-6A40-85332)",
+     "National Renewable Energy Laboratory, Golden (Colorado)",
+     "https://doi.org/10.2172/1984976", "rapport",
+     "DOI vérifié le 22 nov. 2026 (notice OSTI 1984976) ; le PDF chez NREL "
+     "n'a pas pu être téléchargé (DNS) : valeurs prises au résumé de la "
+     "notice", "",
+     "Projections de coût (bas, moyen, haut) des batteries lithium-ion "
+     "de 4 h, en dollars américains de 2022, pour 2030 et 2050."),
+    ("asm1990", "ASM Handbook Committee", 1990,
+     "Properties and Selection: Nonferrous Alloys and Special-Purpose "
+     "Materials (ASM Handbook, Volume 2)",
+     "ASM International, Materials Park (Ohio)",
+     "https://doi.org/10.31399/asm.hb.v02.9781627081627", "livre",
+     "payant ; DOI vérifié le 21 nov. 2026 (redirige vers la fiche du "
+     "volume chez ASM) ; même source [28] que Dormoy pour l'aluminium "
+     "6061-T6 ; chapitres réservés aux abonnés, valeurs typiques "
+     "reproduites par les fiches des fournisseurs", "",
+     "Propriétés mécaniques typiques des alliages d'aluminium."),
+    ("feistel2006", "Feistel R., Wagner W.", 2006,
+     "A New Equation of State for H2O Ice Ih",
+     "Journal of Physical and Chemical Reference Data, 35(2), 1021-1047",
+     "https://doi.org/10.1063/1.2183324", "article_revise",
+     "payant ; DOI vérifié via Crossref le 21 nov. 2026", "",
+     "Équation d'état IAPWS de la glace Ih : enthalpie de fusion au point "
+     "triple."),
     ("lemmon2000",
      "Lemmon E.W., Jacobsen R.T., Penoncello S.G., Friend D.G.", 2000,
      "Thermodynamic Properties of Air and Mixtures of Nitrogen, Argon, and "
@@ -669,6 +756,21 @@ p("ambiance.p_amb_essai",
   "hypothese", "non donnée par l'article",
   "Pression normale supposée (Shawinigan, ≈ 100 m d'altitude : "
   "≈ 1,00 bar en moyenne).")
+p("ambiance.humidite_relative_essai",
+  "Humidité relative de l'air ambiant pendant les essais", 50, "%", D,
+  "§3.1", "hypothese", "non donnée par l'article",
+  "Hypothèse du projet (valeur moyenne intérieure). Sert au bloc "
+  "« ambiance » obligatoire des scénarios (phase 6) ; le module humidité "
+  "(phase 9) l'utilisera pour le point de rosée.")
+p("compresseur.pression_refoulement_max",
+  "Pression de refoulement maximale du compresseur pendant les essais "
+  "(borne haute des lois calibrées)", 190, "bar", D, "§3.1 ; fig. 8 ; fig. 10",
+  "calcul_personnel",
+  "borne haute des lois linéaires en pression (rapport de l'étage 3, "
+  "rendement mécanique, efficacité du refroidisseur 4)",
+  "Égale à la pression finale de l'essai de charge "
+  "(essai_charge.pression_finale) : les lois « varie avec la pression » "
+  "de Dormoy (formules.md#F07) sont calibrées entre 66 et 190 bar.")
 p("compresseur.pression_refoulement_min",
   "Pression de refoulement minimale du compresseur (soupape de pression "
   "minimale avant le sécheur)", 66, "bar", D, "§3.1 ; fig. 8",
@@ -879,6 +981,442 @@ p("tola.tes.fraction_sortie_constante",
   "Fraction de la charge ou de la décharge pendant laquelle la "
   "température de sortie reste constante", 0.67, "-", T_, "§3.3 ; fig. 4",
   "simulation_publiee", notes="« about two thirds ».")
+
+
+# --- Ajouts de la phase 7 (bibliothèque de composants) ----------------
+SH = "shi2024"
+ZS = "zhangS2025"
+BA = "baniamerian2025"
+BZ = "bazdar2022"
+WB = "wolfbudt2014"
+AB = "ablaoui2023"
+NOTE_SHI = ("Prépublication SSRN non révisée par les pairs : à signaler à "
+            "chaque usage.")
+# Tola 2022 : machines et échangeurs
+p("tola.compresseur.rendement_polytropique",
+  "Rendement polytropique des compresseurs (CLP, CIP, CHP, CVHP au "
+  "point nominal)", 0.88, "-", T_, "tableau 1 ; §2.1", "simulation_publiee",
+  "turbomachines commerciales (réf. [21] de Tola)")
+p("tola.turbine.rendement_polytropique",
+  "Rendement polytropique des trois turbines", 0.86, "-", T_, "tableau 6",
+  "simulation_publiee")
+p("tola.rendement_moteur_generateur",
+  "Rendement du moteur et de la génératrice (mécanique → électrique)",
+  0.97, "-", T_, "§4", "simulation_publiee")
+p("tola.compresseur.T_sortie", "Température de sortie imposée des "
+  "compresseurs CLP, CIP, CHP", 170, "degC", T_, "tableau 1",
+  "simulation_publiee", "les rapports de pression en découlent")
+p("tola.compresseur.T_entree", "Température d'entrée des compresseurs "
+  "après refroidissement", 35, "degC", T_, "tableau 1 ; §2.1",
+  "simulation_publiee")
+p("tola.pincement_air", "Écart minimal de température des échangeurs "
+  "air / air (cas A)", 20, "K", T_, "tableau 2 ; §2.1", "simulation_publiee",
+  notes="Différence de température : pas de décalage de 273,15.")
+p("tola.pincement_huile", "Écart minimal de température des échangeurs "
+  "air / huile (cas B)", 10, "K", T_, "tableau 2 ; §2.1", "simulation_publiee",
+  notes="Différence de température : pas de décalage de 273,15.")
+p("tola.huile.cp", "Chaleur massique de l'huile thermique Therminol 66 "
+  "(conditions ambiantes)", 1494, "J/kgK", T_, "tableau 2",
+  "simulation_publiee", "à l'ambiant ; croît avec la température")
+p("tola.turbine.T_sortie_min", "Température minimale de sortie de chaque "
+  "turbine (vanne de laminage sinon)", 15, "degC", T_, "tableau 6",
+  "simulation_publiee")
+p("tola.cave.pression_min", "Pression minimale de la caverne", 64, "bar",
+  T_, "§2.2", "simulation_publiee")
+p("tola.cave.pression_max", "Pression maximale de la caverne", 100, "bar",
+  T_, "§2.2", "simulation_publiee")
+p("tola.rte.cas_A", "Rendement aller-retour, cas A (air)", 0.566, "-", T_,
+  "tableau 10", "simulation_publiee")
+p("tola.rte.cas_B", "Rendement aller-retour, cas B (huile)", 0.635, "-",
+  T_, "tableau 10", "simulation_publiee")
+p("tola.rte.cas_C", "Rendement aller-retour, cas C (gravier direct)",
+  0.674, "-", T_, "tableau 10", "simulation_publiee",
+  notes="La conclusion dit « légèrement inférieur à 0,65 » : incohérence.")
+# Shi 2024 : centrale de 100 MW
+p("shi.compresseur.rendement_isentropique",
+  "Rendement isentropique des compresseurs", 0.86, "-", SH, "tableau 4",
+  "simulation_publiee", notes=NOTE_SHI + " Réf. [27] de Shi.")
+p("shi.turbine.rendement_isentropique",
+  "Rendement isentropique des turbines", 0.90, "-", SH, "tableau 4",
+  "simulation_publiee", notes=NOTE_SHI + " Réf. [27] de Shi.")
+p("shi.rendement_mecanique", "Rendement mécanique des compresseurs et "
+  "des turbines", 0.99, "-", SH, "tableau 4", "simulation_publiee",
+  notes=NOTE_SHI)
+p("shi.rendement_electrique", "Rendement électrique des moteurs et des "
+  "génératrices", 0.98, "-", SH, "tableau 4", "simulation_publiee",
+  notes=NOTE_SHI)
+p("shi.pincement", "Écart minimal de température (PPTD) des "
+  "réchauffeurs et des refroidisseurs", 10, "K", SH, "tableau 4",
+  "simulation_publiee",
+  notes=NOTE_SHI + " Différence de température : pas de décalage.")
+p("shi.perte_charge_echangeur", "Perte de charge dans chaque échangeur",
+  0.4, "bar", SH, "tableau 4", "simulation_publiee",
+  notes=NOTE_SHI + " 0,04 MPa.")
+p("shi.perte_charge_entree_reservoir", "Surpression requise à l'entrée du "
+  "réservoir d'air", 2, "bar", SH, "tableau 4 ; §4", "simulation_publiee",
+  notes=NOTE_SHI + " 0,2 MPa.")
+p("shi.compresseur.T_sortie", "Température de sortie imposée des "
+  "compresseurs 1 à 3", 200, "degC", SH, "tableau 4", "simulation_publiee",
+  notes=NOTE_SHI)
+p("shi.T_eau_froide", "Température de l'eau froide à l'entrée des "
+  "refroidisseurs", 30, "degC", SH, "tableau 4", "simulation_publiee",
+  notes=NOTE_SHI)
+p("shi.T_amb", "Température ambiante", 25, "degC", SH, "tableau 4",
+  "simulation_publiee", notes=NOTE_SHI)
+p("shi.reservoir.pression_min", "Pression minimale du réservoir d'air "
+  "(réservoir isochore adiabatique)", 40, "bar", SH, "tableau 4",
+  "simulation_publiee", notes=NOTE_SHI)
+p("shi.reservoir.pression_max", "Pression maximale du réservoir d'air",
+  100, "bar", SH, "tableau 4", "simulation_publiee", notes=NOTE_SHI)
+p("shi.puissance_decharge", "Puissance de décharge", 100000, "kW", SH,
+  "tableau 4", "simulation_publiee", notes=NOTE_SHI)
+p("shi.duree_decharge", "Durée de décharge", 6, "h", SH, "tableau 4",
+  "simulation_publiee", notes=NOTE_SHI)
+p("shi.duree_charge", "Durée de charge", 8, "h", SH, "tableau 4",
+  "simulation_publiee", notes=NOTE_SHI)
+p("shi.rte", "Rendement aller-retour au point de conception", 0.6764, "-",
+  SH, "tableau 5 ; §5", "simulation_publiee",
+  notes=NOTE_SHI + " 600 / 887,05 MWh.")
+p("shi.eau.pression", "Pression des réservoirs d'eau chaude et froide",
+  18, "bar", SH, "figure 7", "simulation_publiee",
+  notes=NOTE_SHI + " 1,8 MPa ; eau chaude à 190 °C, eau froide à 30 °C.")
+p("shi.eau.T_chaud", "Température de l'eau chaude stockée", 190, "degC",
+  SH, "figure 7", "simulation_publiee", notes=NOTE_SHI)
+p("eau.cp_source", "Chaleur massique et saturation de l'eau liquide : "
+  "équation d'état IAPWS-95 via CoolProp", "IAPWS-95 (CoolProp, Water)",
+  "texte", "wagner2002", "équation d'état", "mesure",
+  notes="Utilisée par le modèle eau_sous_pression (formules.md#F40).")
+p("shi.eau.volume_chaud", "Volume du réservoir d'eau chaude", 4783.5,
+  "m3", SH, "tableau 5", "simulation_publiee", notes=NOTE_SHI)
+# Zhang S. 2025 : Flügel, vanne
+p("zhangS.flugel.t4", "Coefficient t4 de la formule de Flügel modifiée "
+  "(chute de rendement hors du point nominal)", 0.3, "-", ZS, "éq. 3",
+  "simulation_publiee",
+  "turbines de grande taille ; à vérifier pour une petite turbine",
+  "Valeur de la littérature reprise par Zhang (réf. [40], [41]).")
+p("zhangS.turbine.rendement_isentropique",
+  "Rendement isentropique de la turbine au point nominal", 0.88, "-", ZS,
+  "§4.1.1", "simulation_publiee", "turbine de 10 MW",
+  "Trop optimiste pour une petite turbine DEPRAG (53-73 % mécanique).")
+p("zhangS.vanne.Cq", "Coefficient de débit des vannes ON/OFF et de "
+  "réglage", 0.95, "-", ZS, "§4.1.1 (tableau des paramètres)",
+  "simulation_publiee")
+p("zhangS.turbine.T_entree", "Température d'entrée de la turbine au "
+  "point nominal", 336.88, "K", ZS, "§4.1.1", "simulation_publiee")
+p("zhangS.turbine.pression_entree", "Pression d'entrée de la turbine au "
+  "point nominal", 70, "bar", ZS, "§4.1.1 ; §4.1.2", "simulation_publiee")
+p("zhangS.reservoir.pression_max", "Pression maximale de la caverne", 100,
+  "bar", ZS, "§4.1.1", "simulation_publiee")
+# Wolf & Budt 2014 (via Bazdar 2022, tableau 3)
+p("wolfbudt.rte", "Rendement aller-retour attendu d'un LTA-CAES (deux "
+  "réservoirs de liquide, basse température)", None, "-", BZ,
+  "tableau 3 (d'après Wolf & Budt 2014, réf. [110])", "simulation_publiee",
+  notes="Plage 52-60 %. Source primaire : wolfbudt2014 (DOI vérifié, PDF "
+        "non récupéré).", vmin=0.52, vmax=0.60)
+p("wolfbudt.demarrage", "Temps de démarrage d'un LTA-CAES", 5, "min", BZ,
+  "tableau 3 (d'après Wolf & Budt 2014)", "simulation_publiee",
+  notes="« < 5 min » ; stockage chaud (gravier) : 10-15 min.")
+# Laine minérale (Ablaoui 2023, tableau 1)
+p("materiau.laine_minerale.conductivite", "Conductivité thermique de la "
+  "laine minérale à 20 °C (densité > 26 kg/m3)", 0.036, "W/mK", AB,
+  "tableau 1 (projet d'Eurocode, réf. [19] d'Ablaoui)", "fabricant",
+  "20 °C, sec",
+  "Valeur tabulée d'un projet de norme, pas une mesure des auteurs. Plage "
+  "ambiante 0,030-0,046 W/m·K (réf. [13] d'Ablaoui).",
+  vmin=0.030, vmax=0.046)
+p("materiau.laine_minerale.conductivite_100C", "Conductivité thermique "
+  "de la laine minérale à 100 °C", 0.047, "W/mK", AB, "tableau 1",
+  "fabricant", "100 °C",
+  "Interpolation linéaire admise entre 20 et 100 °C (note du tableau).")
+p("materiau.laine_minerale.cp", "Chaleur massique de la laine minérale à "
+  "20 °C", 880, "J/kgK", AB, "tableau 1", "fabricant", "20 °C")
+p("materiau.laine_minerale.masse_volumique", "Masse volumique de la laine "
+  "minérale testée par Ablaoui", 114, "kg/m3", AB, "§4 ; tableau 4",
+  "mesure", "échantillons testés", "Le tableau 1 vaut pour > 26 kg/m3.")
+p("isolation.h_ext", "Coefficient d'échange convectif extérieur d'une "
+  "cuve isolée (air calme)", 2.5, "W/m2K", D, "§2.2.5 (h_conv,ext des "
+  "réservoirs)", "calibration",
+  "même valeur que les réservoirs d'air de Dormoy (air calme, extérieur "
+  "du conteneur)",
+  "Réutilisation de reservoir.h_conv_ext pour la face externe de l'isolant "
+  "d'une cuve : hypothèse de même convection naturelle.")
+# Zhang Z. 2021 : autodécharge
+p("zhangZ.autodecharge_tes", "Autodécharge d'un stockage de chaleur "
+  "(grandes installations)", None, "%", "zhangZ2021", "tableau 11",
+  "simulation_publiee", "par jour", "Plage 0,05-1 % par jour ; valeur "
+  "générique de revue, sans source par ligne.", vmin=0.05, vmax=1.0)
+
+
+# --- Ajouts de la phase 8 (tableau de bord de validation) --------------
+# Tola 2022 : tableaux 1, 6, 7, 9, 10 et § 3.2 (caverne)
+p("tola.T_amb", "Température ambiante (entrée du compresseur basse "
+  "pression)", 15, "degC", T_, "tableau 1", "simulation_publiee")
+p("tola.p_amb", "Pression ambiante (entrée du compresseur basse pression)",
+  1.01, "bar", T_, "tableau 1", "simulation_publiee", notes="0,101 MPa.")
+p("tola.compresseur.debit_entree", "Débit massique d'air à l'entrée du "
+  "compresseur basse pression", 12.35, "kg/s", T_, "tableau 7 ; tableau 10",
+  "simulation_publiee", notes="Décroît légèrement le long de la chaîne "
+  "(condensation) : 12,35 / 12,35 / 12,31 / 12,28 kg/s.")
+p("tola.compresseur.CLP.rapport", "Rapport de pression du compresseur "
+  "basse pression (CLP)", 3.8, "-", T_, "tableau 1", "simulation_publiee")
+p("tola.compresseur.CIP.rapport", "Rapport de pression du compresseur "
+  "moyenne pression (CIP)", 3.1, "-", T_, "tableau 1", "simulation_publiee")
+p("tola.compresseur.CHP.rapport", "Rapport de pression du compresseur "
+  "haute pression (CHP)", 3.1, "-", T_, "tableau 1", "simulation_publiee")
+for nom, P_, E_ in (("CLP", 1980, 11.90), ("CIP", 1730, 10.38),
+                    ("CHP", 1720, 10.31)):
+    p(f"tola.compresseur.{nom}.puissance", f"Puissance électrique du "
+      f"compresseur {nom} (constante pendant la charge)", P_, "kW", T_,
+      "tableau 7", "simulation_publiee",
+      notes="Électrique : 1,98 MW × 6 h = 11,9 MWh (tableau 7), rendement "
+            "moteur 0,97 compris.")
+    p(f"tola.compresseur.{nom}.energie", f"Énergie électrique du "
+      f"compresseur {nom} sur la charge de 6 h", E_, "MWh", T_, "tableau 7",
+      "simulation_publiee")
+p("tola.compresseur.CVHP.puissance", "Puissance électrique du compresseur "
+  "très haute pression (CVHP), de 6,4 à 10 MPa", None, "kW", T_,
+  "tableau 7", "simulation_publiee", vmin=790, vmax=1550)
+p("tola.compresseur.CVHP.energie", "Énergie électrique du compresseur CVHP "
+  "sur la charge", 7.16, "MWh", T_, "tableau 7", "simulation_publiee")
+p("tola.compresseur.energie_totale", "Énergie électrique totale de la "
+  "chaîne de compression (6 h)", 39.76, "MWh", T_, "tableau 7 ; tableau 10",
+  "simulation_publiee", notes="39,8 MWh au tableau 10.")
+p("tola.turbine.debit", "Débit massique d'air des turbines", 24.5, "kg/s",
+  T_, "tableau 10", "simulation_publiee")
+for cas, T_in, E_, P_ in (("A", 130, 23.92, 8300), ("B", 150, 26.82, 9500),
+                          ("C", 170, 28.48, 10000)):
+    p(f"tola.turbine.T_entree_cas_{cas}", f"Température d'entrée nominale "
+      f"des turbines, cas {cas}", T_in, "degC", T_, "tableau 6",
+      "simulation_publiee")
+    p(f"tola.turbine.energie_cas_{cas}", f"Énergie électrique produite par "
+      f"les trois turbines sur 3 h, cas {cas}", E_, "MWh", T_,
+      "tableau 9 ; tableau 10", "simulation_publiee")
+    p(f"tola.turbine.puissance_max_cas_{cas}", f"Puissance électrique "
+      f"maximale des trois turbines (début de décharge), cas {cas}", P_,
+      "kW", T_, "tableau 9 ; tableau 10", "simulation_publiee")
+for nom, E_ in (("THP", 9.41), ("TIP", 9.53), ("TLP", 9.54)):
+    p(f"tola.turbine.{nom}.energie_cas_C", f"Énergie produite par la "
+      f"turbine {nom}, cas C", E_, "MWh", T_, "tableau 9",
+      "simulation_publiee")
+p("tola.cave.volume", "Volume de la caverne", 6500, "m3", T_, "§3.2",
+  "simulation_publiee", notes="Calculé par Tola avec l'hypothèse du gaz "
+  "parfait pour 264,6 t d'air de décharge.")
+p("tola.cave.masse_min", "Masse d'air dans la caverne à la pression "
+  "minimale", 470, "t", T_, "§3.2", "simulation_publiee")
+p("tola.cave.masse_max", "Masse d'air dans la caverne en fin de charge",
+  735, "t", T_, "§3.2", "simulation_publiee")
+p("tola.cave.T_min", "Température minimale de l'air dans la caverne", 15,
+  "degC", T_, "§2.2", "simulation_publiee",
+  notes="Plage 15-55 °C imposée « to avoid structural issues ».")
+p("tola.cave.T_max", "Température maximale de l'air dans la caverne", 55,
+  "degC", T_, "§2.2", "simulation_publiee")
+p("tola.rte.energie_decharge_cas_C", "Énergie produite, cas C (tableau 10)",
+  28.5, "MWh", T_, "tableau 10", "simulation_publiee")
+# Shi 2024 : figure 7 (états à 7 MPa), § 5, tableau 5
+p("shi.p_amb", "Pression ambiante", 1, "bar", SH, "figure 7",
+  "simulation_publiee", notes=NOTE_SHI + " 0,1 MPa.")
+p("shi.debit_charge", "Débit massique d'air pendant la charge", 198.35,
+  "kg/s", SH, "figure 7 ; §5", "simulation_publiee", notes=NOTE_SHI)
+p("shi.debit_decharge", "Débit massique d'air pendant la décharge", 260.15,
+  "kg/s", SH, "figure 7 ; §5", "simulation_publiee", notes=NOTE_SHI)
+for i, P_ in ((1, 36230), (2, 33140), (3, 33150), (4, 10270)):
+    p(f"shi.compresseur.puissance_{i}", f"Puissance électrique du "
+      f"compresseur {i} quand le réservoir est à 7 MPa", P_, "kW", SH,
+      "§5 ; figure 7", "simulation_publiee", "réservoir à 7 MPa",
+      NOTE_SHI)
+for i, P_ in ((1, 20440), (2, 39800), (3, 39770)):
+    p(f"shi.turbine.puissance_{i}", f"Puissance électrique de la turbine "
+      f"{i} quand le réservoir est à 7 MPa", P_, "kW", SH, "§5 ; figure 7",
+      "simulation_publiee", "réservoir à 7 MPa", NOTE_SHI)
+for i, pp in ((1, 4.3), (2, 14.0), (3, 48.6)):
+    p(f"shi.compresseur.p_sortie_{i}", f"Pression de sortie du compresseur "
+      f"{i}", pp, "bar", SH, "figure 7", "simulation_publiee",
+      "réservoir à 7 MPa", NOTE_SHI)
+p("shi.compresseur.p_sortie_4", "Pression de sortie du compresseur 4 "
+  "(réservoir à 7 MPa)", 75.5, "bar", SH, "figure 7", "simulation_publiee",
+  "réservoir à 7 MPa", NOTE_SHI)
+p("shi.compresseur.T_sortie_4", "Température de sortie du compresseur 4 "
+  "(réservoir à 7 MPa)", 90, "degC", SH, "figure 7", "simulation_publiee",
+  "réservoir à 7 MPa", NOTE_SHI)
+p("shi.refroidisseur.T_sortie_air", "Température de l'air à la sortie des "
+  "refroidisseurs", 40, "degC", SH, "figure 7", "simulation_publiee",
+  notes=NOTE_SHI)
+p("shi.turbine.T_entree", "Température d'entrée des turbines (eau à "
+  "190 °C, pincement 10 K)", 180, "degC", SH, "figure 7",
+  "simulation_publiee", notes=NOTE_SHI)
+p("shi.turbine.p_sortie_1", "Pression de sortie de la turbine 1", 32.6,
+  "bar", SH, "figure 7", "simulation_publiee", "réservoir à 7 MPa", NOTE_SHI)
+p("shi.turbine.p_entree_2", "Pression d'entrée de la turbine 2 (après le "
+  "réchauffeur, 0,04 MPa de perte)", 32.2, "bar", SH, "figure 7",
+  "simulation_publiee", notes=NOTE_SHI)
+p("shi.turbine.p_sortie_2", "Pression de sortie de la turbine 2", 5.9,
+  "bar", SH, "figure 7", "simulation_publiee", notes=NOTE_SHI)
+p("shi.turbine.p_entree_3", "Pression d'entrée de la turbine 3", 5.5, "bar",
+  SH, "figure 7", "simulation_publiee", notes=NOTE_SHI)
+p("shi.turbine.p_sortie_3", "Pression de sortie de la turbine 3", 1, "bar",
+  SH, "figure 7", "simulation_publiee", notes=NOTE_SHI)
+for i, T_ in ((1, 100), (2, 24), (3, 24)):
+    p(f"shi.turbine.T_sortie_{i}", f"Température de sortie de la turbine "
+      f"{i} (réservoir à 7 MPa)", T_, "degC", SH, "figure 7",
+      "simulation_publiee", "réservoir à 7 MPa", NOTE_SHI)
+p("shi.reservoir.volume", "Volume du réservoir d'air", 118000, "m3", SH,
+  "tableau 5 ; §5", "simulation_publiee", notes=NOTE_SHI + " 1,18 × 10^5 m3.")
+p("shi.masse_air", "Masse d'air stockée par cycle", 5712.5, "t", SH,
+  "tableau 5", "simulation_publiee", notes=NOTE_SHI + " 198,35 kg/s × 8 h.")
+p("shi.masse_eau", "Masse d'eau stockée par cycle", 4193.7, "t", SH,
+  "tableau 5", "simulation_publiee", notes=NOTE_SHI)
+p("shi.eau.volume_froid", "Volume du réservoir d'eau froide", 4208.8, "m3",
+  SH, "tableau 5", "simulation_publiee", notes=NOTE_SHI)
+p("shi.compresseur4.duree_fonctionnement", "Durée de fonctionnement du "
+  "compresseur 4 pendant la charge de 8 h", 7.04, "h", SH, "tableau 5 ; §5",
+  "simulation_publiee", notes=NOTE_SHI + " Inactif tant que la sortie du "
+  "compresseur 3 dépasse la pression du réservoir.")
+p("shi.energie_charge", "Énergie électrique consommée par cycle", 887.05,
+  "MWh", SH, "tableau 5 ; §5", "simulation_publiee", notes=NOTE_SHI)
+p("shi.energie_decharge", "Énergie électrique produite par cycle", 600,
+  "MWh", SH, "tableau 5", "simulation_publiee", notes=NOTE_SHI)
+p("shi.reservoir.T_min", "Température de l'air dans le réservoir en début "
+  "de charge", 2.78, "degC", SH, "§4 (texte) ; figure 7", "simulation_publiee",
+  notes=NOTE_SHI + " Plage 3-70 °C sur la figure 7.")
+p("shi.reservoir.T_max", "Température de l'air dans le réservoir en fin "
+  "de charge", 70, "degC", SH, "figure 7", "simulation_publiee",
+  notes=NOTE_SHI)
+
+
+# --- Ajouts de la phase 9 (humidité et sécheur) --------------------------
+HE = "herrmann2009"
+p("humidite.formulation", "Propriétés de l'air humide : formulation ASHRAE "
+  "RP-1485 via CoolProp (HAPropsSI)", "RP-1485 (CoolProp HumidAir)",
+  "texte", HE, "article entier", "mesure",
+  notes="Inclut le facteur d'augmentation f(T, p) de la solubilité de "
+        "l'eau dans l'air comprimé (formules.md#F42).")
+p("humidite.pression_max_validite", "Pression maximale de validité de la "
+  "formulation d'air humide", 100, "bar", HE, "résumé ; §2",
+  "simulation_publiee", "10 Pa à 10 MPa, −143 à 350 °C",
+  "Au-delà (réservoir de Dormoy à 190 bar), le simulateur extrapole à "
+  "pression partielle de vapeur constante et le signale.")
+p("eau.enthalpie_fusion", "Enthalpie de fusion de la glace Ih au point "
+  "triple", 333.4, "kJ/kg", "feistel2006", "tableau des propriétés au "
+  "point triple", "mesure", "273,16 K, 611,657 Pa",
+  "Sert à la chaleur libérée par le givre (formules.md#F43).")
+p("secheur.point_de_rosee_sortie", "Point de rosée sous pression à la "
+  "sortie d'un sécheur par adsorption", -40, "degC", D, "§2.1 (sécheur "
+  "par adsorption, non spécifié)", "hypothese",
+  "valeur usuelle des sécheurs par adsorption sans chaleur (classe ISO "
+  "8573-1 : 2)",
+  "Dormoy ne donne pas le point de rosée de son sécheur : hypothèse du "
+  "projet, à remplacer par la fiche technique.")
+p("separateur.efficacite", "Fraction de l'eau liquide entraînée retenue "
+  "par un séparateur cyclonique ou à coalescence", 0.98, "-", D,
+  "§2.1 (non décrit)", "hypothese", "gouttelettes après un refroidisseur",
+  "Hypothèse du projet (ordre de grandeur des séparateurs industriels) ; "
+  "aucune donnée dans les études lues.")
+p("secheur.appoint.efficacite", "Fraction du débit conservée par un petit "
+  "sécheur d'appoint (purge réduite)", 0.95, "-", D, "§2.1 (non décrit)",
+  "hypothese", "après un séparateur, air déjà proche de la saturation à "
+  "basse teneur", "Hypothèse du projet : purge de 5 % au lieu de 19 % "
+  "pour un sécheur dimensionné sur une charge en eau bien plus faible.")
+
+# --- Phase 10 : masse des réservoirs (paroi mince, formules.md#F44) ------
+p("reservoir.alu.limite_elastique",
+  "Limite d'élasticité de l'aluminium 6061-T6 (valeur typique)", 276,
+  "MPa", "asm1990", "propriétés typiques de l'alliage 6061-T6", "fabricant",
+  "20 °C", "Valeur typique (40 ksi) ; résistance à la traction 310 MPa. "
+  "Sert de borne « tout aluminium » dans le calcul de masse F44.")
+p("reservoir.pression_service", "Pression de service des réservoirs "
+  "composites de Dormoy", 300, "bar", D, "§3.3.2 (cas à 300 bar)",
+  "hypothese", "", "L'article simule une charge à 300 bar avec les mêmes "
+  "réservoirs ; leur pression nominale n'est pas publiée.")
+p("reservoir.coefficient_securite", "Coefficient de sécurité (rapport "
+  "pression d'éclatement / pression de service) retenu pour un réservoir "
+  "composite", 2.25, "-", D, "non publié", "hypothese", "",
+  "Hypothèse du projet : rapport d'éclatement courant des bouteilles "
+  "composites à liner métallique (ordre de grandeur de l'industrie, "
+  "aucune source à DOI lue) ; à remplacer par la norme applicable.")
+_r = 0.372 / 2
+_v_fond = 4.0 / 3.0 * math.pi * _r**3
+_rs = []
+for _v, _m in ((0.32, 107.0), (0.27, 95.0)):
+    _rs.append(2.25 * 300e5 * (2 * (_v - _v_fond) + 1.5 * _v_fond) / _m)
+p("reservoir.resistance_specifique_equivalente",
+  "Résistance spécifique équivalente (σ_adm / ρ) de la paroi composite "
+  "des réservoirs de Dormoy, déduite de leur masse", round(sum(_rs) / 2
+  / 1e3, 0), "kJ/kg", S, "tableau 8 (masse, diamètre, volume)",
+  "calibration", "paroi mince, pression de service 300 bar, coefficient "
+  "2,25", "Calcul personnel F44 : (σ/ρ) = S · p · (2 V_cyl + 1,5 V_fonds)"
+  " / m, pour les bouteilles de 320 L (107 kg) et 270 L (95 kg) ; "
+  "l'aluminium 6061-T6 seul donne 102 kJ/kg (276 MPa / 2700 kg/m3).",
+  vmin=round(min(_rs) / 1e3, 0), vmax=round(max(_rs) / 1e3, 0))
+
+# --- Phase 11 : scénarios d'exemple -------------------------------------
+p("reservoir.fuite_par_jour", "Fraction de la masse d'air perdue par jour "
+  "par fuites lentes pendant une attente", 0.5, "%", D,
+  "non publié (l'essai de 10 h ne montre pas de fuite)", "hypothese", "",
+  "Ordre de grandeur choisi par le projet pour les scénarios de "
+  "transport ; 0 par défaut dans les composants. À remplacer par une "
+  "mesure d'étanchéité.")
+TE = "tesla2020"
+p("megapack.energie", "Énergie disponible d'un Megapack « 4-Hour Standard »",
+  3080.4, "kWh", TE, "page 2, Standard System Specifications",
+  "fabricant", "25 °C, jour 1, pertes thermiques incluses")
+p("megapack.puissance", "Puissance d'un Megapack « 4-Hour Standard »",
+  770.1, "kW", TE, "page 2", "fabricant")
+p("megapack.rendement_aller_retour", "Rendement aller-retour d'un Megapack "
+  "4 h", 90, "%", TE, "page 2", "fabricant", "25 °C, jour 1")
+p("megapack.masse", "Masse maximale à l'expédition d'un Megapack standard",
+  25400, "kg", TE, "page 2, Mechanical and Mounting", "fabricant")
+p("megapack.longueur", "Longueur de l'enveloppe d'un Megapack", 7.168, "m",
+  TE, "page 2", "fabricant")
+p("megapack.largeur", "Profondeur de l'enveloppe d'un Megapack", 1.659, "m",
+  TE, "page 2", "fabricant")
+p("megapack.hauteur", "Hauteur de l'enveloppe d'un Megapack", 2.522, "m",
+  TE, "page 2", "fabricant")
+p("megapack.T_min", "Température ambiante minimale de fonctionnement d'un "
+  "Megapack", -30, "degC", TE, "page 2", "fabricant")
+CA = "caterpillar2020"
+p("groupe_diesel.puissance", "Puissance électrique de secours (standby) de "
+  "la génératrice Cat D100 GC, 60 Hz", 100, "kW", CA, "page 1", "fabricant")
+p("groupe_diesel.conso_100", "Consommation de carburant à 100 % de charge "
+  "(triphasé, avec ventilateur)", 27.9, "L/h", CA, "page 1, Fuel "
+  "Consumption", "fabricant")
+p("groupe_diesel.conso_75", "Consommation à 75 % de charge", 22.5, "L/h",
+  CA, "page 1", "fabricant")
+p("groupe_diesel.conso_50", "Consommation à 50 % de charge", 16.7, "L/h",
+  CA, "page 1", "fabricant")
+p("groupe_diesel.masse", "Masse à sec de la génératrice D100 GC", 1008,
+  "kg", CA, "page 2, Weights & Dimensions", "fabricant")
+p("groupe_diesel.pci", "Pouvoir calorifique inférieur du diesel n° 2 "
+  "(18 390 BTU/lb)", 42.78, "MJ/kg", CA, "page 2, note 2",
+  "calcul_personnel", "", "18 390 BTU/lb × 2,326 kJ/kg par BTU/lb.")
+p("groupe_diesel.masse_volumique", "Masse volumique du diesel n° 2 à "
+  "35° API", 850, "kg/m3", CA, "page 2, note 2", "calcul_personnel", "",
+  "Densité = 141,5 / (131,5 + 35) = 0,850.")
+NR = "nrel2023"
+for _nom, _v in (("bas", 245), ("moyen", 326), ("haut", 403)):
+    p(f"batterie.cout_2030_{_nom}", f"Coût projeté ({_nom}) d'une batterie "
+      "lithium-ion de 4 h en 2030, dollars américains de 2022", _v, "$/kWh",
+      NR, "résumé (notice OSTI)", "simulation_publiee", "",
+      "Coût du système installé par kWh de capacité.")
+p("caes.cout_reservoir_hors_sol", "Coût du stockage d'air hors sol "
+  "(réservoirs) par kWh", None, "$/kWh", D, "tableau 1 (d'après Bazdar "
+  "et al. 2022)", "simulation_publiee", "", "Fourchette citée par Dormoy "
+  "pour un CAES à réservoirs hors sol.", vmin=200, vmax=250)
+p("centre_urgence.puissance_moyenne", "Puissance moyenne d'un centre "
+  "d'urgence", 100, "kW", D, "plan v2 du projet (scénario 3)", "hypothese",
+  "", "Choix du projet ; 7,2 MWh sur 72 h.")
+p("centre_urgence.duree", "Autonomie visée d'un centre d'urgence", 72, "h",
+  D, "plan v2 du projet (scénario 3)", "hypothese")
+p("centre_urgence.facteur_jour", "Multiplicateur de la demande de jour "
+  "(6 h à 22 h)", 1.2, "-", D, "non publié", "hypothese", "",
+  "Profil jour/nuit de moyenne 1 : (16 × 1,2 + 8 × 0,6) / 24 = 1. À "
+  "remplacer par un profil mesuré (données ouvertes d'un bâtiment).")
+p("centre_urgence.facteur_nuit", "Multiplicateur de la demande de nuit "
+  "(22 h à 6 h)", 0.6, "-", D, "non publié", "hypothese")
+p("meteo.amplitude_journaliere", "Demi-amplitude de la variation "
+  "journalière de la température extérieure dans les profils d'exemple",
+  5, "K", D, "non publié", "hypothese", "",
+  "Sinusoïde de 24 h autour de la moyenne (−20 °C en hiver, 30 °C en "
+  "été) ; à remplacer par des normales climatiques.")
 
 
 def main() -> None:

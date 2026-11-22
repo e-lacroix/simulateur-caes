@@ -198,8 +198,8 @@ def main() -> None:
         sys.stdout.reconfigure(encoding="utf-8")
     DOSSIER_RAPPORT.mkdir(parents=True, exist_ok=True)
     reg = Registre.charger()
-    base = charger_scenario("dormoy_charge_1_190.yaml", reg)
-    chaud = charger_scenario("dormoy_charge_1_190_aspiration_chaude.yaml", reg)
+    base = charger_scenario("v1/dormoy_charge_1_190.yaml", reg)
+    chaud = charger_scenario("v1/dormoy_charge_1_190_aspiration_chaude.yaml", reg)
     debit_mesure = {
         "secheur.debit_massique_reservoir_impose":
             reg.si("secheur.debit_massique_sortie")
@@ -213,7 +213,7 @@ def main() -> None:
             debit_mesure, "debit_mesure"),
     }
     resultats = {nom: simuler_charge(sc) for nom, sc in variantes.items()}
-    base55 = charger_scenario("dormoy_charge_55_190.yaml", reg)
+    base55 = charger_scenario("v1/dormoy_charge_55_190.yaml", reg)
     chaud55 = base55.avec(
         {"compresseur.debit_massique_aspire": None,
          "ambiance.T_aspiration": chaud["ambiance.T_aspiration"]},
@@ -530,7 +530,7 @@ def main() -> None:
     L.extend(comparer_courbes_numerisees(deux))
     L.append(
         "\nAucune courbe n'était numérisée à la date de ce rapport : voir "
-        "`data/validation/A_NUMERISER.md` (fig. 10, 8 et 9 en priorité).\n"
+        "`data/validation/dormoy/A_NUMERISER.md` (fig. 10, 8 et 9 en priorité).\n"
     )
 
     L.append(

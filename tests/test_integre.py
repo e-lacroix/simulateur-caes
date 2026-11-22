@@ -15,28 +15,28 @@ def registre() -> Registre:
 
 @pytest.fixture(scope="module")
 def res_B(registre: Registre) -> ResultatIntegre:
-    sc = charger_scenario("B.yaml", registre).avec(
+    sc = charger_scenario("v1/B.yaml", registre).avec(
         {"cycles.nombre_max": 2}, "court")
     return simuler_cycles(sc, registre)
 
 
 @pytest.fixture(scope="module")
 def res_C(registre: Registre) -> ResultatIntegre:
-    sc = charger_scenario("C.yaml", registre).avec(
+    sc = charger_scenario("v1/C.yaml", registre).avec(
         {"cycles.nombre_max": 2}, "court")
     return simuler_cycles(sc, registre)
 
 
 @pytest.fixture(scope="module")
 def res_D(registre: Registre) -> ResultatIntegre:
-    sc = charger_scenario("D.yaml", registre).avec(
+    sc = charger_scenario("v1/D.yaml", registre).avec(
         {"cycles.nombre_max": 2, "cuves.n_cellules": 15}, "court")
     return simuler_cycles(sc, registre)
 
 
 @pytest.fixture(scope="module")
 def res_E(registre: Registre) -> ResultatIntegre:
-    sc = charger_scenario("E.yaml", registre).avec(
+    sc = charger_scenario("v1/E.yaml", registre).avec(
         {"cycles.nombre_max": 2, "cuves.n_cellules": 15}, "court")
     return simuler_cycles(sc, registre)
 
@@ -108,7 +108,7 @@ def test_E_pincement_reduit_la_temperature(
 
 
 def test_cuves_trop_petites_ne_suffisent_pas(registre: Registre) -> None:
-    sc = charger_scenario("D.yaml", registre).avec(
+    sc = charger_scenario("v1/D.yaml", registre).avec(
         {"cycles.nombre_max": 1, "cuves.n_cellules": 10}, "mini")
     r = simuler_cycles(sc, registre, volumes_m3=[0.05, 0.05, 0.05])
     s = r.dernier.decharge.series
@@ -118,6 +118,7 @@ def test_cuves_trop_petites_ne_suffisent_pas(registre: Registre) -> None:
 
 
 def test_architecture_inconnue(registre: Registre) -> None:
-    sc = charger_scenario("A.yaml", registre).avec({"architecture": "Z"}, "z")
+    sc = charger_scenario("v1/A.yaml", registre).avec(
+        {"architecture": "Z"}, "z")
     with pytest.raises(ValueError):
         simuler_cycles(sc, registre)

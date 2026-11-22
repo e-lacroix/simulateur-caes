@@ -10,10 +10,10 @@
 | 3 | compression étage 2 (chaleur échangée en comprimant) | 2 | 669 | 8 rejetées |  |
 | 4 | compression étage 3 (chaleur échangée en comprimant) | -1 | 670 | -4 rejetées | n > γ : le modèle absorbe un peu de chaleur |
 | 5 | compression étage 4 (chaleur échangée en comprimant) | 1 | 669 | 1 rejetées |  |
-| 6 | refroidisseur 1 (chaleur rejetée) | 21 | 648 | 110 rejetées, dont 22 au-dessus de 130 °C | récupérable dans une cuve (phases 4-5) |
-| 7 | refroidisseur 2 (chaleur rejetée) | 32 | 616 | 152 rejetées, dont 39 au-dessus de 130 °C | récupérable dans une cuve (phases 4-5) |
-| 8 | refroidisseur 3 (chaleur rejetée) | 19 | 597 | 102 rejetées, dont 19 au-dessus de 130 °C | récupérable dans une cuve (phases 4-5) |
-| 9 | refroidisseur 4 (chaleur rejetée) | 21 | 576 | 118 rejetées, dont 14 au-dessus de 130 °C | récupérable dans une cuve (phases 4-5) |
+| 6 | refroidisseur 1 (chaleur rejetée) | 21 | 648 | 110 rejetées, dont 22 au-dessus du seuil | récupérable dans un stockage de chaleur |
+| 7 | refroidisseur 2 (chaleur rejetée) | 32 | 616 | 152 rejetées, dont 39 au-dessus du seuil | récupérable dans un stockage de chaleur |
+| 8 | refroidisseur 3 (chaleur rejetée) | 19 | 597 | 102 rejetées, dont 19 au-dessus du seuil | récupérable dans un stockage de chaleur |
+| 9 | refroidisseur 4 (chaleur rejetée) | 21 | 576 | 118 rejetées, dont 14 au-dessus du seuil | récupérable dans un stockage de chaleur |
 | 10 | air rejeté (rendement volumétrique) | 89 | 487 |  | dans le modèle, l'air non refoulé a été comprimé : à lire avec « moteur et mécanique » |
 | 11 | air rejeté (sécheur) | 82 | 405 |  |  |
 | 12 | laminage vers le réservoir | 0 | 404 |  |  |

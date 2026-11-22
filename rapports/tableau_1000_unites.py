@@ -12,56 +12,25 @@ de l'état final de la charge), calcule les bilans d'exergie
 * ``exergie.md`` : synthèse et comparaison avec le calcul à la main de
   la fiche Dormoy (section 4 de `dormoy-2024-caes-hors-sol.md`).
 
-1000 unités = l'électricité consommée pendant la charge.
+1000 unités = l'électricité consommée pendant la charge. Le tableau et
+la cascade sont produits par ``caes.tableau_1000`` (phase 6) ; ce script
+garde l'enchaînement des cas de Dormoy et la synthèse de la phase 3.
 """
 
 from __future__ import annotations
 
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "validation"))
-from style_graphiques import (  # noqa: E402
-    COULEURS,
-    ENCRE,
-    ENCRE_2,
-    SURFACE,
-    nouvelle_figure,
-    style_axes,
-    terminer,
-)
-
-from caes.exergie import (  # noqa: E402
-    BilanExergie,
-    bilan_exergie_charge,
-    bilan_exergie_decharge,
-)
-from caes.registre import Registre  # noqa: E402
-from caes.scenario import Scenario, charger_scenario  # noqa: E402
-from caes.systeme import (  # noqa: E402
-    ResultatCharge,
-    ResultatDecharge,
-    simuler_charge,
-    simuler_decharge,
-)
+from caes.registre import Registre
+from caes.scenario import Scenario, charger_scenario
+from caes.systeme import simuler_charge, simuler_decharge
+from caes.tableau_1000 import Cas, cas_depuis_resultats, u
+from caes.tableau_1000 import cascade as cascade_vers
+from caes.tableau_1000 import tableau_markdown as tableau_markdown_cas
 
 RACINE = Path(__file__).resolve().parent.parent
 DOSSIER = RACINE / "rapports" / "phase3"
-
-
-@dataclass
-class Cas:
-    code: str
-    titre: str
-    charge: ResultatCharge
-    decharge: ResultatDecharge
-    bilan_charge: BilanExergie
-    bilan_decharge: BilanExergie
-
-    @property
-    def unite_j(self) -> float:
-        return self.bilan_charge.entree_j / 1000.0
 
 
 def enchainer(
@@ -75,179 +44,16 @@ def enchainer(
         "enchaine",
     )
     d = simuler_decharge(sc_d)
-    return Cas(code, titre, ch, d, bilan_exergie_charge(ch),
-               bilan_exergie_decharge(d))
-
-
-def u(cas: Cas, val_j: float) -> float:
-    return val_j / cas.unite_j
-
-
-def lignes_tableau(cas: Cas) -> list[dict[str, object]]:
-    """Lignes du tableau : étape, exergie perdue, exergie restante, chaleur."""
-    bc, bd = cas.bilan_charge, cas.bilan_decharge
-    L: list[dict[str, object]] = []
-    reste = 1000.0
-    L.append({"etape": "Électricité tirée du réseau", "perdu": None,
-              "reste": reste, "chaleur": None, "note": "charge"})
-    chaleur_cle = {
-        "refroidisseur": lambda i: (
-            f"{u(cas, bc.chaleurs_j[f'refroidisseur {i}']):.0f} rejetées, "
-            f"dont {u(cas, bc.chaleurs_j[f'refroidisseur {i} > seuil']):.0f} "
-            f"au-dessus de 130 °C"),
-    }
-    for nom, val in bc.postes.items():
-        perdu = u(cas, val)
-        reste -= perdu
-        chaleur = None
-        note = ""
-        if nom.startswith("refroidisseur"):
-            i = int(nom.split()[1])
-            chaleur = chaleur_cle["refroidisseur"](i)
-            note = "récupérable dans une cuve (phases 4-5)"
-        elif "comprimant" in nom:
-            i = int(nom.split()[2])
-            q = u(cas, bc.chaleurs_j[f"compression étage {i}"])
-            chaleur = f"{q:.0f} rejetées"
-            if q < 0:
-                note = "n > γ : le modèle absorbe un peu de chaleur"
-        elif "parois" in nom:
-            q_paroi = u(cas, bc.chaleurs_j["parois du réservoir"])
-            chaleur = f"{q_paroi:.0f} perdues"
-            note = "chaleur tiède : beaucoup d'énergie, peu d'exergie"
-        elif "volumétrique" in nom:
-            note = ("dans le modèle, l'air non refoulé a été comprimé : à "
-                    "lire avec « moteur et mécanique »")
-        L.append({"etape": nom, "perdu": perdu, "reste": reste,
-                  "chaleur": chaleur, "note": note})
-    stock = u(cas, bc.sorties_utiles_j["exergie stockée dans les réservoirs"])
-    L.append({"etape": "**Exergie stockée dans les réservoirs**",
-              "perdu": None, "reste": stock, "chaleur": None,
-              "note": f"résidu du bilan de charge "
-                      f"{bc.residu_relatif * 100:+.2f} %"})
-    # Décharge : l'entrée est l'exergie initiale (= stock + coussin
-    # initial) plus le réchauffage.
-    coussin0 = u(cas, bc.exergie_initiale_j)
-    reste = stock + coussin0
-    L.append({"etape": "Exergie disponible (stock + coussin initial)",
-              "perdu": None, "reste": reste, "chaleur": None,
-              "note": f"coussin initial {coussin0:.0f}"})
-    rech = u(cas, bd.exergie_rechauffage_j)
-    q = sum(v for k, v in bd.chaleurs_j.items() if "réchauffage" in k)
-    if rech > 0:
-        reste += rech
-        L.append({"etape": "Réchauffage avant les turbines (source externe "
-                           "ou huile idéale)",
-                  "perdu": -rech, "reste": reste,
-                  "chaleur": f"+{u(cas, q):.0f} fournies",
-                  "note": "exergie apportée = gain de l'air ; à compter si "
-                          "la source est externe"})
-    puise = u(cas, bd.exergie_puisee_cuves_j)
-    if puise > 0:
-        reste += puise
-        L.append({"etape": "Exergie puisée dans les cuves de gravier",
-                  "perdu": -puise, "reste": reste,
-                  "chaleur": f"+{u(cas, q):.0f} fournies à l'air",
-                  "note": "chaleur de compression stockée pendant la charge"})
-    for nom, val in bd.postes.items():
-        perdu = u(cas, val)
-        reste -= perdu
-        chaleur = None
-        note = ""
-        if "parois" in nom:
-            chaleur = (f"{-u(cas, bd.chaleurs_j['parois du réservoir']):.0f} "
-                       f"reçues des parois")
-            note = "l'air se refroidit en se détendant ; la paroi le réchauffe"
-        L.append({"etape": nom, "perdu": perdu, "reste": reste,
-                  "chaleur": chaleur, "note": note})
-    coussin = u(cas, bd.sorties_utiles_j[
-        "exergie restant dans les réservoirs (coussin)"])
-    elec = u(cas, bd.sorties_utiles_j["électricité produite"])
-    L.append({"etape": "Exergie restant dans les réservoirs (coussin)",
-              "perdu": coussin, "reste": reste - coussin, "chaleur": None,
-              "note": "pas une perte : reste pour le cycle suivant (plus "
-                      "froid et plus lourd que le coussin initial, d'où "
-                      "une exergie un peu plus grande)"})
-    L.append({"etape": "**Électricité rendue au réseau**", "perdu": None,
-              "reste": elec, "chaleur": None,
-              "note": f"résidu du bilan de décharge "
-                      f"{bd.residu_relatif * 100:+.2f} %"})
-    return L
+    return cas_depuis_resultats(code, titre, ch, d)
 
 
 def tableau_markdown(cas: Cas) -> str:
-    L = lignes_tableau(cas)
-    out = [
-        f"# Tableau « 1000 unités » : {cas.titre}\n",
-        f"*Cas `{cas.code}` : charge `{cas.charge.scenario.nom}` "
-        f"({cas.charge.totaux['energie_electrique_kwh']:.1f} kWh = 1000 "
-        f"unités, 1 unité = {cas.unite_j / 3.6e6 * 1000:.3f} Wh), puis "
-        f"décharge `{cas.decharge.scenario.nom}` enchaînée "
-        f"({cas.decharge.totaux['energie_electrique_kwh']:.2f} kWh "
-        f"produits). État mort : {cas.bilan_charge.T0_K - 273.15:.0f} °C, "
-        f"{cas.bilan_charge.p0_pa / 1e5:.3f} bar. Généré par "
-        f"`rapports/tableau_1000_unites.py`.*\n",
-        "| # | Étape | Exergie perdue | Exergie restante | Chaleur (énergie) "
-        "| Remarque |",
-        "|---|---|---|---|---|---|",
-    ]
-    for k, l in enumerate(L):
-        perdu = "" if l["perdu"] is None else f"{l['perdu']:.0f}"
-        chaleur = "" if l["chaleur"] is None else str(l["chaleur"])
-        out.append(
-            f"| {k} | {l['etape']} | {perdu} | {l['reste']:.0f} | {chaleur} "
-            f"| {l['note']} |"
-        )
-    out.append(
-        "\nLes colonnes « exergie » comptent l'énergie **utile** (travail "
-        "maximal récupérable) ; la colonne « chaleur » compte de "
-        "l'**énergie** thermique, dans la même unité. Les deux ne "
-        "s'additionnent pas : 100 unités de chaleur à 45 °C ne valent que "
-        "8 unités d'exergie.\n"
-    )
-    return "\n".join(out)
+    return tableau_markdown_cas(cas, "`rapports/tableau_1000_unites.py`")
 
 
 def cascade(cas: Cas, fichier: str) -> str:
-    """Graphique en cascade de l'exergie (unités sur 1000)."""
-    L = lignes_tableau(cas)
-    fig, ax = nouvelle_figure(11.0, 6.0)
-    x = 0
-    etiquettes: list[str] = []
-    for l in L:
-        perdu = l["perdu"]
-        if perdu is None:
-            # barre pleine : total
-            ax.bar(x, l["reste"], color=COULEURS[0], width=0.8)
-            ax.text(x, l["reste"] + 8, f"{l['reste']:.0f}", ha="center",
-                    fontsize=8, color=ENCRE)
-        else:
-            bas = l["reste"] if perdu > 0 else l["reste"] - abs(perdu)
-            c = COULEURS[1] if perdu > 0 else COULEURS[2]
-            if "coussin" in str(l["etape"]):
-                c = COULEURS[3]
-            ax.bar(x, abs(perdu), bottom=bas, color=c, width=0.8)
-            if abs(perdu) >= 3:
-                ax.text(x, bas + abs(perdu) + 8, f"{abs(perdu):.0f}",
-                        ha="center", fontsize=8, color=ENCRE_2)
-        etiquettes.append(str(l["etape"]).replace("**", ""))
-        x += 1
-    ax.set_xticks(range(len(etiquettes)))
-    ax.set_xticklabels(etiquettes, rotation=60, ha="right", fontsize=7)
-    style_axes(ax, f"Cascade d'exergie sur 1000 unités : {cas.titre}",
-               "", "Unités (1000 = électricité consommée)")
-    ax.set_facecolor(SURFACE)
-    from matplotlib.patches import Patch
-    ax.legend(
-        handles=[Patch(color=COULEURS[0], label="total (stock, électricité)"),
-                 Patch(color=COULEURS[1], label="exergie perdue ou détruite"),
-                 Patch(color=COULEURS[2],
-                       label="exergie apportée (réchauffage)"),
-                 Patch(color=COULEURS[3],
-                       label="coussin restant (pas une perte)")],
-        frameon=False, fontsize=8, labelcolor=ENCRE_2, loc="upper right",
-    )
-    return terminer(fig, ax, DOSSIER / fichier, legende=None)
+    """Cascade écrite dans ``DOSSIER`` (modifiable par les autres rapports)."""
+    return cascade_vers(cas, DOSSIER / fichier)
 
 
 def main() -> None:
@@ -256,10 +62,10 @@ def main() -> None:
     DOSSIER.mkdir(parents=True, exist_ok=True)
     reg = Registre.charger()
     charge_B = charger_scenario(
-        "dormoy_charge_1_190_aspiration_chaude.yaml", reg)
-    charge_A = charger_scenario("dormoy_charge_1_190.yaml", reg)
-    base = charger_scenario("dormoy_decharge_base.yaml", reg)
-    trois = charger_scenario("dormoy_decharge_3etages.yaml", reg)
+        "v1/dormoy_charge_1_190_aspiration_chaude.yaml", reg)
+    charge_A = charger_scenario("v1/dormoy_charge_1_190.yaml", reg)
+    base = charger_scenario("v1/dormoy_decharge_base.yaml", reg)
+    trois = charger_scenario("v1/dormoy_decharge_3etages.yaml", reg)
     p18 = reg.si("cas_base.pression_arret")
     p55 = reg.si("charge_55_190.pression_min")
     cas = [

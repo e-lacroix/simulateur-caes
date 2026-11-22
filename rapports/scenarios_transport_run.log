@@ -1,0 +1,45 @@
+lot principal : 36 simulations, 8 processus
+  1/36 [22 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  2/36 [22 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  3/36 [22 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  4/36 [22 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  5/36 [23 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  6/36 [23 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  7/36 [23 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  8/36 [23 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  9/36 [38 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  10/36 [39 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  11/36 [39 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  12/36 [39 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  13/36 [39 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  14/36 [39 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  15/36 [40 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  16/36 [41 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  17/36 [55 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  18/36 [57 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  19/36 [59 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  20/36 [59 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  21/36 [59 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  22/36 [60 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  23/36 [62 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  24/36 [62 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  25/36 [74 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  26/36 [77 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  27/36 [81 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  28/36 [81 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  29/36 [82 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  30/36 [82 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+  31/36 [82 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  32/36 [82 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  33/36 [91 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  34/36 [93 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  35/36 [95 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  36/36 [95 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+lot appoint : 6 simulations
+  1/6 [117 s] composants.attente.duree=7j composants.cuve_1.isolation.epai
+  2/6 [118 s] composants.attente.duree=14j composants.cuve_1.isolation.epa
+  3/6 [118 s] composants.attente.duree=21j composants.cuve_1.isolation.epa
+  4/6 [118 s] composants.attente.duree=28j composants.cuve_1.isolation.epa
+  5/6 [118 s] composants.attente.duree=42j composants.cuve_1.isolation.epa
+  6/6 [119 s] composants.attente.duree=56j composants.cuve_1.isolation.epa
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\scenarios\transport.md

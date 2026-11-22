@@ -1,0 +1,72 @@
+id,grandeur,valeur,valeur_min,valeur_max,unite,localisation,conditions,niveau_preuve
+materiau.gravier_tola.masse_volumique,Masse volumique du gravier,2750.0,,,kg/m3,tableau 3,,simulation_publiee
+materiau.gravier_tola.cp,Chaleur massique du gravier,900.0,,,J/kgK,tableau 3,,simulation_publiee
+materiau.gravier_tola.diametre_particule,Diamètre moyen des particules de gravier,0.03,,,m,tableau 3,,simulation_publiee
+materiau.gravier_tola.porosite,Fraction de vide du lit de gravier,0.3,,,-,tableau 3 ; §2.3,,simulation_publiee
+materiau.gravier_tola.conductivite,Conductivité thermique des particules de gravier,2.5,,,W/mK,tableaux granite / gneiss,"roche silicatée, 20 °C",hypothese
+tola.tes_lp.diametre,Cuve TES-LP (cas C) : diamètre,5.2,,,m,tableau 8,,simulation_publiee
+tola.tes_lp.rapport_hauteur_diametre,Cuve TES-LP : rapport hauteur / diamètre,2.0,,,-,tableau 8 ; §3.3 (« an aspect ratio of 2 was set »),,simulation_publiee
+tola.tes_lp.volume,Cuve TES-LP : volume,220.8,,,m3,tableau 8,,simulation_publiee
+tola.tes_lp.pression_charge,Cuve TES-LP : pression en charge,3.9,,,bar,tableau 4,,simulation_publiee
+tola.tes_ip.pression_charge,Cuve TES-IP : pression en charge,11.9,,,bar,tableau 4,,simulation_publiee
+tola.tes_hp.pression_charge,Cuve TES-HP : pression en charge,36.8,,,bar,tableau 4,,simulation_publiee
+tola.tes.debit_charge,Cuves du cas C : débit d'air en charge,12.3,,,kg/s,tableau 8 ; §3.3,,simulation_publiee
+tola.tes.debit_decharge,Cuves du cas C : débit d'air en décharge,24.5,,,kg/s,tableau 8 ; §3.3,,simulation_publiee
+tola.tes.T_entree_charge,Cuves du cas C : température d'entrée en charge,170.0,,,degC,tableau 4 et 8,,simulation_publiee
+tola.tes.T_entree_decharge,Cuves du cas C : température d'entrée en décharge,35.0,,,degC,tableau 4 et 8,,simulation_publiee
+tola.tes.duree_charge,Durée de la charge,6.0,,,h,§3.3,,simulation_publiee
+tola.tes.duree_decharge,Durée de la décharge,3.0,,,h,§3.3,,simulation_publiee
+tola.tes.T_sortie_min_decharge,Température minimale de sortie imposée en décharge (1er cycle),100.0,,,degC,§3.3,,simulation_publiee
+tola.tes_lp.energie_stockee,Cuve TES-LP : énergie stockée,9.6,,,MWh,tableau 8,,simulation_publiee
+tola.tes_ip.energie_stockee,Cuve TES-IP : énergie stockée,9.54,,,MWh,tableau 8,,simulation_publiee
+tola.tes_hp.energie_stockee,Cuve TES-HP : énergie stockée,9.54,,,MWh,tableau 8,,simulation_publiee
+tola.tes.nb_cycles_stabilisation,Nombre de cycles simulés jusqu'au régime stable,20.0,,,-,§3.3,,simulation_publiee
+tola.tes.fraction_sortie_constante,Fraction de la charge ou de la décharge pendant laquelle la température de sortie reste constante,0.67,,,-,§3.3 ; fig. 4,,simulation_publiee
+tola.compresseur.rendement_polytropique,"Rendement polytropique des compresseurs (CLP, CIP, CHP, CVHP au point nominal)",0.88,,,-,tableau 1 ; §2.1,turbomachines commerciales (réf. [21] de Tola),simulation_publiee
+tola.turbine.rendement_polytropique,Rendement polytropique des trois turbines,0.86,,,-,tableau 6,,simulation_publiee
+tola.rendement_moteur_generateur,Rendement du moteur et de la génératrice (mécanique → électrique),0.97,,,-,§4,,simulation_publiee
+tola.compresseur.T_sortie,"Température de sortie imposée des compresseurs CLP, CIP, CHP",170.0,,,degC,tableau 1,les rapports de pression en découlent,simulation_publiee
+tola.compresseur.T_entree,Température d'entrée des compresseurs après refroidissement,35.0,,,degC,tableau 1 ; §2.1,,simulation_publiee
+tola.pincement_air,Écart minimal de température des échangeurs air / air (cas A),20.0,,,K,tableau 2 ; §2.1,,simulation_publiee
+tola.pincement_huile,Écart minimal de température des échangeurs air / huile (cas B),10.0,,,K,tableau 2 ; §2.1,,simulation_publiee
+tola.huile.cp,Chaleur massique de l'huile thermique Therminol 66 (conditions ambiantes),1494.0,,,J/kgK,tableau 2,à l'ambiant ; croît avec la température,simulation_publiee
+tola.turbine.T_sortie_min,Température minimale de sortie de chaque turbine (vanne de laminage sinon),15.0,,,degC,tableau 6,,simulation_publiee
+tola.cave.pression_min,Pression minimale de la caverne,64.0,,,bar,§2.2,,simulation_publiee
+tola.cave.pression_max,Pression maximale de la caverne,100.0,,,bar,§2.2,,simulation_publiee
+tola.rte.cas_A,"Rendement aller-retour, cas A (air)",0.566,,,-,tableau 10,,simulation_publiee
+tola.rte.cas_B,"Rendement aller-retour, cas B (huile)",0.635,,,-,tableau 10,,simulation_publiee
+tola.rte.cas_C,"Rendement aller-retour, cas C (gravier direct)",0.674,,,-,tableau 10,,simulation_publiee
+tola.T_amb,Température ambiante (entrée du compresseur basse pression),15.0,,,degC,tableau 1,,simulation_publiee
+tola.p_amb,Pression ambiante (entrée du compresseur basse pression),1.01,,,bar,tableau 1,,simulation_publiee
+tola.compresseur.debit_entree,Débit massique d'air à l'entrée du compresseur basse pression,12.35,,,kg/s,tableau 7 ; tableau 10,,simulation_publiee
+tola.compresseur.CLP.rapport,Rapport de pression du compresseur basse pression (CLP),3.8,,,-,tableau 1,,simulation_publiee
+tola.compresseur.CIP.rapport,Rapport de pression du compresseur moyenne pression (CIP),3.1,,,-,tableau 1,,simulation_publiee
+tola.compresseur.CHP.rapport,Rapport de pression du compresseur haute pression (CHP),3.1,,,-,tableau 1,,simulation_publiee
+tola.compresseur.CLP.puissance,Puissance électrique du compresseur CLP (constante pendant la charge),1980.0,,,kW,tableau 7,,simulation_publiee
+tola.compresseur.CLP.energie,Énergie électrique du compresseur CLP sur la charge de 6 h,11.9,,,MWh,tableau 7,,simulation_publiee
+tola.compresseur.CIP.puissance,Puissance électrique du compresseur CIP (constante pendant la charge),1730.0,,,kW,tableau 7,,simulation_publiee
+tola.compresseur.CIP.energie,Énergie électrique du compresseur CIP sur la charge de 6 h,10.38,,,MWh,tableau 7,,simulation_publiee
+tola.compresseur.CHP.puissance,Puissance électrique du compresseur CHP (constante pendant la charge),1720.0,,,kW,tableau 7,,simulation_publiee
+tola.compresseur.CHP.energie,Énergie électrique du compresseur CHP sur la charge de 6 h,10.31,,,MWh,tableau 7,,simulation_publiee
+tola.compresseur.CVHP.puissance,"Puissance électrique du compresseur très haute pression (CVHP), de 6,4 à 10 MPa",,790.0,1550.0,kW,tableau 7,,simulation_publiee
+tola.compresseur.CVHP.energie,Énergie électrique du compresseur CVHP sur la charge,7.16,,,MWh,tableau 7,,simulation_publiee
+tola.compresseur.energie_totale,Énergie électrique totale de la chaîne de compression (6 h),39.76,,,MWh,tableau 7 ; tableau 10,,simulation_publiee
+tola.turbine.debit,Débit massique d'air des turbines,24.5,,,kg/s,tableau 10,,simulation_publiee
+tola.turbine.T_entree_cas_A,"Température d'entrée nominale des turbines, cas A",130.0,,,degC,tableau 6,,simulation_publiee
+tola.turbine.energie_cas_A,"Énergie électrique produite par les trois turbines sur 3 h, cas A",23.92,,,MWh,tableau 9 ; tableau 10,,simulation_publiee
+tola.turbine.puissance_max_cas_A,"Puissance électrique maximale des trois turbines (début de décharge), cas A",8300.0,,,kW,tableau 9 ; tableau 10,,simulation_publiee
+tola.turbine.T_entree_cas_B,"Température d'entrée nominale des turbines, cas B",150.0,,,degC,tableau 6,,simulation_publiee
+tola.turbine.energie_cas_B,"Énergie électrique produite par les trois turbines sur 3 h, cas B",26.82,,,MWh,tableau 9 ; tableau 10,,simulation_publiee
+tola.turbine.puissance_max_cas_B,"Puissance électrique maximale des trois turbines (début de décharge), cas B",9500.0,,,kW,tableau 9 ; tableau 10,,simulation_publiee
+tola.turbine.T_entree_cas_C,"Température d'entrée nominale des turbines, cas C",170.0,,,degC,tableau 6,,simulation_publiee
+tola.turbine.energie_cas_C,"Énergie électrique produite par les trois turbines sur 3 h, cas C",28.48,,,MWh,tableau 9 ; tableau 10,,simulation_publiee
+tola.turbine.puissance_max_cas_C,"Puissance électrique maximale des trois turbines (début de décharge), cas C",10000.0,,,kW,tableau 9 ; tableau 10,,simulation_publiee
+tola.turbine.THP.energie_cas_C,"Énergie produite par la turbine THP, cas C",9.41,,,MWh,tableau 9,,simulation_publiee
+tola.turbine.TIP.energie_cas_C,"Énergie produite par la turbine TIP, cas C",9.53,,,MWh,tableau 9,,simulation_publiee
+tola.turbine.TLP.energie_cas_C,"Énergie produite par la turbine TLP, cas C",9.54,,,MWh,tableau 9,,simulation_publiee
+tola.cave.volume,Volume de la caverne,6500.0,,,m3,§3.2,,simulation_publiee
+tola.cave.masse_min,Masse d'air dans la caverne à la pression minimale,470.0,,,t,§3.2,,simulation_publiee
+tola.cave.masse_max,Masse d'air dans la caverne en fin de charge,735.0,,,t,§3.2,,simulation_publiee
+tola.cave.T_min,Température minimale de l'air dans la caverne,15.0,,,degC,§2.2,,simulation_publiee
+tola.cave.T_max,Température maximale de l'air dans la caverne,55.0,,,degC,§2.2,,simulation_publiee
+tola.rte.energie_decharge_cas_C,"Énergie produite, cas C (tableau 10)",28.5,,,MWh,tableau 10,,simulation_publiee

@@ -1,0 +1,41 @@
+[registre] registre scientifique (CSV) (≈ 5 s)
+  ok en 0 s code de retour 0
+[scenarios] scénarios dérivés et profils (≈ 10 s)
+  ok en 1 s code de retour 0
+[validation] rapports de validation des phases 1, 2, 4 (≈ 5 min)
+  ok en 3267 s code de retour 0
+[non_regression] phases 1 à 5 contre le format composants (≈ 4 min)
+  ok en 124 s code de retour 0
+[tableau_de_bord] tableau de bord de validation (phase 8) (≈ 3 min)
+  ok en 92 s code de retour 0
+[tableau_1000] exergie et 1000 unités (phase 3) (≈ 2 min)
+  ok en 13 s code de retour 0
+[phase5] architectures A à E (phase 5) (≈ 15 min)
+  ok en 329 s code de retour 0
+[phase7] variantes de la bibliothèque (phase 7) (≈ 3 min)
+  ok en 191 s code de retour 0
+[phase9] humidité et sécheur (phase 9) (≈ 2 min)
+  ok en 70 s code de retour 0
+[analyse] sensibilité, incertitudes, Pareto (phase 10) (≈ 50 min)
+  ok en 1823 s code de retour 0
+[exemples] scénarios d'exemple (phase 11) (≈ 8 min)
+  ok en 390 s code de retour 0
+[api] référence de l'API depuis les docstrings (≈ 5 s)
+  ok en 4 s code de retour 0
+
+| Étape | Durée | État |
+|---|---|---|
+| registre | 0.0 min | ok |
+| scenarios | 0.0 min | ok |
+| validation | 54.5 min | ok |
+| non_regression | 2.1 min | ok |
+| tableau_de_bord | 1.5 min | ok |
+| tableau_1000 | 0.2 min | ok |
+| phase5 | 5.5 min | ok |
+| phase7 | 3.2 min | ok |
+| phase9 | 1.2 min | ok |
+| analyse | 30.4 min | ok |
+| exemples | 6.5 min | ok |
+| api | 0.1 min | ok |
+
+Total : 105.1 min ; journal : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\generer_tout.log

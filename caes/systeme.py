@@ -189,6 +189,9 @@ class ResultatCharge:
     totaux: dict[str, float]
     bilan: dict[str, float]
     arret: str
+    parametres: dict[str, float] = field(default_factory=dict)
+    """Grandeurs de référence du bilan d'exergie (état mort, volume,
+    état initial), indépendantes du format du scénario."""
 
     def resume(self) -> str:
         t = self.totaux
@@ -396,7 +399,13 @@ def simuler_charge(
         totaux[f"chaleur_sup_seuil_{i + 1}_kwh"] = Q_sup_etage[i] / 3.6e6
         totaux[f"chaleur_cuve_{i + 1}_kwh"] = Q_cuve_etage[i] / 3.6e6
     res = ResultatCharge(
-        scenario=sc, series=series, totaux=totaux, bilan=bilan, arret=arret
+        scenario=sc, series=series, totaux=totaux, bilan=bilan, arret=arret,
+        parametres={
+            "T0_K": T_amb, "p0_pa": p_amb, "T_aspiration_K": T_asp,
+            "rendement_volumetrique": compresseur.rendement_volumetrique,
+            "volume_m3": reservoir.volume_m3,
+            "p_initiale_pa": p_init, "T_initiale_K": T_init,
+        },
     )
     res.reservoir = reservoir  # type: ignore[attr-defined]
     return res
@@ -473,6 +482,7 @@ class ResultatDecharge:
     bilan: dict[str, float]
     chaleur_par_source: dict[str, float]
     arret: str
+    parametres: dict[str, float] = field(default_factory=dict)
 
     def resume(self) -> str:
         t = self.totaux
@@ -711,6 +721,11 @@ def simuler_decharge(
             k: v / 3.6e6 for k, v in chaleur_par_source.items()
         },
         arret=arret,
+        parametres={
+            "T0_K": T_amb, "p0_pa": sc["ambiance.p_amb"],
+            "volume_m3": reservoir.volume_m3,
+            "p_initiale_pa": p_init, "T_initiale_K": T_init,
+        },
     )
     res.reservoir = reservoir  # type: ignore[attr-defined]
     return res

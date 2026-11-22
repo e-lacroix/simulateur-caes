@@ -1,0 +1,89 @@
+# Chaîne de compression de Tola et al. (2022), tableaux 1 et 7 : quatre
+# compresseurs à rendement polytropique 0,88, les trois premiers à 170 °C
+# de sortie (rapports 3,8 / 3,1 / 3,1), le quatrième (CVHP) jusqu'à la
+# caverne (6,4 → 10 MPa) ; intercoolers à pincement de 20 K (air ambiant à
+# 15 °C → 35 °C) ; 12,35 kg/s pendant 6 h. Références (tableau 7) :
+# puissances 1,98 / 1,73 / 1,72 / 0,79-1,55 MW, énergie totale 39,76 MWh.
+# Le modèle thermique de la caverne n'est pas décrit par Tola (gaz parfait,
+# 15 à 55 °C) : caverne quasi isotherme ici (hypothèse, signalée).
+
+nom: tola_charge
+description: >
+  Chaîne de compression de Tola 2022 (10 MW, caverne de 6500 m3 entre 6,4
+  et 10 MPa) : compresseurs polytropiques à 170 °C, pincement de 20 K.
+
+ambiance:
+  T_amb: registre:tola.T_amb
+  p_amb: registre:tola.p_amb
+  humidite_relative: registre:ambiance.humidite_relative_essai
+
+composants:
+  compresseur:
+    type: compresseur
+    modele: polytropique_rendement
+    debit_massique_aspire: registre:tola.compresseur.debit_entree
+    rendement_polytropique: registre:tola.compresseur.rendement_polytropique
+    rendement_mecanique:
+      valeur: 1
+      unite: "-"
+      source: Tola ne distingue pas de rendement mécanique ; seul le rendement moteur / génératrice (0,97) est donné
+    rendement_electrique: registre:tola.rendement_moteur_generateur
+    etages:
+      - T_sortie: registre:tola.compresseur.T_sortie
+      - T_sortie: registre:tola.compresseur.T_sortie
+      - T_sortie: registre:tola.compresseur.T_sortie
+      - {}
+  refroidisseur_1:
+    type: refroidisseur
+    modele: pincement
+    pincement: registre:tola.pincement_air
+    T_seuil_chaleur_utile: registre:tola.turbine.T_entree_cas_C
+  refroidisseur_2:
+    type: refroidisseur
+    modele: pincement
+    pincement: registre:tola.pincement_air
+    T_seuil_chaleur_utile: registre:tola.turbine.T_entree_cas_C
+  refroidisseur_3:
+    type: refroidisseur
+    modele: pincement
+    pincement: registre:tola.pincement_air
+    T_seuil_chaleur_utile: registre:tola.turbine.T_entree_cas_C
+  refroidisseur_4:
+    type: refroidisseur
+    modele: pincement
+    pincement: registre:tola.pincement_air
+    T_seuil_chaleur_utile: registre:tola.turbine.T_entree_cas_C
+  reservoir:
+    # Tola suppose un gaz parfait entre 15 et 55 °C dans la caverne (470 t
+    # à 6,4 MPa, 735 t à 10 MPa : masse volumique d'un air à ≈ 35 °C). Une
+    # caverne adiabatique chaufferait trop (charge en 3,9 h au lieu de 6) :
+    # modèle à échange fort avec l'ambiant, quasi isotherme (hypothèse).
+    type: reservoir_air
+    modele: K_global
+    volume: registre:tola.cave.volume
+    surface:
+      valeur: 1700
+      unite: m2
+      source: calcul personnel, sphère équivalente de 6500 m3
+    K_global:
+      valeur: 1000
+      unite: W/m2K
+      source: hypothèse « caverne quasi isotherme » (constante de temps ≈ 4 min), Tola ne décrit pas le modèle thermique
+    p_max: registre:tola.cave.pression_max
+
+charge:
+  chaine: [compresseur.1, refroidisseur_1, compresseur.2, refroidisseur_2,
+           compresseur.3, refroidisseur_3, compresseur.4, refroidisseur_4,
+           reservoir]
+  reservoir_initial:
+    p: registre:tola.cave.pression_min
+    T: registre:tola.cave.T_min
+  p_cible: registre:tola.cave.pression_max
+  dt:
+    valeur: 60
+    unite: s
+    source: choix numérique (charge de 6 h)
+  duree_max: registre:tola.tes.duree_charge
+
+simulation:
+  mode: charge

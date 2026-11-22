@@ -1,0 +1,31 @@
+[5 s] A_secheur_adsorption (cycles) ; cycle 2 ; charge 324.5 kWh en 8.26 h ; produit 14.05 kWh en 53.9 min, chaleur  ; RTE 4.3 % (4.3 % avec la chaleur externe) ; 4 avertissement(s)
+[5 s] A_separateur (cycles) ; cycle 2 ; charge 259.8 kWh en 6.62 h ; produit 13.99 kWh en 53.3 min, chaleur  ; RTE 5.4 % (5.4 % avec la chaleur externe) ; 5 avertissement(s)
+[4 s] A_separateur_appoint (cycles) ; cycle 2 ; charge 274.3 kWh en 6.98 h ; produit 14.01 kWh en 53.5 min, chaleur  ; RTE 5.1 % (5.1 % avec la chaleur externe) ; 4 avertissement(s)
+[4 s] B_secheur_adsorption (cycles) ; cycle 2 (non stabilisé) ; charge 243.9 kWh en 6.05 h ; produit 40.87 kWh en 39.3 min, chaleur externe 51.0 ; RTE 16.8 % (13.9 % avec la chaleur externe) ; 2 avertissement(s)
+[5 s] B_separateur (cycles) ; cycle 2 (non stabilisé) ; charge 196.1 kWh en 4.87 h ; produit 40.53 kWh en 39.0 min, chaleur externe 50.3 ; RTE 20.7 % (16.4 % avec la chaleur externe) ; 5 avertissement(s)
+[4 s] B_separateur_appoint (cycles) ; cycle 2 (non stabilisé) ; charge 206.6 kWh en 5.12 h ; produit 40.61 kWh en 39.1 min, chaleur externe 50.5 ; RTE 19.7 % (15.8 % avec la chaleur externe) ; 2 avertissement(s)
+[3 s] A -20 °C 30 % : givre 0.008 kg, réservoir 0.054 kg
+[2 s] A -20 °C 60 % : givre 0.008 kg, réservoir 0.054 kg
+[2 s] A -20 °C 90 % : givre 0.008 kg, réservoir 0.054 kg
+[3 s] A 0 °C 30 % : givre 0.034 kg, réservoir 0.205 kg
+[2 s] A 0 °C 60 % : givre 0.034 kg, réservoir 0.205 kg
+[2 s] A 0 °C 90 % : givre 0.034 kg, réservoir 0.205 kg
+[2 s] A 20 °C 30 % : givre 0.115 kg, réservoir 0.612 kg
+[2 s] A 20 °C 60 % : givre 0.115 kg, réservoir 0.612 kg
+[2 s] A 20 °C 90 % : givre 0.115 kg, réservoir 0.612 kg
+[3 s] A 30 °C 30 % : givre 0.194 kg, réservoir 0.992 kg
+[2 s] A 30 °C 60 % : givre 0.194 kg, réservoir 0.992 kg
+[2 s] A 30 °C 90 % : givre 0.194 kg, réservoir 0.992 kg
+[2 s] B -20 °C 30 % : givre 0.005 kg, réservoir 0.042 kg
+[2 s] B -20 °C 60 % : givre 0.005 kg, réservoir 0.042 kg
+[2 s] B -20 °C 90 % : givre 0.005 kg, réservoir 0.042 kg
+[2 s] B 0 °C 30 % : givre 0.012 kg, réservoir 0.162 kg
+[2 s] B 0 °C 60 % : givre 0.012 kg, réservoir 0.162 kg
+[2 s] B 0 °C 90 % : givre 0.012 kg, réservoir 0.162 kg
+[2 s] B 20 °C 30 % : givre 0.006 kg, réservoir 0.485 kg
+[2 s] B 20 °C 60 % : givre 0.006 kg, réservoir 0.485 kg
+[2 s] B 20 °C 90 % : givre 0.006 kg, réservoir 0.485 kg
+[2 s] B 30 °C 30 % : givre 0.000 kg, réservoir 0.793 kg
+[2 s] B 30 °C 60 % : givre 0.000 kg, réservoir 0.793 kg
+[2 s] B 30 °C 90 % : givre 0.000 kg, réservoir 0.793 kg
+rapport écrit : C:\Users\Wilson\Documents\exposcience\Expo-sciences-2026-2027\simulateur\rapports\phase9\humidite.md

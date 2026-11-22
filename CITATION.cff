@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "Si vous utilisez ce simulateur, citez-le ainsi (et citez Dormoy et al. 2024 pour les données du banc d'essai)."
+type: software
+title: "Simulateur CAES : banc d'essai numérique pour le stockage d'énergie par air comprimé (projet Expo-sciences 2026-2027)"
+abstract: "Simulateur Python de stockage d'énergie par air comprimé (CAES) avec récupération de la chaleur de compression dans des cuves de gravier. Registre scientifique traçable, bibliothèque de composants interchangeables assemblés par fichier YAML, validation contre les mesures et simulations publiées (Dormoy 2024, Tola 2022, Shi 2024), humidité et givre, sensibilité et front de Pareto, scénarios d'exemple (transport, centre d'urgence, grande échelle)."
+authors:
+  - family-names: Lacroix
+    given-names: Éliam
+    affiliation: "Projet Expo-sciences 2026-2027 (Québec)"
+version: 0.12.0
+date-released: 2026-11-22
+license: GPL-3.0-or-later
+repository-code: "https://github.com/e-lacroix/simulateur-caes"
+keywords:
+  - stockage d'énergie
+  - air comprimé
+  - CAES
+  - lit de gravier
+  - stockage thermique
+  - validation
+  - reproductibilité
+references:
+  - type: article
+    title: "Aboveground compressed air energy storage systems: Experimental and numerical approach"
+    authors:
+      - family-names: Dormoy
+        given-names: E.
+      - family-names: Le Lostec
+        given-names: B.
+      - family-names: Haillot
+        given-names: D.
+    year: 2024
+    doi: 10.1016/j.enconman.2024.119073

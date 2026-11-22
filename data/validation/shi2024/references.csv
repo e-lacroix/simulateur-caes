@@ -1,0 +1,54 @@
+id,grandeur,valeur,valeur_min,valeur_max,unite,localisation,conditions,niveau_preuve
+shi.compresseur.rendement_isentropique,Rendement isentropique des compresseurs,0.86,,,-,tableau 4,,simulation_publiee
+shi.turbine.rendement_isentropique,Rendement isentropique des turbines,0.9,,,-,tableau 4,,simulation_publiee
+shi.rendement_mecanique,Rendement mécanique des compresseurs et des turbines,0.99,,,-,tableau 4,,simulation_publiee
+shi.rendement_electrique,Rendement électrique des moteurs et des génératrices,0.98,,,-,tableau 4,,simulation_publiee
+shi.pincement,Écart minimal de température (PPTD) des réchauffeurs et des refroidisseurs,10.0,,,K,tableau 4,,simulation_publiee
+shi.perte_charge_echangeur,Perte de charge dans chaque échangeur,0.4,,,bar,tableau 4,,simulation_publiee
+shi.perte_charge_entree_reservoir,Surpression requise à l'entrée du réservoir d'air,2.0,,,bar,tableau 4 ; §4,,simulation_publiee
+shi.compresseur.T_sortie,Température de sortie imposée des compresseurs 1 à 3,200.0,,,degC,tableau 4,,simulation_publiee
+shi.T_eau_froide,Température de l'eau froide à l'entrée des refroidisseurs,30.0,,,degC,tableau 4,,simulation_publiee
+shi.T_amb,Température ambiante,25.0,,,degC,tableau 4,,simulation_publiee
+shi.reservoir.pression_min,Pression minimale du réservoir d'air (réservoir isochore adiabatique),40.0,,,bar,tableau 4,,simulation_publiee
+shi.reservoir.pression_max,Pression maximale du réservoir d'air,100.0,,,bar,tableau 4,,simulation_publiee
+shi.puissance_decharge,Puissance de décharge,100000.0,,,kW,tableau 4,,simulation_publiee
+shi.duree_decharge,Durée de décharge,6.0,,,h,tableau 4,,simulation_publiee
+shi.duree_charge,Durée de charge,8.0,,,h,tableau 4,,simulation_publiee
+shi.rte,Rendement aller-retour au point de conception,0.6764,,,-,tableau 5 ; §5,,simulation_publiee
+shi.eau.pression,Pression des réservoirs d'eau chaude et froide,18.0,,,bar,figure 7,,simulation_publiee
+shi.eau.T_chaud,Température de l'eau chaude stockée,190.0,,,degC,figure 7,,simulation_publiee
+shi.eau.volume_chaud,Volume du réservoir d'eau chaude,4783.5,,,m3,tableau 5,,simulation_publiee
+shi.p_amb,Pression ambiante,1.0,,,bar,figure 7,,simulation_publiee
+shi.debit_charge,Débit massique d'air pendant la charge,198.35,,,kg/s,figure 7 ; §5,,simulation_publiee
+shi.debit_decharge,Débit massique d'air pendant la décharge,260.15,,,kg/s,figure 7 ; §5,,simulation_publiee
+shi.compresseur.puissance_1,Puissance électrique du compresseur 1 quand le réservoir est à 7 MPa,36230.0,,,kW,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee
+shi.compresseur.puissance_2,Puissance électrique du compresseur 2 quand le réservoir est à 7 MPa,33140.0,,,kW,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee
+shi.compresseur.puissance_3,Puissance électrique du compresseur 3 quand le réservoir est à 7 MPa,33150.0,,,kW,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee
+shi.compresseur.puissance_4,Puissance électrique du compresseur 4 quand le réservoir est à 7 MPa,10270.0,,,kW,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee
+shi.turbine.puissance_1,Puissance électrique de la turbine 1 quand le réservoir est à 7 MPa,20440.0,,,kW,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee
+shi.turbine.puissance_2,Puissance électrique de la turbine 2 quand le réservoir est à 7 MPa,39800.0,,,kW,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee
+shi.turbine.puissance_3,Puissance électrique de la turbine 3 quand le réservoir est à 7 MPa,39770.0,,,kW,§5 ; figure 7,réservoir à 7 MPa,simulation_publiee
+shi.compresseur.p_sortie_1,Pression de sortie du compresseur 1,4.3,,,bar,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.compresseur.p_sortie_2,Pression de sortie du compresseur 2,14.0,,,bar,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.compresseur.p_sortie_3,Pression de sortie du compresseur 3,48.6,,,bar,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.compresseur.p_sortie_4,Pression de sortie du compresseur 4 (réservoir à 7 MPa),75.5,,,bar,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.compresseur.T_sortie_4,Température de sortie du compresseur 4 (réservoir à 7 MPa),90.0,,,degC,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.refroidisseur.T_sortie_air,Température de l'air à la sortie des refroidisseurs,40.0,,,degC,figure 7,,simulation_publiee
+shi.turbine.T_entree,"Température d'entrée des turbines (eau à 190 °C, pincement 10 K)",180.0,,,degC,figure 7,,simulation_publiee
+shi.turbine.p_sortie_1,Pression de sortie de la turbine 1,32.6,,,bar,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.turbine.p_entree_2,"Pression d'entrée de la turbine 2 (après le réchauffeur, 0,04 MPa de perte)",32.2,,,bar,figure 7,,simulation_publiee
+shi.turbine.p_sortie_2,Pression de sortie de la turbine 2,5.9,,,bar,figure 7,,simulation_publiee
+shi.turbine.p_entree_3,Pression d'entrée de la turbine 3,5.5,,,bar,figure 7,,simulation_publiee
+shi.turbine.p_sortie_3,Pression de sortie de la turbine 3,1.0,,,bar,figure 7,,simulation_publiee
+shi.turbine.T_sortie_1,Température de sortie de la turbine 1 (réservoir à 7 MPa),100.0,,,degC,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.turbine.T_sortie_2,Température de sortie de la turbine 2 (réservoir à 7 MPa),24.0,,,degC,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.turbine.T_sortie_3,Température de sortie de la turbine 3 (réservoir à 7 MPa),24.0,,,degC,figure 7,réservoir à 7 MPa,simulation_publiee
+shi.reservoir.volume,Volume du réservoir d'air,118000.0,,,m3,tableau 5 ; §5,,simulation_publiee
+shi.masse_air,Masse d'air stockée par cycle,5712.5,,,t,tableau 5,,simulation_publiee
+shi.masse_eau,Masse d'eau stockée par cycle,4193.7,,,t,tableau 5,,simulation_publiee
+shi.eau.volume_froid,Volume du réservoir d'eau froide,4208.8,,,m3,tableau 5,,simulation_publiee
+shi.compresseur4.duree_fonctionnement,Durée de fonctionnement du compresseur 4 pendant la charge de 8 h,7.04,,,h,tableau 5 ; §5,,simulation_publiee
+shi.energie_charge,Énergie électrique consommée par cycle,887.05,,,MWh,tableau 5 ; §5,,simulation_publiee
+shi.energie_decharge,Énergie électrique produite par cycle,600.0,,,MWh,tableau 5,,simulation_publiee
+shi.reservoir.T_min,Température de l'air dans le réservoir en début de charge,2.78,,,degC,§4 (texte) ; figure 7,,simulation_publiee
+shi.reservoir.T_max,Température de l'air dans le réservoir en fin de charge,70.0,,,degC,figure 7,,simulation_publiee

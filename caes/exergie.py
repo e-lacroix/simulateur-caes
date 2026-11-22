@@ -124,15 +124,12 @@ class BilanExergie:
         return (self.entree_j - self.total_postes_j) / self.entree_j
 
 
-def _etat_initial(res: ResultatCharge | ResultatDecharge,
-                  sc) -> tuple[float, float]:
-    """État initial réel du réservoir (p, T) : celui du résultat si la
-    simulation a repris un réservoir existant (cycles), sinon le
-    scénario."""
-    t = res.totaux
-    if "p_initiale_bar" in t and "T_initiale_degC" in t:
-        return t["p_initiale_bar"] * 1e5, t["T_initiale_degC"] + 273.15
-    return sc["reservoir.p_initiale"], sc["reservoir.T_initiale"]
+def _etat_initial(
+    res: ResultatCharge | ResultatDecharge,
+) -> tuple[float, float]:
+    """État initial réel du réservoir (p, T), tel que la simulation l'a
+    vu (y compris quand elle a repris un réservoir existant)."""
+    return res.parametres["p_initiale_pa"], res.parametres["T_initiale_K"]
 
 
 def exergie_etage_compression(
@@ -165,15 +162,15 @@ def bilan_exergie_charge(
     """Bilan d'exergie d'une charge, poste par poste [J]."""
     air = air or air_par_defaut()
     sc = res.scenario
-    T0 = sc["ambiance.T_amb"]
-    p0 = sc["ambiance.p_amb"]
-    T_asp = sc.get("ambiance.T_aspiration", T0)
+    par = res.parametres
+    T0 = par["T0_K"]
+    p0 = par["p0_pa"]
     ex = Exergie(air, T0, p0)
     s = res.series
     t = s["t_s"].to_numpy()
     dt = np.diff(np.concatenate(([0.0], t)))
     nb = sum(1 for c in s.columns if c.startswith("beta_"))
-    eta_vol = sc["compresseur.rendement_volumetrique"]
+    eta_vol = par["rendement_volumetrique"]
 
     P = {
         "moteur et mécanique": 0.0,
@@ -263,8 +260,8 @@ def bilan_exergie_charge(
         P["chaleur perdue par les parois"] += ex.chaleur(q, T_res)
         Q["parois du réservoir"] += q
 
-    V = sc["reservoir.volume"]
-    p_i, T_i = _etat_initial(res, sc)
+    V = par["volume_m3"]
+    p_i, T_i = _etat_initial(res)
     m_i = air.rho(p_i, T_i) * V
     fin = s.iloc[-1]
     m_f, p_f, T_f = fin["m_res_kg"], fin["p_res_pa"], fin["T_res_K"]
@@ -301,16 +298,15 @@ def bilan_exergie_decharge(
     """
     air = air or air_par_defaut()
     sc = res.scenario
-    T0 = sc["ambiance.T_amb"]
-    p0 = sc["ambiance.p_amb"]
+    par = res.parametres
+    T0 = par["T0_K"]
+    p0 = par["p0_pa"]
     ex = Exergie(air, T0, p0)
     s = res.series
     t = s["t_s"].to_numpy()
     dt = np.diff(np.concatenate(([0.0], t)))
-    turbine = sc["decharge.mode"] == "turbine"
-    nb = 0
-    if turbine:
-        nb = sum(1 for c in s.columns if c.startswith("T_in_turb_"))
+    nb = sum(1 for c in s.columns if c.startswith("T_in_turb_"))
+    turbine = nb > 0
 
     P: dict[str, float] = {
         "réservoir (détente interne)": 0.0,
@@ -332,8 +328,8 @@ def bilan_exergie_decharge(
     S_out_res = 0.0
     S_q_res = 0.0
 
-    V = sc["reservoir.volume"]
-    p_prev, T_prev = _etat_initial(res, sc)
+    V = par["volume_m3"]
+    p_prev, T_prev = _etat_initial(res)
     m_i = air.rho(p_prev, T_prev) * V
     for k in range(len(s)):
         row = s.iloc[k]
@@ -383,7 +379,7 @@ def bilan_exergie_decharge(
 
     fin = s.iloc[-1]
     m_f, p_f, T_f = fin["m_res_kg"], fin["p_res_pa"], fin["T_res_K"]
-    p_i, T_i = _etat_initial(res, sc)
+    p_i, T_i = _etat_initial(res)
     dS_res = m_f * air.s(p_f, T_f) - m_i * air.s(p_i, T_i)
     S_gen_res = dS_res + S_out_res + S_q_res
     P["réservoir (détente interne)"] = T0 * S_gen_res
@@ -398,11 +394,11 @@ def bilan_exergie_decharge(
     for i in range(1, nb + 1):
         gain = rech[f"réchauffage étage {i} (exergie apportée)"]
         src = sources.get(i, "")
-        if src.startswith("cuve_"):
-            k = src.split("_")[1]
-            puise = -float(res.totaux.get(f"dEx_cuve_{k}_j", 0.0))
+        if src and f"dEx_{src}_j" in res.totaux:
+            puise = -float(res.totaux[f"dEx_{src}_j"])
             puise_cuves += puise
-            P[f"cuve {k} (restitution gravier → air)"] = puise - gain
+            etiquette = src.replace("_", " ")
+            P[f"{etiquette} (restitution gravier → air)"] = puise - gain
         else:
             rech_externe += gain
     entree = Ex_i + rech_externe + puise_cuves
